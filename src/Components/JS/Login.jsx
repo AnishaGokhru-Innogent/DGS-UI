@@ -40,7 +40,7 @@ const Login = () => {
                         <div className="loginBox d-flex">
                                 <div className="leftSection d-flex flex-column align-items-center">
                                         <Form onFinish={handleLogin} style={{marginTop:"40px"}}>
-                                                <h1 className="text-center" style={{fontFamily:"Karben 205",fontWeight:"700",fontSize:"60px"}}>Welcome</h1>
+                                                <h1 className="text-center" style={{fontFamily:"Karben 205",fontWeight:"700",fontSize:"54px"}}>Welcome</h1>
                                                 <p className="text-center">We are glad to see you back with us</p>
                                                 <div className="d-flex flex-column justify-content-center mt-4" style={{ width: "280px" }}>
                                                         <Form.Item>
@@ -75,7 +75,10 @@ const Login = () => {
                                                 </div>
                                         </Form>
                                 </div>
-                                <div className="rightSection">
+                                <div className="rightSection d-flex align-items-center">
+                                        <div className="image">
+
+                                        </div>
                                 </div>
                         </div>
                 </div>

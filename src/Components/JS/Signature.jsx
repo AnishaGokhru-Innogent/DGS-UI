@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import SignatureCanvas from 'react-signature-canvas';
 import axios from 'axios';
-import baseUrl from "./BootApi";
+import baseUrl from "../../BootApi";
 import { toast } from "react-toastify";
 import { Button, Dropdown, Space, Form, Input, Upload, message, } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
