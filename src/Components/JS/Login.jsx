@@ -26,12 +26,12 @@ const Login = () => {
       .then((response) => {
         var token = response.data.token;
         var userId = response.data.user;
-        dispatch(login(token));
         if (token) {
           localStorage.setItem("token", token);
           localStorage.setItem("userId", userId);
           toast.success("Login Success");
           navigate("/home");
+          //   dispatch(login(token));
         }
       })
       .catch((error) => {
