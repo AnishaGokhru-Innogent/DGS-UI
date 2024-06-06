@@ -42,11 +42,10 @@ const CreateTemplate = () => {
   const [template, setTemplate] = useState({});
   const [resTemplate, setResTemplate] = useState({});
   const [templateName, setTemplateName] = useState("");
-  const [userId, setUserId] = useState(102);
   const quillRef = useRef(null);
-  const bearerToken =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0dXNoYXJAaW5ub2dlbnQuaW4iLCJpYXQiOjE3MTcxNTk5NjUsImV4cCI6MTcxNzE3NDM2NX0.hJS5vL3BFcJrrzo8INcZ2vPyBqtrQVDSotqQltzk-sU";
-
+  const userid = localStorage.getItem("userId");
+  const [userId, setUserId] = useState(userid);
+  const bearerToken = localStorage.getItem("token");
   useEffect(() => {
     if (quillRef.current) {
       quillRef.current.focus();
@@ -116,7 +115,7 @@ const CreateTemplate = () => {
     console.log(template);
     await axios
       .post("http://localhost:8080/template/create", template, {
-        // headers: { Authorization: `Bearer ${bearerToken}` },
+        headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((response) => response.data)
       .then((res) => setResTemplate(res))

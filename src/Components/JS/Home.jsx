@@ -16,15 +16,23 @@ import { Alltemplate } from "./AllTemplates";
 import { log } from "util";
 import { Alldocument } from "./AllDocument";
 import CreateTemplate from "./CreateTemplate";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice";
 const { Header, Sider, Content } = Layout;
 
 const Home = () => {
+  const navigate = useNavigate();
+
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState({});
   const [currentView, setCurrentView] = useState("home");
+  const dispatch = useDispatch();
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const bearerToken = localStorage.getItem("token");
 
   const userId = localStorage.getItem("userId");
   useEffect(() => {
@@ -34,13 +42,21 @@ const Home = () => {
   const userName = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/users/getUser/${userId}`
+        `http://localhost:8080/api/v1/users/getUser/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
       );
       setUser(response.data);
     } catch (error) {
       console.log(error);
     }
   };
+
+  function logOut() {
+    dispatch(logout());
+    navigate("/login");
+  }
 
   const renderContent = () => {
     switch (currentView) {
@@ -50,6 +66,8 @@ const Home = () => {
         return <Alldocument />;
       case "New Tempalte":
         return <CreateTemplate />;
+      case "LogOut":
+        return logOut();
       default:
         return <div>Home Content</div>;
     }
@@ -108,7 +126,7 @@ const Home = () => {
               style: { color: "white" },
             },
             {
-              key: "8",
+              key: "LogOut",
               icon: <LogoutOutlined />,
               label: "LogOut",
               style: { color: "white" },

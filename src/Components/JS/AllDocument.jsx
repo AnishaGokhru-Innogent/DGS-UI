@@ -8,9 +8,12 @@ export function Alldocument() {
   const [documents, setDocuments] = useState();
 
   const userId = localStorage.getItem("userId");
+  const bearerToken = localStorage.getItem("token");
   async function getDocumentsOfUser(Id) {
     await axios
-      .get(`${baseUrl}/document/get-documents/${Id}`)
+      .get(`${baseUrl}/document/get-documents/${Id}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
       .then((response) => response.data)
       .then((data) => setDocuments(data))
       .catch((error) => console.log(error));

@@ -14,15 +14,21 @@ export function CreateDocument() {
   const [documentName, setDocumentName] = useState("");
   const [formValues, setFormValues] = useState({});
   const documentPdf = useRef();
+  const userId = localStorage.getItem("userId");
+  const bearerToken = localStorage.getItem("token");
   const navigate = useNavigate();
   async function getTemplateAndFields(templateId) {
     await axios
-      .get(`${baseUrl}/template/get/${templateId}`)
+      .get(`${baseUrl}/template/get/${templateId}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
       .then((response) => response.data.templateBody)
       .then((data) => setDocumentBody(data))
       .catch((error) => console.log(error));
     await axios
-      .get(`${baseUrl}/placeholder/template/${templateId}`)
+      .get(`${baseUrl}/placeholder/template/${templateId}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
       .then((response) => response.data)
       .then((data) => setFileds(data))
       .catch((error) => console.log(error));
@@ -38,7 +44,9 @@ export function CreateDocument() {
       formData.append(key, value);
     }
     await axios
-      .post(`${baseUrl}/document/populate/${id}`, formData)
+      .post(`${baseUrl}/document/populate/${id}`, formData, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
       .then((response) => response.data)
       .then((data) => setDocumentBody(data))
       .catch((error) => console.log(error));
@@ -56,11 +64,11 @@ export function CreateDocument() {
     .filter((email) => email);
   async function saveDocument() {
     const documentData = {
-      documentName: documentName, // Replace with actual document name
+      documentName: documentName,
       documentBody: documentBody,
       status: "PENDING",
       templateId: id,
-      userId: 53, // Replace with actual user ID
+      userId: userId,
       signatureEmails: fields
         .filter((field) => field.placeholderType === "signature")
         .map((field) => formValues[field.placeholderName]),
@@ -70,6 +78,7 @@ export function CreateDocument() {
       .post(`${baseUrl}/document/save`, documentData, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${bearerToken}`,
         },
       })
       .then((response) => console.log(response.data))

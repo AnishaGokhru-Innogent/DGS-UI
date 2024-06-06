@@ -9,8 +9,10 @@ import moment from "moment";
 
 export function Alltemplate() {
   const [templates, setTemplates] = useState([]);
-  const [userId, setUserId] = useState(53); //we will use this for getting user object from database
   const navigate = useNavigate();
+  const userid = localStorage.getItem("userId");
+  const bearerToken = localStorage.getItem("token");
+  const [userId, setUserId] = useState(userid); //we will use this for getting user object from database
 
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type, message) => {
@@ -18,23 +20,27 @@ export function Alltemplate() {
       message: message,
     });
   };
-  async function getTempalte() {
+  async function getTemplate() {
     await axios
-      .get(`${baseUrl}/template/all/${userId}`) //we have to extract userId
+      .get(`${baseUrl}/template/all/${userId}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      }) //we have to extract userId
       .then((response) => response.data)
       .then((data) => setTemplates(data))
       .catch((error) => console.log(error));
   }
 
   useEffect(() => {
-    getTempalte();
+    getTemplate();
   }, []);
 
   console.log(templates);
 
   async function DeleteTemplate(Id) {
     await axios
-      .delete(`${baseUrl}/template/deleteTemplate/${Id}`)
+      .delete(`${baseUrl}/template/deleteTemplate/${Id}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
       .then((response) => {
         openNotificationWithIcon("success", `Template Deleted Successfully`);
       })
