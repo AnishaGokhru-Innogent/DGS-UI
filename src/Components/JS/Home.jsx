@@ -25,7 +25,7 @@ const Home = () => {
     const userId = localStorage.getItem('userId');
     useEffect(()=>{
         userName();
-    })
+    },[])
     const userName = async()=>{
         await axios.get(`http://localhost:8080/api/v1/users/getUser/${userId}`).then(
               (response)=>{

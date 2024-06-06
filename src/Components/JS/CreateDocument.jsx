@@ -58,7 +58,7 @@ export function CreateDocument() {
       documentBody: documentBody,
       status: "PENDING",
       templateId: id,
-      userId: 53, // Replace with actual user ID
+      userId: 1, // Replace with actual user ID
       signatureEmails: fields
         .filter((field) => field.placeholderType === "signature")
         .map((field) => formValues[field.placeholderName]),
