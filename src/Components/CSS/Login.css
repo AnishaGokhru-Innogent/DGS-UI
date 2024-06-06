@@ -20,8 +20,12 @@
     width: 55%;
 }
 .rightSection{
-    width: 45%;
+    width: 45%;   
+}
+.image{
     background-image: url("../Images/docuImage.jpg");
     background-size:cover;
     border-radius: 20px;
+    height: 400px;
+    width: 300px;
 }
