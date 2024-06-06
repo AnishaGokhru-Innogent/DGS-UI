@@ -1,5 +1,5 @@
 .placeholder-blot {
-    user-select: none;
-    /* Make it non-selectable */
-    border: "2px solid black";
-  }
+  user-select: none;
+  /* Make it non-selectable */
+  /* border: "2px solid "; */
+}
