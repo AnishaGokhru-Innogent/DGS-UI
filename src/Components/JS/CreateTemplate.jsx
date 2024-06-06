@@ -42,6 +42,7 @@ const CreateTemplate = () => {
   const [template, setTemplate] = useState({});
   const [resTemplate, setResTemplate] = useState({});
   const [templateName, setTemplateName] = useState("");
+
   const quillRef = useRef(null);
   const userid = localStorage.getItem("userId");
   const [userId, setUserId] = useState(userid);

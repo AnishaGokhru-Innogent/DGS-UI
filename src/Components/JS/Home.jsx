@@ -24,6 +24,19 @@ const { Header, Sider, Content } = Layout;
 const Home = () => {
   const navigate = useNavigate();
 
+    const userId = localStorage.getItem('userId');
+    useEffect(()=>{
+        userName();
+    },[])
+    const userName = async()=>{
+        await axios.get(`http://localhost:8080/api/v1/users/getUser/${userId}`).then(
+              (response)=>{
+                  setUser(response.data);
+                //   console.log(response.data);
+              }
+        ).catch((error)=>{
+            console.log(error);
+        })
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState({});
   const [currentView, setCurrentView] = useState("home");
