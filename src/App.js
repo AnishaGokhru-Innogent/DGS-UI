@@ -21,6 +21,10 @@ function App() {
           {/* <Route path='/register' element={<Register/>}></Route> */}
           <Route path="/create-template" element={<CreateTemplate />} />
           <Route path="/create-document/:id" element={<CreateDocument />} />
+          <Route
+            path="/sign/:documentId/:placeholder"
+            element={<Signature />}
+          ></Route>
         </Routes>
       </BrowserRouter>
     </>

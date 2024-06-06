@@ -5,6 +5,7 @@ import { render } from "@testing-library/react";
 import { Button, Space, Table, notification } from "antd";
 import { useNavigate } from "react-router-dom";
 import { log } from "util";
+import moment from "moment";
 
 export function Alltemplate() {
   const [templates, setTemplates] = useState([]);
@@ -56,13 +57,20 @@ export function Alltemplate() {
     },
     {
       title: "Date Of Creation",
-      dataIndex: "createdAt",
       key: "createdAt",
-    },
-    {
-      title: "Date Of Creation",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      render: (text) => {
+        if (text) {
+          const formattedDate = moment(text).format("YYYY-MM-DD");
+          const formattedTime = moment(text).format("hh:mm:ss");
+          return (
+            <span>
+              {formattedDate}
+              <br />
+              {formattedTime}
+            </span>
+          );
+        }
+      },
     },
     {
       title: "",
