@@ -2,7 +2,6 @@ import "./App.css";
 import ModalSignature from "./ModalSignature";
 import Signature from "./Components/JS/Signature";
 import Home from "./Components/JS/Home";
-import Register from "./Components/JS/Register";
 import { ToastContainer } from "react-toastify";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
