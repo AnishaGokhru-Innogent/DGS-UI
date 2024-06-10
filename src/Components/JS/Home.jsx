@@ -74,9 +74,14 @@ const Home = () => {
   const renderContentAdmin = ()=>{
       switch(currentView){
          case "Home":
-          return <Register/>
-         case "AllUser":
-          return <AllUser/>
+          return (
+            <>
+              <Register/>
+              <AllUser/>
+            </>
+          );
+          case "LogOut":
+            return logOut();
         default :
         return <Register/>
       }
@@ -155,12 +160,6 @@ const Home = () => {
         style: { color: "white" } 
        },
        {
-        key: "AllUser",
-        icon: <UserOutlined />,
-        label: "All User",
-        style: { color: "white" } 
-       },
-       {
         key: "LogOut",
         icon: <LogoutOutlined />,
         label: "LogOut",
@@ -211,7 +210,10 @@ const Home = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {renderContent()}
+          {
+             renderContent()
+          }
+           
         </Content>
       </Layout>
     </Layout>

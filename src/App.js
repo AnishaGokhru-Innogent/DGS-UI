@@ -12,6 +12,7 @@ import { Seedocument } from "./Components/JS/Document";
 import { Provider } from "react-redux";
 import PrivateRoute from "./Components/redux/PrivateRoute";
 import store from "./Components/redux/store";
+
 function App() {
   return (
     <>

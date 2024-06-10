@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
 import { render } from "@testing-library/react";
-import { Button, Space, Table, notification } from "antd";
+import { Button, Space, Table, notification ,Popconfirm , message} from "antd";
 import { useNavigate } from "react-router-dom";
 import { log } from "util";
 import moment from "moment";
@@ -42,13 +42,18 @@ export function Alltemplate() {
         headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((response) => {
-        openNotificationWithIcon("success", `Template Deleted Successfully`);
+        message.success("Template Deleted Successfully")
       })
       .catch((error) => {
-        openNotificationWithIcon("error", `Template Not Deleted`);
+        message.error("Template Not Deleted");
       });
     setTemplates(templates.filter((temp) => temp.templateId !== Id));
   }
+
+  const cancel = (e) => {
+    console.log(e);
+    message.error('Click on No');
+  };
 
   const columns = [
     {
@@ -98,17 +103,16 @@ export function Alltemplate() {
       title: "",
       key: "use",
       render: (_, record) => (
-        <Space>
-          <Button
-            type="primary"
-            danger
-            onClick={() => {
-              DeleteTemplate(record.templateId);
-            }}
-          >
-            Delete
-          </Button>
-        </Space>
+        <Popconfirm
+          title="Delete the task"
+          description="Are you sure to delete this task?"
+          onConfirm={() => DeleteTemplate(record.templateId)}
+          onCancel={cancel}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button danger>Delete</Button>
+        </Popconfirm>
       ),
     },
   ];
@@ -117,14 +121,15 @@ export function Alltemplate() {
     <div>
       <h2>All Templates</h2>
       {contextHolder}
-      <div className="mt-4" >
-        <Table dataSource={templates} columns={columns} borderColor="black"
-             scroll={{
-              x: '100%',
-              y: 330,  
-            }}
-            
-        
+      <div className="mt-4">
+        <Table
+          dataSource={templates}
+          columns={columns}
+          borderColor="black"
+          scroll={{
+            x: "100%",
+            y: 330,
+          }}
         />
       </div>
     </div>
