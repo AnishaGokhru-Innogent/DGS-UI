@@ -1,9 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
-import { Button, Space, Table, notification } from "antd";
+import { Button, Space, Table, Tag, notification } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { render } from "@testing-library/react";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState();
@@ -48,12 +49,6 @@ export function Alldocument() {
   }
   console.log(documents);
 
-  const [api, contextHolder] = notification.useNotification();
-  const openNotificationWithIcon = (type, message) => {
-    api[type]({
-      message: message,
-    });
-  };
   async function DeleteDocument(id) {
     await axios
       .delete(`${baseUrl}/document/delete-doc/${id}`, {
@@ -99,8 +94,19 @@ export function Alldocument() {
     },
     {
       title: "Status",
-      dataIndex: "status",
+      // dataIndex: "status",
       key: "Status",
+      render: (_, record) => {
+        let color = "magenta";
+        if (record.status === "SIGNED") {
+          color = "geekblue";
+        }
+        return (
+          <Tag color={color} style={{ fontSize: "20px" }}>
+            {record.status}
+          </Tag>
+        );
+      },
     },
     {
       title: "",
@@ -138,17 +144,17 @@ export function Alldocument() {
   ];
   return (
     <div>
-      <h2 >All Document</h2>
-      {
-        contextHolder
-      }
-      <div className="mt-4" >
-        <Table dataSource={documents} columns={columns} borderColor="black"
-           scroll={{
-            x: '100%',
-            y: 330,  
+      <h2>All Document</h2>
+      {contextHolder}
+      <div className="mt-4">
+        <Table
+          dataSource={documents}
+          columns={columns}
+          borderColor="black"
+          scroll={{
+            x: "100%",
+            y: 330,
           }}
-        
         />
       </div>
     </div>

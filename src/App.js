@@ -40,7 +40,6 @@ function App() {
             }
           />
           {/* <Route path='/register' element={<Register/>}></Route> */}
-<<<<<<< HEAD
           <Route
             path="/create-template"
             element={
@@ -61,13 +60,14 @@ function App() {
             path="/sign/:documentId/:placeholder"
             element={<Signature />}
           ></Route>
-          <Route
+          {/* <Route
             path="/document/:id"
             element={
               // <PrivateRoute>
               <Seedocument />
               // </PrivateRoute>
-=======
+           */}
+          <Route path="/document/:id" element={<Seedocument />} />
           <Route
             path="/create-template"
             element={
@@ -90,7 +90,6 @@ function App() {
               <PrivateRoute>
                 <Seedocument />
               </PrivateRoute>
->>>>>>> 933d1a15dffa25821d9063ceab2d14f38a4394b8
             }
           />
         </Routes>

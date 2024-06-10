@@ -1,10 +1,18 @@
-import { Button, Form, Input, Col, Row, Typography } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Col,
+  Row,
+  Typography,
+  Tooltip,
+  Space,
+} from "antd";
 import axios from "axios";
 import { useRef, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import baseUrl from "../../BootApi";
-import { toast } from "react-toastify";
 import "../CSS/createDocument.css"; // Ensure you import your CSS for custom styling
 
 export function CreateDocument() {
@@ -88,13 +96,10 @@ export function CreateDocument() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${bearerToken}`,
         },
-      })
-      .then((response) => 
-        {
-          toast.success("Email Send Succesfully")
-        }
-    )
-      .catch((error) => console.log(error));
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -136,9 +141,17 @@ export function CreateDocument() {
               >
                 {field.placeholderType === "signature" ? (
                   // <Tooltip title="Enter the email of the person whose signature is required">
-                  <Input type="email" />
+                  <Space direction="vertical">
+                    <Input type="email" placeholder="Receipient Email" />
+                    <Tooltip title="Input valid Receipient Email for Signature">
+                      <Typography.Link href="#API">Need Help? </Typography.Link>
+                    </Tooltip>
+                    <Typography.Text type="secondary">
+                      Please enter the email address of the recipient who needs
+                      to sign this document.
+                    </Typography.Text>
+                  </Space>
                 ) : (
-                  // </Tooltip>
                   <Input type={field.placeholderType} />
                 )}
               </Form.Item>

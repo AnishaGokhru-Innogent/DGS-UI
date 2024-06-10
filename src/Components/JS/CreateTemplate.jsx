@@ -9,6 +9,7 @@ import {
   Typography,
   Row,
   Col,
+  notification,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -60,6 +61,14 @@ const CreateTemplate = () => {
   const userid = localStorage.getItem("userId");
   const [userId, setUserId] = useState(userid);
   const bearerToken = localStorage.getItem("token");
+
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotificationWithIcon = (type, message) => {
+    api[type]({
+      message: message,
+    });
+  };
 
   useEffect(() => {
     if (quillRef.current) {
@@ -210,20 +219,26 @@ const CreateTemplate = () => {
   };
 
   function generateTemplateJSON() {
-    const plainText = quillRef.current.getEditor().getText();
-    const templateJSON = {
-      templateName: templateName,
-      templateFormat: "DOCX",
-      templateBody: plainText,
-      userId: userId,
-      placeholderDTOS: placeholders.map(
-        ({ placeholderName, placeholderType }) => ({
-          placeholderName,
-          placeholderType,
-        })
-      ),
-    };
-    setTemplate(templateJSON);
+    if (templateName === "") {
+      openNotificationWithIcon("error", "Template Name Should not be empty");
+    } else {
+      const plainText = quillRef.current.getEditor().getText();
+      const templateJSON = {
+        templateName: templateName,
+        templateFormat: "DOCX",
+        templateBody: plainText,
+        userId: userId,
+        placeholderDTOS: placeholders.map(
+          ({ placeholderName, placeholderType }) => ({
+            placeholderName,
+            placeholderType,
+          })
+        ),
+      };
+      openNotificationWithIcon("success", "Template Created");
+
+      setTemplate(templateJSON);
+    }
   }
 
   const handlerFileChange = async (file) => {
@@ -252,9 +267,9 @@ const CreateTemplate = () => {
 
   return (
     <div style={{ padding: "50px", backgroundColor: "#f0f0f0" }}>
+      {contextHolder}
       <Row gutter={24}>
         <Col span={16}>
-          <Title level={3}>{resTemplate.templateId}</Title>
           <Title>Template Creator</Title>
           <Form.Item
             label="Document Name"
