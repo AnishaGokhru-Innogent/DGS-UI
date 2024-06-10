@@ -141,15 +141,15 @@ export function CreateDocument() {
               >
                 {field.placeholderType === "signature" ? (
                   // <Tooltip title="Enter the email of the person whose signature is required">
-                  <Space direction="vertical">
-                    <Input type="email" placeholder="Receipient Email" />
-                    <Tooltip title="Input valid Receipient Email for Signature">
+                  <Space>
+                    To: <Input type="email" placeholder="Receipient Email" />
+                    {/* <Tooltip title="Input valid Receipient Email for Signature">
                       <Typography.Link href="#API">Need Help? </Typography.Link>
                     </Tooltip>
                     <Typography.Text type="secondary">
                       Please enter the email address of the recipient who needs
                       to sign this document.
-                    </Typography.Text>
+                    </Typography.Text> */}
                   </Space>
                 ) : (
                   <Input type={field.placeholderType} />
