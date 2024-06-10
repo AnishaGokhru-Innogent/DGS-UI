@@ -31,7 +31,9 @@ const Login = () => {
           localStorage.setItem("userId", userId);
           toast.success("Login Success");
           navigate("/home");
-            dispatch(login(token));
+
+          dispatch(login(token));
+
         }
       })
       .catch((error) => {
