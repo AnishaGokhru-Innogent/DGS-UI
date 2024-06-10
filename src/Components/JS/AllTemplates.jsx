@@ -67,7 +67,7 @@ export function Alltemplate() {
       render: (text) => {
         if (text) {
           const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
-          const formattedTime = moment(text.createdAt).format("hh:mm:ss");
+          const formattedTime = moment(text.createdAt).format("hh:mm A");
           return (
             <span>
               {formattedDate}

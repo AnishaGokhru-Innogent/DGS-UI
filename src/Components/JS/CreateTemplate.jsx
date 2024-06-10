@@ -1,11 +1,23 @@
-import { Form, Input, Select } from "antd";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Upload,
+  message,
+  List,
+  Typography,
+  Row,
+  Col,
+  notification,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import * as mammoth from "mammoth";
 import "../CSS/createTemplate.css";
-import { log } from "util";
 
 // Register the custom placeholder blot
 const Inline = Quill.import("blots/inline");
@@ -17,7 +29,7 @@ class PlaceholderBlot extends Inline {
     node.setAttribute("contenteditable", "false"); // make it non-editable
     node.style.backgroundColor = "#bae7ff";
     node.style.border = "1px solid black"; // add boundary for signature
-    node.style.padding = "5px";
+    node.style.padding = "2px 5px"; // reduced padding
     node.classList.add("placeholder-blot");
     node.innerHTML = `{{${value}}}`;
     return node;
@@ -33,6 +45,8 @@ PlaceholderBlot.tagName = "span";
 PlaceholderBlot.className = "placeholder-blot";
 Quill.register(PlaceholderBlot);
 
+const { Title, Text } = Typography;
+
 const CreateTemplate = () => {
   const [placeholders, setPlaceholders] = useState([]);
   const [editorContent, setEditorContent] = useState("");
@@ -47,6 +61,15 @@ const CreateTemplate = () => {
   const userid = localStorage.getItem("userId");
   const [userId, setUserId] = useState(userid);
   const bearerToken = localStorage.getItem("token");
+
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotificationWithIcon = (type, message) => {
+    api[type]({
+      message: message,
+    });
+  };
+
   useEffect(() => {
     if (quillRef.current) {
       quillRef.current.focus();
@@ -196,25 +219,29 @@ const CreateTemplate = () => {
   };
 
   function generateTemplateJSON() {
-    const plainText = quillRef.current.getEditor().getText();
-    const templateJSON = {
-      templateName: templateName,
-      templateFormat: "DOCX",
-      templateBody: plainText,
-      userId: userId,
-      placeholderDTOS: placeholders.map(
-        ({ placeholderName, placeholderType }) => ({
-          placeholderName,
-          placeholderType,
-        })
-      ),
-    };
-    setTemplate(templateJSON);
-    // console.log(JSON.stringify(templateJSON, null, 2));
+    if (templateName === "") {
+      openNotificationWithIcon("error", "Template Name Should not be empty");
+    } else {
+      const plainText = quillRef.current.getEditor().getText();
+      const templateJSON = {
+        templateName: templateName,
+        templateFormat: "DOCX",
+        templateBody: plainText,
+        userId: userId,
+        placeholderDTOS: placeholders.map(
+          ({ placeholderName, placeholderType }) => ({
+            placeholderName,
+            placeholderType,
+          })
+        ),
+      };
+      openNotificationWithIcon("success", "Template Created");
+
+      setTemplate(templateJSON);
+    }
   }
 
-  const handlerFileChange = async (e) => {
-    const file = e.target.files[0];
+  const handlerFileChange = async (file) => {
     if (
       file &&
       file.type ===
@@ -234,18 +261,16 @@ const CreateTemplate = () => {
       };
       reader.readAsArrayBuffer(file);
     } else {
-      alert("Please upload a valid Word document (.docx)");
+      message.error("Please upload a valid Word document (.docx)");
     }
   };
 
   return (
-    <div
-      style={{ padding: "50px", backgroundColor: "#f0f0f0", height: "cover" }}
-    >
-      <div className="container-fluid row">
-        <div className="col-8">
-          <h3>{resTemplate.templateId}</h3>
-          <h1>Template Creator</h1>
+    <div style={{ padding: "50px", backgroundColor: "#f0f0f0" }}>
+      {contextHolder}
+      <Row gutter={24}>
+        <Col span={16}>
+          <Title>Template Creator</Title>
           <Form.Item
             label="Document Name"
             name="Document Name"
@@ -258,90 +283,111 @@ const CreateTemplate = () => {
               style={{ marginBottom: 20, width: "400px" }}
             />
           </Form.Item>
-          <ReactQuill
-            ref={quillRef}
-            value={editorContent}
-            onChange={setEditorContent}
-            theme="snow"
-            style={{ minHeight: "200px", maxHeight: "none" }}
-          />
-          <div style={{ marginTop: "100px" }}>
-            <h4>Upload Word Document</h4>
-            <input type="file" accept=".docx" onChange={handlerFileChange} />
+          <div
+            style={{
+              border: "1px solid #d9d9d9",
+              // width: "790.7px",
+              height: "auto",
+              margin: "0 auto",
+              backgroundColor: "#fff",
+              padding: "20px",
+              boxSizing: "border-box",
+            }}
+          >
+            <ReactQuill
+              ref={quillRef}
+              value={editorContent}
+              onChange={setEditorContent}
+              theme="snow"
+              style={{
+                height: "auto", // Allow some padding for toolbars
+                width: "90%",
+              }}
+            />
           </div>
-        </div>
-        <div className="col-3">
+          <div style={{ marginTop: "20px" }}>
+            <Title level={4}>Upload Word Document</Title>
+            <Upload
+              accept=".docx"
+              showUploadList={false}
+              customRequest={({ file }) => handlerFileChange(file)}
+            >
+              <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            </Upload>
+          </div>
+        </Col>
+        <Col span={8}>
+          <Title level={5}>Add Placeholder</Title>
           <div>
-            <h5>Add Placeholder</h5>
-            <div>
-              <Input
-                type="text"
-                placeholder="Placeholder Name"
-                value={placeholderName}
-                onChange={(e) => setPlaceholderName(e.target.value)}
-              />
-              {/* <select
-                value={placeholderType}
-                onChange={(e) => setPlaceholderType(e.target.value)}
-              >
-                <option value="text">Text</option>
-                <option value="date">Date</option>
-                <option value="number">Number</option>
-                <option value="signature">Signature</option>
-              </select> */}
-              <Select
-                value={placeholderType}
-                defaultValue="text"
-                style={{ width: 120 }}
-                onChange={setPlaceholderType}
-                options={[
-                  { value: "text", label: "Text" },
-                  { value: "date", label: "Date" },
-                  { value: "number", label: "Number" },
-                  { value: "signature", label: "Signature" },
-                ]}
-              />
-              <button onClick={addPlaceholder}>Add Placeholder</button>
-            </div>
+            <Input
+              type="text"
+              placeholder="Placeholder Name"
+              value={placeholderName}
+              onChange={(e) => setPlaceholderName(e.target.value)}
+              style={{ marginBottom: 10 }}
+            />
+            <Select
+              value={placeholderType}
+              defaultValue="text"
+              style={{ width: 120, marginBottom: 10 }}
+              onChange={setPlaceholderType}
+              options={[
+                { value: "text", label: "Text" },
+                { value: "date", label: "Date" },
+                { value: "number", label: "Number" },
+                { value: "email", label: "Email" },
+                { value: "signature", label: "Signature" },
+              ]}
+            />
+            <Button type="primary" onClick={addPlaceholder}>
+              Add Placeholder
+            </Button>
           </div>
           <div
             style={{
-              marginTop: "50px",
-              margin: "10px",
-              border: "2px solid black",
-              height: "200px",
-              width: "auto",
-              borderRadius: "2px",
+              marginTop: "20px",
+              padding: "10px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "4px",
             }}
           >
-            <h5>Placeholders</h5>
-            <hr style={{ color: "black", height: "2px" }} />
-            <ul>
-              {placeholders.map((placeholder) => (
-                <li
-                  key={`${placeholder.placeholderName}-${placeholder.placeholderType}`}
+            <Title level={5}>Placeholders</Title>
+            <List
+              bordered
+              dataSource={placeholders}
+              renderItem={(placeholder) => (
+                <List.Item
+                  style={{ padding: "5px 10px" }} // compact list item
+                  actions={[
+                    <Button
+                      type="link"
+                      size="small"
+                      onClick={() =>
+                        deletePlaceholder(
+                          placeholder.placeholderName,
+                          placeholder.placeholderType
+                        )
+                      }
+                    >
+                      Delete
+                    </Button>,
+                  ]}
                 >
-                  {placeholder.placeholderName} ({placeholder.placeholderType}){" "}
-                  <button
-                    onClick={() =>
-                      deletePlaceholder(
-                        placeholder.placeholderName,
-                        placeholder.placeholderType
-                      )
-                    }
-                  >
-                    Delete
-                  </button>
-                </li>
-              ))}
-            </ul>
+                  <Text style={{ fontSize: "14px" }}>
+                    {placeholder.placeholderName} ({placeholder.placeholderType}
+                    )
+                  </Text>
+                </List.Item>
+              )}
+            />
           </div>
-          <div>
-            <h2>Generated Template JSON</h2>
-            <button onClick={generateTemplateJSON}>SAVE</button>
+          <div style={{ marginTop: "20px" }}>
+            <Button type="primary" onClick={generateTemplateJSON}>
+              Save
+            </Button>
           </div>
-        </div>
-      </div>
+        </Col>
+      </Row>
     </div>
   );
 };

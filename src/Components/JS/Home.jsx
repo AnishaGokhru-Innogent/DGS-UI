@@ -61,7 +61,7 @@ const Home = () => {
       case "Templates":
         return <Alltemplate />;
       case "My Documents":
-        return <Alldocument/>;
+        return <Alldocument />;
       case "New Tempalte":
         return <CreateTemplate />;
       case "LogOut":
@@ -70,107 +70,108 @@ const Home = () => {
         return <div>Home Content</div>;
     }
   };
+  console.log(currentView);
 
-  const renderContentAdmin = ()=>{
-      switch(currentView){
-         case "Home":
-          return <Register/>
-         case "AllUser":
-          return <AllUser/>
-        default :
-        return <Register/>
-      }
-  }
+  const renderContentAdmin = () => {
+    switch (currentView) {
+      case "Home":
+        return <Register />;
+      case "AllUser":
+        return <AllUser />;
+      case "LogOut":
+        return logOut();
+      default:
+        return <Register />;
+    }
+  };
 
   // console.log(user);
   const userMenuItems = [
-      {
-        key: "1",
-        icon: <UserOutlined />,
-        label: `${user.firstName}`,
-        style:{color:"white",fontSize:"18px"}
-
-      },
-      {
-        key: "2",
-        label: "DocMaster",
-        style: { color: "white", fontSize: "21px" },
-      },
-      {
-        key: "New Tempalte",
-        icon: <PlusOutlined />,
-        label: "New Template",
-        style: { color: "white" },
-      },
-      {
-        key: "4",
-        icon: <HomeOutlined />,
-        label: "Home",
-        style: { color: "white" },
-      },
-      {
-        key: "My Documents",
-        icon: <BookOutlined />,
-        label: "My Documents",
-        style: { color: "white" },
-      },
-      {
-        key: "Templates",
-        icon: <LayoutOutlined />, 
-        label: "Templates",
-        style: { color: "white" },
-      },
-      {
-        key: "7",
-        icon: <ContactsOutlined />,
-        label: "Contact Us",
-        style: { color: "white" },
-      },
-      {
-        key: "LogOut",
-        icon: <LogoutOutlined />,
-        label: "LogOut",
-        style: { color: "white" },
-      },
-    ]
-  
+    {
+      key: "1",
+      icon: <UserOutlined />,
+      label: `${user.firstName}`,
+      style: { color: "white", fontSize: "18px" },
+    },
+    {
+      key: "2",
+      label: "DocMaster",
+      style: { color: "white", fontSize: "21px" },
+    },
+    {
+      key: "New Tempalte",
+      icon: <PlusOutlined />,
+      label: "New Template",
+      style: { color: "white" },
+    },
+    {
+      key: "4",
+      icon: <HomeOutlined />,
+      label: "Home",
+      style: { color: "white" },
+    },
+    {
+      key: "My Documents",
+      icon: <BookOutlined />,
+      label: "My Documents",
+      style: { color: "white" },
+    },
+    {
+      key: "Templates",
+      icon: <LayoutOutlined />,
+      label: "Templates",
+      style: { color: "white" },
+    },
+    {
+      key: "7",
+      icon: <ContactsOutlined />,
+      label: "Contact Us",
+      style: { color: "white" },
+    },
+    {
+      key: "LogOut",
+      icon: <LogoutOutlined />,
+      label: "LogOut",
+      style: { color: "white" },
+    },
+  ];
 
   const adminMenuItems = [
-      {
-        key: "1",
-        icon: <UserOutlined />,
-        label: `${user.firstName}`,
-        style:{color:"white",fontSize:"18px"}
+    {
+      key: "1",
+      icon: <UserOutlined />,
+      label: `${user.firstName}`,
+      style: { color: "white", fontSize: "18px" },
+    },
+    {
+      key: "2",
+      label: "DocMaster",
+      style: { color: "white", fontSize: "21px" },
+    },
+    {
+      key: "Home",
+      icon: <HomeOutlined />,
+      label: "Home",
+      style: { color: "white" },
+    },
+    {
+      key: "AllUser",
+      icon: <UserOutlined />,
+      label: "All User",
+      style: { color: "white" },
+    },
+    {
+      key: "LogOut",
+      icon: <LogoutOutlined />,
+      label: "LogOut",
+      style: { color: "white" },
+    },
+  ];
 
-      },
-      {
-        key: "2",
-        label: "DocMaster",
-        style: { color: "white", fontSize: "21px" },
-      },
-      {
-        key: "Home",
-        icon: <HomeOutlined />,
-        label: "Home",
-        style: { color: "white" } 
-       },
-       {
-        key: "AllUser",
-        icon: <UserOutlined />,
-        label: "All User",
-        style: { color: "white" } 
-       },
-       {
-        key: "LogOut",
-        icon: <LogoutOutlined />,
-        label: "LogOut",
-        style: { color: "white" },
-      }
-    ]
-  
   //  console.log(user);
-  const menuItems = user.role === "ADMIN" ? adminMenuItems :userMenuItems;
-  const renderContent = user.role ==="ADMIN" ? renderContentAdmin : renderContentUser;
+  const menuItems = user.role === "ADMIN" ? adminMenuItems : userMenuItems;
+  const renderContent =
+    user.role === "ADMIN" ? renderContentAdmin : renderContentUser;
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>

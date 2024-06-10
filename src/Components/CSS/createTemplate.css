@@ -3,3 +3,13 @@
   /* Make it non-selectable */
   /* border: "2px solid "; */
 }
+
+.ql-container {
+  height: "auto";
+}
+
+.ql-editor {
+  height: calc(100% - 40px); /* Adjust height based on toolbar size */
+  padding: 20px;
+  box-sizing: border-box;
+}
