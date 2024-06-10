@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { log } from "util";
 import baseUrl from "../../BootApi";
+import { toast } from "react-toastify";
 export function CreateDocument() {
   const { id } = useParams();
   const [documentBody, setDocumentBody] = useState();
@@ -74,7 +75,7 @@ export function CreateDocument() {
         .filter((field) => field.placeholderType === "signature")
         .map((field) => formValues[field.placeholderName]),
     };
-    console.log(documentData);
+    // console.log(documentData);
     await axios
       .post(`${baseUrl}/document/save`, documentData, {
         headers: {
@@ -82,7 +83,11 @@ export function CreateDocument() {
           Authorization: `Bearer ${bearerToken}`,
         },
       })
-      .then((response) => console.log(response.data))
+      .then((response) => 
+        {
+          toast.success("Email Send Succesfully")
+        }
+    )
       .catch((error) => console.log(error));
   }
   return (

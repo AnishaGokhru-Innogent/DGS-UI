@@ -12,19 +12,21 @@ import { Seedocument } from "./Components/JS/Document";
 import { Provider } from "react-redux";
 import PrivateRoute from "./Components/redux/PrivateRoute";
 import store from "./Components/redux/store";
-
 function App() {
   return (
     <>
       <ToastContainer />
       <>
         <Routes>
-          <Route path='/login' element={<Login />}></Route>
-          <Route path='/sign/:documentId/:placeholder' element={<Signature />}></Route>
-          <Route path='/home' element={<Home />}></Route>
-          <Route path='/register' element={<Register/>}></Route>
-
-          
+          <Route path="/login" element={<Login />}></Route>
+          <Route
+            path="/sign/:documentId/:placeholder"
+            element={
+                <Signature />
+            }
+          ></Route>
+          {/* <Route path='/home' element={<Home />}></Route> */}
+          {/* <Route path='/register' element={<Register/>}></Route> */}
           <Route
             path="/home"
             element={
@@ -34,17 +36,33 @@ function App() {
             }
           />
           {/* <Route path='/register' element={<Register/>}></Route> */}
-          <Route path="/create-template" element={<CreateTemplate />} />
-          <Route path="/create-document/:id" element={<CreateDocument />} />
           <Route
-            path="/sign/:documentId/:placeholder"
-            element={<Signature />}
-          ></Route>
-          <Route path="/document/:id" element={<Seedocument />} />
+            path="/create-template"
+            element={
+              <PrivateRoute>
+                <CreateTemplate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/create-document/:id"
+            element={
+              <PrivateRoute>
+                <CreateDocument />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/document/:id"
+            element={
+              <PrivateRoute>
+                <Seedocument />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </>
     </>
   );
 }
-
 export default App;

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
-import { Button, Space, Table } from "antd";
+import { Button, Space, Table ,notification} from "antd";
 import moment from "moment";
 
 export function Alldocument() {
@@ -24,6 +24,26 @@ export function Alldocument() {
   }, []);
   console.log(documents);
 
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (type, message) => {
+    api[type]({
+      message: message,
+    });
+  };
+  async function DeleteDocument(id) {
+    await axios
+      .delete(`${baseUrl}/document/delete-doc/${id}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => {
+        openNotificationWithIcon("success", `Document Deleted Successfully`);
+      })
+      .catch((error) => {
+        openNotificationWithIcon("error", `Error Occured in Deletion`);
+      });
+    setDocuments(documents.filter((doc) => doc.documentId !== id));
+  }
+
   const columns = [
     {
       title: "Sno",
@@ -40,8 +60,8 @@ export function Alldocument() {
       key: "createdAt",
       render: (text) => {
         if (text) {
-          const formattedDate = moment(text).format("YYYY-MM-DD");
-          const formattedTime = moment(text).format("hh:mm A");
+          const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
+          const formattedTime = moment(text.createdAt).format("hh:mm A");
           return (
             <span>
               {formattedDate}
@@ -83,7 +103,7 @@ export function Alldocument() {
             type="primary"
             danger
             onClick={() => {
-              // DeleteTemplate(record.templateId);
+               DeleteDocument(record.documentId);
             }}
           >
             Delete
@@ -94,9 +114,18 @@ export function Alldocument() {
   ];
   return (
     <div>
-      <h1>All Document</h1>
-      <div>
-        <Table dataSource={documents} columns={columns} borderColor="black" />
+      <h2 >All Document</h2>
+      {
+        contextHolder
+      }
+      <div className="mt-4" >
+        <Table dataSource={documents} columns={columns} borderColor="black"
+           scroll={{
+            x: '100%',
+            y: 330,  
+          }}
+        
+        />
       </div>
     </div>
   );

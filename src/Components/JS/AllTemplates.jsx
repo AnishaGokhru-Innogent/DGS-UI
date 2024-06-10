@@ -66,8 +66,8 @@ export function Alltemplate() {
       key: "createdAt",
       render: (text) => {
         if (text) {
-          const formattedDate = moment(text).format("YYYY-MM-DD");
-          const formattedTime = moment(text).format("hh:mm:ss");
+          const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
+          const formattedTime = moment(text.createdAt).format("hh:mm:ss");
           return (
             <span>
               {formattedDate}
@@ -115,10 +115,17 @@ export function Alltemplate() {
 
   return (
     <div>
-      <h1>All Templates</h1>
+      <h2>All Templates</h2>
       {contextHolder}
-      <div>
-        <Table dataSource={templates} columns={columns} borderColor="black" />
+      <div className="mt-4" >
+        <Table dataSource={templates} columns={columns} borderColor="black"
+             scroll={{
+              x: '100%',
+              y: 330,  
+            }}
+            
+        
+        />
       </div>
     </div>
   );

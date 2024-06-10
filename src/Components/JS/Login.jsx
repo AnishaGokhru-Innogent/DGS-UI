@@ -31,7 +31,7 @@ const Login = () => {
           localStorage.setItem("userId", userId);
           toast.success("Login Success");
           navigate("/home");
-          //   dispatch(login(token));
+            dispatch(login(token));
         }
       })
       .catch((error) => {
@@ -75,6 +75,7 @@ const Login = () => {
                   placeholder="Password"
                   prefix={<LockOutlined />}
                   value={password}
+                  type="password"
                   onChange={(e) => setPassword(e.target.value)}
                   style={{ width: "270px" }}
                 />
@@ -95,14 +96,14 @@ const Login = () => {
                   Login
                 </Button>
               </Form.Item>
-              <Form.Item className="text-center">
+              {/* <Form.Item className="text-center">
                 <p className="mt-3">
                   Don't Have an Account ?{" "}
                   <span style={{ color: "#589A65", fontWeight: "700" }}>
                     SignUp
                   </span>
                 </p>
-              </Form.Item>
+              </Form.Item> */}
             </div>
           </Form>
         </div>
