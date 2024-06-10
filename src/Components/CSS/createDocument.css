@@ -1,3 +1,25 @@
 .sigCanvasBorder {
-    border: 2px solid black;
-  }
+  border: 2px solid black;
+}
+
+.create-document-container {
+  padding: 20px;
+  background-color: #f0f0f0;
+}
+
+.a4-paper {
+  width: 793.7px; /* Width of A4 paper in pixels */
+  height: 1122.5px; /* Height of A4 paper in pixels */
+  margin: 0 auto;
+  border: 1px solid #d9d9d9;
+  background-color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.document-body {
+  color: black;
+  height: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}

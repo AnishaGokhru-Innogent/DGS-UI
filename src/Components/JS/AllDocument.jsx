@@ -1,11 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
-import { Button, Space, Table } from "antd";
+import { Button, Space, Table, notification } from "antd";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState();
+
+  const navigate = useNavigate();
 
   const userId = localStorage.getItem("userId");
   const bearerToken = localStorage.getItem("token");
@@ -22,7 +25,27 @@ export function Alldocument() {
   useEffect(() => {
     getDocumentsOfUser(userId);
   }, []);
-  console.log(documents);
+  // console.log(documents);
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotificationWithIcon = (type, message) => {
+    api[type]({
+      message: message,
+    });
+  };
+  async function DeleteDocument(id) {
+    await axios
+      .delete(`${baseUrl}/document/delete-doc/${id}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => {
+        openNotificationWithIcon("success", `Document Deleted Successfully`);
+      })
+      .catch((error) => {
+        openNotificationWithIcon("error", `Error Occured in Deletion`);
+      });
+    setDocuments(documents.filter((doc) => doc.documentId !== id));
+  }
 
   const columns = [
     {
@@ -39,9 +62,9 @@ export function Alldocument() {
       title: "Date Of Creation",
       key: "createdAt",
       render: (text) => {
-        if (text) {
-          const formattedDate = moment(text).format("YYYY-MM-DD");
-          const formattedTime = moment(text).format("hh:mm A");
+        if (text.createdAt) {
+          const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
+          const formattedTime = moment(text.createdAt).format("hh:mm A");
           return (
             <span>
               {formattedDate}
@@ -66,7 +89,7 @@ export function Alldocument() {
           <Button
             type="primary"
             onClick={() => {
-              // navigate(`/create-document/${record.templateId}`);
+              navigate(`/document/${record.documentId}`);
             }}
           >
             See
@@ -83,7 +106,7 @@ export function Alldocument() {
             type="primary"
             danger
             onClick={() => {
-              // DeleteTemplate(record.templateId);
+              DeleteDocument(record.documentId);
             }}
           >
             Delete
@@ -95,6 +118,7 @@ export function Alldocument() {
   return (
     <div>
       <h1>All Document</h1>
+      {contextHolder}
       <div>
         <Table dataSource={documents} columns={columns} borderColor="black" />
       </div>

@@ -72,7 +72,6 @@ const Home = () => {
         return <div>Home Content</div>;
     }
   };
-
   console.log(currentView);
 
   return (

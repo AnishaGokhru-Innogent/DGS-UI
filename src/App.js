@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Login from "./Components/JS/Login";
 import CreateTemplate from "./Components/JS/CreateTemplate";
 import { CreateDocument } from "./Components/JS/CreateDocument";
-import { Seedocument } from "./Components/JS/Document";
+import { Seedocument } from "./Components/JS/SeeDocument";
 import { Provider } from "react-redux";
 import PrivateRoute from "./Components/redux/PrivateRoute";
 import store from "./Components/redux/store";
@@ -22,7 +22,11 @@ function App() {
           <Route path="/login" element={<Login />}></Route>
           <Route
             path="/sign/:documentId/:placeholder"
-            element={<Signature />}
+            element={
+              // <PrivateRoute>
+              <Signature />
+              // </PrivateRoute>
+            }
           ></Route>
           {/* <Route path='/home' element={<Home />}></Route> */}
           {/* <Route path='/register' element={<Register/>}></Route> */}
@@ -36,13 +40,34 @@ function App() {
             }
           />
           {/* <Route path='/register' element={<Register/>}></Route> */}
-          <Route path="/create-template" element={<CreateTemplate />} />
-          <Route path="/create-document/:id" element={<CreateDocument />} />
+          <Route
+            path="/create-template"
+            element={
+              <PrivateRoute>
+                <CreateTemplate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/create-document/:id"
+            element={
+              <PrivateRoute>
+                <CreateDocument />
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/sign/:documentId/:placeholder"
             element={<Signature />}
           ></Route>
-          <Route path="/document/:id" element={<Seedocument />} />
+          <Route
+            path="/document/:id"
+            element={
+              // <PrivateRoute>
+              <Seedocument />
+              // </PrivateRoute>
+            }
+          />
         </Routes>
       </>
     </>
