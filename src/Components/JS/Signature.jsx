@@ -9,18 +9,24 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 
 const items = [
-  {
-    key: "ELECTRONIC",
-    label: <span>ELECTRONIC</span>,
-  },
-  {
-    key: "DRAWN",
-    label: <span>DRAWN</span>,
-  },
-  {
-    key: "INITIAL",
-    label: <span>INITIAL</span>,
-  },
+    {
+        key: 'ELECTRONIC',
+        label: (
+            <span>ELECTRONIC</span>
+        ),
+    },
+    {
+        key: 'DRAWN',
+        label: (
+            <span>DRAWN</span>
+        ),
+    },
+    {
+        key: 'INITIAL',
+        label: (
+            <span>INITIAL</span>
+        ),
+    },
 ];
 
 const Signature = () => {

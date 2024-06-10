@@ -115,10 +115,17 @@ export function Alltemplate() {
 
   return (
     <div>
-      <h1>All Templates</h1>
+      <h2>All Templates</h2>
       {contextHolder}
-      <div>
-        <Table dataSource={templates} columns={columns} borderColor="black" />
+      <div className="mt-4" >
+        <Table dataSource={templates} columns={columns} borderColor="black"
+             scroll={{
+              x: '100%',
+              y: 330,  
+            }}
+            
+        
+        />
       </div>
     </div>
   );

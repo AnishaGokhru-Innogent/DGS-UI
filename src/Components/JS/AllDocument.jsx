@@ -46,6 +46,27 @@ export function Alldocument() {
       });
     setDocuments(documents.filter((doc) => doc.documentId !== id));
   }
+  console.log(documents);
+
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (type, message) => {
+    api[type]({
+      message: message,
+    });
+  };
+  async function DeleteDocument(id) {
+    await axios
+      .delete(`${baseUrl}/document/delete-doc/${id}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => {
+        openNotificationWithIcon("success", `Document Deleted Successfully`);
+      })
+      .catch((error) => {
+        openNotificationWithIcon("error", `Error Occured in Deletion`);
+      });
+    setDocuments(documents.filter((doc) => doc.documentId !== id));
+  }
 
   const columns = [
     {
@@ -117,10 +138,18 @@ export function Alldocument() {
   ];
   return (
     <div>
-      <h1>All Document</h1>
-      {contextHolder}
-      <div>
-        <Table dataSource={documents} columns={columns} borderColor="black" />
+      <h2 >All Document</h2>
+      {
+        contextHolder
+      }
+      <div className="mt-4" >
+        <Table dataSource={documents} columns={columns} borderColor="black"
+           scroll={{
+            x: '100%',
+            y: 330,  
+          }}
+        
+        />
       </div>
     </div>
   );

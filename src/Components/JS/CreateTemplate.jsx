@@ -171,7 +171,7 @@ const CreateTemplate = () => {
     }
 
     quill.insertEmbed(cursorPos, "placeholder", placeholderName, "user");
-    quill.insertText(cursorPos + placeholderName.length + 4, "");
+    quill.insertText(cursorPos + placeholderName.length + 4, " ");
     quill.setSelection(cursorPos + placeholderName.length + 5, " ");
     quill.focus();
     setPlaceholderName("");

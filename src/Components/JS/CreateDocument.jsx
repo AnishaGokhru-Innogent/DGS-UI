@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import baseUrl from "../../BootApi";
+import { toast } from "react-toastify";
 import "../CSS/createDocument.css"; // Ensure you import your CSS for custom styling
 
 export function CreateDocument() {
@@ -87,10 +88,13 @@ export function CreateDocument() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${bearerToken}`,
         },
-      });
-    } catch (error) {
-      console.error(error);
-    }
+      })
+      .then((response) => 
+        {
+          toast.success("Email Send Succesfully")
+        }
+    )
+      .catch((error) => console.log(error));
   }
 
   return (
