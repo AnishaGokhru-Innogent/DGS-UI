@@ -1,11 +1,15 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
-import { Button, Space, Table, notification,Popconfirm,message } from "antd";
+import { Button, Space, Table, notification,Popconfirm,message ,Tag} from "antd";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
+import { render } from "@testing-library/react";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState();
+
+  const navigate = useNavigate();
 
   const userId = localStorage.getItem("userId");
   const bearerToken = localStorage.getItem("token");
@@ -22,9 +26,9 @@ export function Alldocument() {
   useEffect(() => {
     getDocumentsOfUser(userId);
   }, []);
-  console.log(documents);
-
+  // console.log(documents);
   const [api, contextHolder] = notification.useNotification();
+
   const openNotificationWithIcon = (type, message) => {
     api[type]({
       message: message,
@@ -63,7 +67,7 @@ export function Alldocument() {
       title: "Date Of Creation",
       key: "createdAt",
       render: (text) => {
-        if (text) {
+        if (text.createdAt) {
           const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
           const formattedTime = moment(text.createdAt).format("hh:mm A");
           return (
@@ -79,8 +83,19 @@ export function Alldocument() {
     },
     {
       title: "Status",
-      dataIndex: "status",
+      // dataIndex: "status",
       key: "Status",
+      render: (_, record) => {
+        let color = "magenta";
+        if (record.status === "SIGNED") {
+          color = "geekblue";
+        }
+        return (
+          <Tag color={color} style={{ fontSize: "20px" }}>
+            {record.status}
+          </Tag>
+        );
+      },
     },
     {
       title: "",
@@ -90,7 +105,7 @@ export function Alldocument() {
           <Button
             type="primary"
             onClick={() => {
-              // navigate(`/create-document/${record.templateId}`);
+              navigate(`/document/${record.documentId}`);
             }}
           >
             See
@@ -117,19 +132,19 @@ export function Alldocument() {
   ];
   return (
     <div>
-      <h2>All Document</h2>
-      {contextHolder}
-      <div className="mt-4">
-        <Table
-          dataSource={documents}
-          columns={columns}
-          borderColor="black"
-          scroll={{
-            x: "100%",
-            y: 330,
-          }}
-        />
-      </div>
+    <h2>All Document</h2>
+    {contextHolder}
+    <div className="mt-4">
+      <Table
+        dataSource={documents}
+        columns={columns}
+        borderColor="black"
+        scroll={{
+          x: "100%",
+          y: 330,
+        }}
+      />
     </div>
+  </div>
   );
 }

@@ -10,17 +10,20 @@
     box-shadow: 0px 2px 8px;
     border-radius: 20px;
     overflow: hidden;
+    background-color:white;
+    opacity: 0.99;
 }
 .main{
-    height: 620px;
+    height: 630px;
+    background-image: url("https://static.zohocdn.com/iam/v2/components/images/bg.49756b7c711696d95133fa95451f8e13.svg");
 }
 .leftSection{
     /* border: 2px solid blue; */
     height: 100%;
-    width: 55%;
+    width: 55%; 
 }
 .rightSection{
-    width: 45%;   
+    width: 45%;  
 }
 .image{
     background-image: url("../Images/docuImage.jpg");
