@@ -119,7 +119,7 @@ export function Alldocument() {
               navigate(`/document/${record.documentId}`);
             }}
           >
-            See
+            View
           </Button>
         </Space>
       ),

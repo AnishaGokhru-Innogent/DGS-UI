@@ -144,10 +144,10 @@ export function CreateDocument() {
                   <Space direction="horizontal">
                     To:
                     <Input type="email" placeholder="Receipient Email" />
-                    {/* <Tooltip title="Input valid Receipient Email for Signature">
+                    <Tooltip title="Input valid Receipient Email for Signature">
                       <Typography.Link href="#API">Need Help? </Typography.Link>
                     </Tooltip>
-                    <Typography.Text type="secondary">
+                    {/* <Typography.Text type="secondary">
                       Please enter the email address of the recipient who needs
                       to sign this document.
                     </Typography.Text> */}

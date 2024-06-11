@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Button, Dropdown, Space, Form, Input, Upload, Modal } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
+import AnvilSignatureFrame from "@anvilco/react-signature-frame";
 const items = [
   {
     key: "ELECTRONIC",
@@ -20,17 +21,30 @@ const items = [
     label: <span>INITIAL</span>,
   },
 ];
+
+const decodeBase64Url = (encodedWord) => {
+  try {
+    return atob(encodedWord);
+  } catch (e) {
+    console.log("Failed to decode URL:", e);
+    return null;
+  }
+};
+
 const Signature = () => {
   const [sign, setSign] = useState(null);
   const [dataURL, setDataURL] = useState(null);
   const [signatureType, setSignatureType] = useState();
   const [fileList, setFileList] = useState([]);
   const { documentId, placeholder } = useParams();
+  const decodedDocumentId = decodeBase64Url(documentId);
+  const decodedPlaceholder = decodeBase64Url(placeholder);
   const [name, setName] = useState("");
   const [document, setDocument] = useState({});
   const signatureRef = useRef();
   const [isSignatureAdded, setIsSignatureAdded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const showModal = () => {
     setSignatureType(null);
     setFileList([]);
@@ -47,8 +61,8 @@ const Signature = () => {
     sign.clear();
   };
   useEffect(() => {
-    getDocument(documentId);
-  }, [documentId]);
+    getDocument(decodedDocumentId);
+  }, [decodedDocumentId]);
   const handleUploadChange = ({ file, fileList }) => {
     setFileList(fileList);
   };
@@ -109,13 +123,13 @@ const Signature = () => {
       signatureData = new FormData();
       signatureData.append("signatureType", signatureType);
       signatureData.append("signatureData", fileList[0].originFileObj);
-      signatureData.append("documentId", documentId);
-      signatureData.append("placeholder", placeholder);
+      signatureData.append("documentId", decodedDocumentId);
+      signatureData.append("placeholder", decodedPlaceholder);
       signatureUrl = URL.createObjectURL(fileList[0].originFileObj);
     } else if (signatureType === "ELECTRONIC") {
       signatureData = {
         signatureType: signatureType,
-        documentId: documentId,
+        documentId: decodedDocumentId,
       };
       headers = { "Content-Type": "application/json" };
       try {
@@ -138,8 +152,8 @@ const Signature = () => {
       signatureData = new FormData();
       signatureData.append("signatureType", signatureType);
       signatureData.append("signatureData", blob);
-      signatureData.append("documentId", documentId);
-      signatureData.append("placeholder", placeholder);
+      signatureData.append("documentId", decodedDocumentId);
+      signatureData.append("placeholder", decodedPlaceholder);
       signatureUrl = savedDataURL;
     }
     if (signatureType !== "ELECTRONIC") {
@@ -152,9 +166,9 @@ const Signature = () => {
       }
     }
     let updatedDocumentBody = document.documentBody;
-    if (updatedDocumentBody.includes(placeholder)) {
+    if (updatedDocumentBody.includes(decodedPlaceholder)) {
       updatedDocumentBody = updatedDocumentBody.replace(
-        placeholder,
+        decodedPlaceholder,
         `<img src="${signatureUrl}" alt="Signature" width="200" height="100"/>`
       );
     } else {
@@ -169,6 +183,7 @@ const Signature = () => {
   const handleMenuClick = (e) => {
     setSignatureType(e.key);
   };
+  const [loading, setLoading] = useState(false);
   return (
     <div className="box">
       <Modal
@@ -177,6 +192,13 @@ const Signature = () => {
         onOk={submit}
         onCancel={handleCancel}
       >
+        <AnvilSignatureFrame
+          // signURL={signURL}
+          scroll="smooth"
+          onLoad={() => setLoading(true)}
+          onFinishSigning={(payload) => console.log(payload)}
+          onError={(errorPayload) => console.log(errorPayload)}
+        />
         <Form
           onFinish={submit}
           style={{ width: "450px", height: "auto" }}
@@ -240,6 +262,7 @@ const Signature = () => {
           )}
         </Form>
       </Modal>
+
       <div className="d-flex justify-content-center">
         <div
           ref={signatureRef}
