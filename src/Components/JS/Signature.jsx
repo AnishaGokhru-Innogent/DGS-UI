@@ -191,8 +191,6 @@ const Signature = () => {
         onOk={submit}
         onCancel={handleCancel}
       >
-        <AnvilSignatureFrame
-\
         <Form
           onFinish={submit}
           style={{ width: "450px", height: "auto" }}
