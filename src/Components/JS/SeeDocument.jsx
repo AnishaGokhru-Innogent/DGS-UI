@@ -1,10 +1,13 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import baseUrl from "../../BootApi";
-import { log } from "util";
 import { useReactToPrint } from "react-to-print";
-import { Button, notification } from "antd";
+import { Button, notification, Row, Col, Typography } from "antd";
+import { HomeOutlined, DownloadOutlined } from "@ant-design/icons";
+import "../CSS/viewDocument.css";
+
+const { Title } = Typography;
 
 export function Seedocument() {
   const bearerToken = localStorage.getItem("token");
@@ -12,6 +15,7 @@ export function Seedocument() {
   const [document, setDocument] = useState({});
   const [signatures, setSignatures] = useState([]);
   const signatureRef = useRef();
+  const navigate = useNavigate();
 
   const { id } = useParams();
 
@@ -74,28 +78,57 @@ export function Seedocument() {
   }, [id]);
 
   return (
-    <div>
+    <div className="container mt-4">
       {contextHolder}
-      <h1>Document</h1>
-
-      <div className="d-flex justify-content-center">
-        <div
-          ref={signatureRef}
-          dangerouslySetInnerHTML={{ __html: document.documentBody }}
-          style={{
-            color: "black",
-            height: "auto",
-            whiteSpace: "pre",
-            overflowWrap: "break-word",
-            padding: "20px",
-            margin: "20px",
-            // backgroundColor: "lightgrey",
-            border: "2px solid black",
-            width: "800px",
-          }}
-        ></div>
-      </div>
-      <Button onClick={() => generatePdf()}>Download</Button>
+      <Row gutter={[16, 16]} justify="space-between" align="middle">
+        <Col>
+          <Button
+            type="primary"
+            icon={<HomeOutlined />}
+            onClick={() => navigate("/home")}
+          >
+            Home
+          </Button>
+        </Col>
+        <Col>
+          <Button
+            type="primary"
+            icon={<DownloadOutlined />}
+            onClick={generatePdf}
+          >
+            Download as PDF
+          </Button>
+        </Col>
+      </Row>
+      <Row justify="center" className="mt-4">
+        <Col span={24} className="text-center">
+          <Title level={2}>{document.documentName}</Title>
+        </Col>
+      </Row>
+      <Row justify="center">
+        <Col>
+          <div>
+            <div
+              ref={signatureRef}
+              dangerouslySetInnerHTML={{ __html: document.documentBody }}
+              style={{
+                color: "black",
+                whiteSpace: "pre-wrap",
+                overflowWrap: "break-word",
+                padding: "20px",
+                // border: "2px solid black",
+                width: "794px",
+                height: "1123px",
+                background: "white",
+                boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                // margin: "0 auto",
+                overflow: "hidden",
+                transform: "scale(1)",
+              }}
+            ></div>
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 }

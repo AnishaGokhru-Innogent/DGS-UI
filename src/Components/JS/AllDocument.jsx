@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
-import { Button, Space, Table, Tag, notification } from "antd";
+import { Button, Space, Table, notification,Popconfirm,message ,Tag} from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { render } from "@testing-library/react";
@@ -34,28 +34,17 @@ export function Alldocument() {
       message: message,
     });
   };
+  const cancel = (e) => {
+    console.log(e);
+    message.error('Click on No');
+  };
   async function DeleteDocument(id) {
     await axios
       .delete(`${baseUrl}/document/delete-doc/${id}`, {
         headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((response) => {
-        openNotificationWithIcon("success", `Document Deleted Successfully`);
-      })
-      .catch((error) => {
-        openNotificationWithIcon("error", `Error Occured in Deletion`);
-      });
-    setDocuments(documents.filter((doc) => doc.documentId !== id));
-  }
-  console.log(documents);
-
-  async function DeleteDocument(id) {
-    await axios
-      .delete(`${baseUrl}/document/delete-doc/${id}`, {
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
-      .then((response) => {
-        openNotificationWithIcon("success", `Document Deleted Successfully`);
+        message.success("Document Deleted Succesfully");
       })
       .catch((error) => {
         openNotificationWithIcon("error", `Error Occured in Deletion`);
@@ -119,7 +108,7 @@ export function Alldocument() {
               navigate(`/document/${record.documentId}`);
             }}
           >
-            See
+            View
           </Button>
         </Space>
       ),
@@ -128,35 +117,34 @@ export function Alldocument() {
       title: "",
       key: "use",
       render: (_, record) => (
-        <Space>
-          <Button
-            type="primary"
-            danger
-            onClick={() => {
-              DeleteDocument(record.documentId);
-            }}
-          >
-            Delete
-          </Button>
-        </Space>
+        <Popconfirm
+          title="Delete the task"
+          description="Are you sure to delete this task?"
+          onConfirm={() => DeleteDocument(record.documentId)}
+          onCancel={cancel}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button danger>Delete</Button>
+        </Popconfirm>
       ),
     },
   ];
   return (
     <div>
-      <h2>All Document</h2>
-      {contextHolder}
-      <div className="mt-4">
-        <Table
-          dataSource={documents}
-          columns={columns}
-          borderColor="black"
-          scroll={{
-            x: "100%",
-            y: 330,
-          }}
-        />
-      </div>
+    <h2>All Document</h2>
+    {contextHolder}
+    <div className="mt-4">
+      <Table
+        dataSource={documents}
+        columns={columns}
+        borderColor="black"
+        scroll={{
+          x: "100%",
+          y: 330,
+        }}
+      />
     </div>
+  </div>
   );
 }
