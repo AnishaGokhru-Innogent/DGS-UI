@@ -177,7 +177,7 @@ const Home = () => {
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu
-          style={{ backgroundColor: "#01606F", height: "100vh" }}
+          style={{ backgroundColor: "#4F576B", height: "100vh" }}
           mode="inline"
           defaultSelectedKeys={["1"]}
           selectedKeys={[currentView]}
