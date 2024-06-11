@@ -183,7 +183,6 @@ const Signature = () => {
   const handleMenuClick = (e) => {
     setSignatureType(e.key);
   };
-  const [loading, setLoading] = useState(false);
   return (
     <div className="box">
       <Modal
@@ -193,12 +192,7 @@ const Signature = () => {
         onCancel={handleCancel}
       >
         <AnvilSignatureFrame
-          // signURL={signURL}
-          scroll="smooth"
-          onLoad={() => setLoading(true)}
-          onFinishSigning={(payload) => console.log(payload)}
-          onError={(errorPayload) => console.log(errorPayload)}
-        />
+\
         <Form
           onFinish={submit}
           style={{ width: "450px", height: "auto" }}
