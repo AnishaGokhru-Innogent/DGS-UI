@@ -285,7 +285,7 @@ const AllUser = () => {
   const [lastName, setLastName] = useState("");
   const [departmentName, setDepartmentName] = useState("");
   const [designationName, setDesignationName] = useState("");
-  let userId = "";
+  let id = "";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -320,22 +320,13 @@ const AllUser = () => {
   };
 
   const [open, setOpen] = useState(false);
-  const showDrawer = (id) => {
+  const showDrawer = (userId) => {
     setOpen(true);
-    userId = id;
+    id = userId;
   };
   const onClose = (id) => {
     setOpen(false);
-    try{  
-        let token = localStorage.getItem("token");
-         const response = axios.put(`http://localhost:8080/api/v1/users/updateUser/${userId}`,{
-            headers:{Authorization :`Bearer ${token}` },
-         });
-        console.log(response.data);
-    }
-    catch(error){
-        console.log(error);
-    }
+   
   };
 
   const confirm = async (id) => {
