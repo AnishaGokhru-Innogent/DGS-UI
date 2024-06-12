@@ -9,7 +9,6 @@ import {
   Typography,
   Row,
   Col,
-  notification,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -61,14 +60,6 @@ const CreateTemplate = () => {
   const userid = localStorage.getItem("userId");
   const [userId, setUserId] = useState(userid);
   const bearerToken = localStorage.getItem("token");
-
-  const [api, contextHolder] = notification.useNotification();
-
-  const openNotificationWithIcon = (type, message) => {
-    api[type]({
-      message: message,
-    });
-  };
 
   useEffect(() => {
     if (quillRef.current) {
@@ -180,7 +171,7 @@ const CreateTemplate = () => {
     }
 
     quill.insertEmbed(cursorPos, "placeholder", placeholderName, "user");
-    quill.insertText(cursorPos + placeholderName.length + 4, " ");
+    quill.insertText(cursorPos + placeholderName.length + 4, "");
     quill.setSelection(cursorPos + placeholderName.length + 5, " ");
     quill.focus();
     setPlaceholderName("");
@@ -219,26 +210,20 @@ const CreateTemplate = () => {
   };
 
   function generateTemplateJSON() {
-    if (templateName === "") {
-      openNotificationWithIcon("error", "Template Name Should not be empty");
-    } else {
-      const plainText = quillRef.current.getEditor().getText();
-      const templateJSON = {
-        templateName: templateName,
-        templateFormat: "DOCX",
-        templateBody: plainText,
-        userId: userId,
-        placeholderDTOS: placeholders.map(
-          ({ placeholderName, placeholderType }) => ({
-            placeholderName,
-            placeholderType,
-          })
-        ),
-      };
-      openNotificationWithIcon("success", "Template Created");
-
-      setTemplate(templateJSON);
-    }
+    const plainText = quillRef.current.getEditor().getText();
+    const templateJSON = {
+      templateName: templateName,
+      templateFormat: "DOCX",
+      templateBody: plainText,
+      userId: userId,
+      placeholderDTOS: placeholders.map(
+        ({ placeholderName, placeholderType }) => ({
+          placeholderName,
+          placeholderType,
+        })
+      ),
+    };
+    setTemplate(templateJSON);
   }
 
   const handlerFileChange = async (file) => {
@@ -267,9 +252,9 @@ const CreateTemplate = () => {
 
   return (
     <div style={{ padding: "50px", backgroundColor: "#f0f0f0" }}>
-      {contextHolder}
       <Row gutter={24}>
         <Col span={16}>
+          <Title level={3}>{resTemplate.templateId}</Title>
           <Title>Template Creator</Title>
           <Form.Item
             label="Document Name"
@@ -285,13 +270,8 @@ const CreateTemplate = () => {
           </Form.Item>
           <div
             style={{
-              border: "1px solid #d9d9d9",
-              // width: "790.7px",
+              backgroundColor: "white",
               height: "auto",
-              margin: "0 auto",
-              backgroundColor: "#fff",
-              padding: "20px",
-              boxSizing: "border-box",
             }}
           >
             <ReactQuill
@@ -299,10 +279,7 @@ const CreateTemplate = () => {
               value={editorContent}
               onChange={setEditorContent}
               theme="snow"
-              style={{
-                height: "auto", // Allow some padding for toolbars
-                width: "90%",
-              }}
+              style={{ minHeight: "100px", height: "auto" }}
             />
           </div>
           <div style={{ marginTop: "20px" }}>

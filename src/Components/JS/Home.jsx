@@ -21,6 +21,8 @@ import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import Register from "./Register";
 import AllUser from "./AllUser";
+import "../CSS/home.css";
+
 const { Header, Sider, Content } = Layout;
 const Home = () => {
   const navigate = useNavigate();
@@ -72,21 +74,21 @@ const Home = () => {
   };
   console.log(currentView);
 
-  const renderContentAdmin = ()=>{
-      switch(currentView){
-         case "Home":
-          return (
-            <>
-              <Register/>
-              <AllUser/>
-            </>
-          );
-          case "LogOut":
-            return logOut();
-        default :
-        return <Register/>
-      }
-  }
+  const renderContentAdmin = () => {
+    switch (currentView) {
+      case "Home":
+        return (
+          <>
+            <Register />
+            <AllUser />
+          </>
+        );
+      case "LogOut":
+        return logOut();
+      default:
+        return <Register />;
+    }
+  };
 
   // console.log(user);
   const userMenuItems = [
@@ -140,32 +142,31 @@ const Home = () => {
   ];
 
   const adminMenuItems = [
-      {
-        key: "1",
-        icon: <UserOutlined />,
-        label: `${user.firstName}`,
-        style:{color:"white",fontSize:"18px"}
+    {
+      key: "1",
+      icon: <UserOutlined />,
+      label: `${user.firstName}`,
+      style: { color: "white", fontSize: "18px" },
+    },
+    {
+      key: "2",
+      label: "DocMaster",
+      style: { color: "white", fontSize: "21px" },
+    },
+    {
+      key: "Home",
+      icon: <HomeOutlined />,
+      label: "Home",
+      style: { color: "white" },
+    },
+    {
+      key: "LogOut",
+      icon: <LogoutOutlined />,
+      label: "LogOut",
+      style: { color: "white" },
+    },
+  ];
 
-      },
-      {
-        key: "2",
-        label: "DocMaster",
-        style: { color: "white", fontSize: "21px" },
-      },
-      {
-        key: "Home",
-        icon: <HomeOutlined />,
-        label: "Home",
-        style: { color: "white" } 
-       },
-       {
-        key: "LogOut",
-        icon: <LogoutOutlined />,
-        label: "LogOut",
-        style: { color: "white" },
-      }
-    ]
-  
   //  console.log(user);
   const menuItems = user.role === "ADMIN" ? adminMenuItems : userMenuItems;
   const renderContent =
@@ -210,10 +211,7 @@ const Home = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {
-             renderContent()
-          }
-           
+          {renderContent()}
         </Content>
       </Layout>
     </Layout>

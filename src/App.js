@@ -21,7 +21,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />}></Route>
           <Route
-            path="/sign/:documentId/:placeholder"
+            path="/sign/:documentId/:placeholder/:email"
             element={
               // <PrivateRoute>
               <Signature />
