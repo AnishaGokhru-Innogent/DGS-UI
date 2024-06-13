@@ -9,7 +9,6 @@ import {
   Typography,
   Row,
   Col,
-  notification,
 } from "antd";
 import { UploadOutlined ,SaveOutlined,BookOutlined} from "@ant-design/icons";
 import axios from "axios";
@@ -61,14 +60,6 @@ const CreateTemplate = () => {
   const userid = localStorage.getItem("userId");
   const [userId, setUserId] = useState(userid);
   const bearerToken = localStorage.getItem("token");
-
-  const [api, contextHolder] = notification.useNotification();
-
-  const openNotificationWithIcon = (type, message) => {
-    api[type]({
-      message: message,
-    });
-  };
 
   useEffect(() => {
     if (quillRef.current) {
@@ -183,7 +174,7 @@ const CreateTemplate = () => {
     }
 
     quill.insertEmbed(cursorPos, "placeholder", placeholderName, "user");
-    quill.insertText(cursorPos + placeholderName.length + 4, " ");
+    quill.insertText(cursorPos + placeholderName.length + 4, "");
     quill.setSelection(cursorPos + placeholderName.length + 5, " ");
     quill.focus();
     setPlaceholderName("");
@@ -222,26 +213,20 @@ const CreateTemplate = () => {
   };
 
   function generateTemplateJSON() {
-    if (templateName === "") {
-      openNotificationWithIcon("error", "Template Name Should not be empty");
-    } else {
-      const plainText = quillRef.current.getEditor().getText();
-      const templateJSON = {
-        templateName: templateName,
-        templateFormat: "DOCX",
-        templateBody: plainText,
-        userId: userId,
-        placeholderDTOS: placeholders.map(
-          ({ placeholderName, placeholderType }) => ({
-            placeholderName,
-            placeholderType,
-          })
-        ),
-      };
-      message.success("Template Created");
-
-      setTemplate(templateJSON);
-    }
+    const plainText = quillRef.current.getEditor().getText();
+    const templateJSON = {
+      templateName: templateName,
+      templateFormat: "DOCX",
+      templateBody: plainText,
+      userId: userId,
+      placeholderDTOS: placeholders.map(
+        ({ placeholderName, placeholderType }) => ({
+          placeholderName,
+          placeholderType,
+        })
+      ),
+    };
+    setTemplate(templateJSON);
   }
 
   const handlerFileChange = async (file) => {
@@ -270,43 +255,44 @@ const CreateTemplate = () => {
 
   return (
     <div style={{}}>
-      {contextHolder}
       <Row gutter={24}>
         <Col span={16}>
-          <h3>Create a New Template</h3>
-          <div className="createBox"> 
-            <Form.Item
-              label="Document Name"
-              name="Document Name"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <Input
-                placeholder="Enter Template Name"
-                value={templateName}
-                onChange={(e) => setTemplateName(e.target.value)}
-                style={{ width: "580px" }}
-              />
-            </Form.Item>
-            <div
-             style={{
-              backgroundColor:"white",
-              height: 'calc(90vh - 200px)', overflow: 'auto'
-             }}
-            >
-              <ReactQuill
-                ref={quillRef}
-                value={editorContent}
-                onChange={setEditorContent}
-                theme="snow"
-                style={{
-                  height: "auto",
-                  width: "100%",
-                  minHeight:"50vh",
-                  overflow: 'auto'
-                }}
-                
-              />
-            </div>
+          <Title level={3}>{resTemplate.templateId}</Title>
+          <div style={{backgroundColor:"#01606F",color:"white" , textAlign:"center",borderRadius:"10px",padding:"1px"}}>
+          <h4>Create a New Template</h4>
+          </div>
+          <div style={{marginTop:"20px"}}>
+          <Form.Item
+            label="Document Name"
+            name="Document Name"
+            rules={[{ required: true, message: "Please input!" }]}
+          >
+            <Input
+              placeholder="Enter Template Name"
+              value={templateName}
+              onChange={(e) => setTemplateName(e.target.value)}
+              style={{ width: "580px" }}
+            />
+          </Form.Item>
+          </div>
+          <div
+            style={{
+              backgroundColor: "white",
+               height: 'calc(90vh - 200px)', overflow: 'auto'
+            }}
+          >
+            <ReactQuill
+              ref={quillRef}
+              value={editorContent}
+              onChange={setEditorContent}
+              theme="snow"
+              style={{
+                height: "auto",
+                width: "100%",
+                minHeight:"50vh",
+                overflow: 'auto'
+              }}
+            />
           </div>
         </Col>
         <Col span={7}>
