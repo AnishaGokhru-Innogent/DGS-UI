@@ -127,7 +127,7 @@ const Register = () => {
             extra={
                 <Space>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button style={{backgroundColor:"#589A65" , color:"white"}} onClick={handleRegister}>
+                    <Button style={{backgroundColor:"#01606F" , color:"white"}} onClick={handleRegister}>
                         Register
                     </Button>
                 </Space>

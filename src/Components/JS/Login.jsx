@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../CSS/Login.css";
 import { MailOutlined, LockOutlined, LoginOutlined } from "@ant-design/icons";
-import { Input, Button, Form } from "antd";
+import { Input, Button, Form ,message} from "antd";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@ const Login = () => {
         if (token) {
           localStorage.setItem("token", token);
           localStorage.setItem("userId", userId);
-          toast.success("Login Success");
+          message.success("Login Success");
           navigate("/home");
           dispatch(login(token));
         }

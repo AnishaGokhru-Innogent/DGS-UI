@@ -21,6 +21,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import Register from "./Register";
 import AllUser from "./AllUser";
+import "../CSS/home.css";
 const { Header, Sider, Content } = Layout;
 const Home = () => {
   const navigate = useNavigate();
@@ -175,7 +176,8 @@ const Home = () => {
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu
-          style={{ backgroundColor: "#1A2037", height: "100vh" }}
+          className="slideBar"
+          style={{  height: "100vh",backgroundColor:"#01606F"}}
           mode="inline"
           defaultSelectedKeys={["1"]}
           selectedKeys={[currentView]}

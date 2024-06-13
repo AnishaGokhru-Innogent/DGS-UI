@@ -5,6 +5,7 @@ import { Button, Space, Table, notification,Popconfirm,message ,Tag} from "antd"
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { render } from "@testing-library/react";
+import {EyeOutlined,DeleteOutlined} from "@ant-design/icons";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState();
@@ -91,7 +92,7 @@ export function Alldocument() {
           color = "geekblue";
         }
         return (
-          <Tag color={color} style={{ fontSize: "20px" }}>
+          <Tag color={color} style={{ fontSize: "14px" }}>
             {record.status}
           </Tag>
         );
@@ -103,7 +104,8 @@ export function Alldocument() {
       render: (_, record) => (
         <Space>
           <Button
-            type="primary"
+            style={{backgroundColor:"#01606F",color:"white"}}
+            icon={<EyeOutlined/>}
             onClick={() => {
               navigate(`/document/${record.documentId}`);
             }}
@@ -125,7 +127,7 @@ export function Alldocument() {
           okText="Yes"
           cancelText="No"
         >
-          <Button danger>Delete</Button>
+          <Button danger icon={<DeleteOutlined/>}>Delete</Button>
         </Popconfirm>
       ),
     },

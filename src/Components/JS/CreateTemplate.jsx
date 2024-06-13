@@ -11,7 +11,7 @@ import {
   Col,
   notification,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined ,SaveOutlined,BookOutlined} from "@ant-design/icons";
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
 import ReactQuill, { Quill } from "react-quill";
@@ -73,6 +73,9 @@ const CreateTemplate = () => {
   useEffect(() => {
     if (quillRef.current) {
       quillRef.current.focus();
+      const editor = quillRef.current.getEditor();
+      const editorElement = editor.container.firstChild;
+      editorElement.style.minHeight = '50vh';
     }
   }, []);
 
@@ -235,7 +238,7 @@ const CreateTemplate = () => {
           })
         ),
       };
-      openNotificationWithIcon("success", "Template Created");
+      message.success("Template Created");
 
       setTemplate(templateJSON);
     }
@@ -266,57 +269,47 @@ const CreateTemplate = () => {
   };
 
   return (
-    <div style={{ padding: "50px", backgroundColor: "#f0f0f0" }}>
+    <div style={{}}>
       {contextHolder}
       <Row gutter={24}>
         <Col span={16}>
-          <Title>Template Creator</Title>
-          <Form.Item
-            label="Document Name"
-            name="Document Name"
-            rules={[{ required: true, message: "Please input!" }]}
-          >
-            <Input
-              placeholder="Enter Template Name"
-              value={templateName}
-              onChange={(e) => setTemplateName(e.target.value)}
-              style={{ marginBottom: 20, width: "400px" }}
-            />
-          </Form.Item>
-          <div
-            style={{
-              border: "1px solid #d9d9d9",
-              // width: "790.7px",
-              height: "auto",
-              margin: "0 auto",
-              backgroundColor: "#fff",
-              padding: "20px",
-              boxSizing: "border-box",
-            }}
-          >
-            <ReactQuill
-              ref={quillRef}
-              value={editorContent}
-              onChange={setEditorContent}
-              theme="snow"
-              style={{
-                height: "auto", // Allow some padding for toolbars
-                width: "90%",
-              }}
-            />
-          </div>
-          <div style={{ marginTop: "20px" }}>
-            <Title level={4}>Upload Word Document</Title>
-            <Upload
-              accept=".docx"
-              showUploadList={false}
-              customRequest={({ file }) => handlerFileChange(file)}
+          <h3>Create a New Template</h3>
+          <div className="createBox"> 
+            <Form.Item
+              label="Document Name"
+              name="Document Name"
+              rules={[{ required: true, message: "Please input!" }]}
             >
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
+              <Input
+                placeholder="Enter Template Name"
+                value={templateName}
+                onChange={(e) => setTemplateName(e.target.value)}
+                style={{ width: "580px" }}
+              />
+            </Form.Item>
+            <div
+             style={{
+              backgroundColor:"white",
+              height: 'calc(90vh - 200px)', overflow: 'auto'
+             }}
+            >
+              <ReactQuill
+                ref={quillRef}
+                value={editorContent}
+                onChange={setEditorContent}
+                theme="snow"
+                style={{
+                  height: "auto",
+                  width: "100%",
+                  minHeight:"50vh",
+                  overflow: 'auto'
+                }}
+                
+              />
+            </div>
           </div>
         </Col>
-        <Col span={8}>
+        <Col span={7}>
           <Title level={5}>Add Placeholder</Title>
           <div>
             <Input
@@ -324,12 +317,12 @@ const CreateTemplate = () => {
               placeholder="Placeholder Name"
               value={placeholderName}
               onChange={(e) => setPlaceholderName(e.target.value)}
-              style={{ marginBottom: 10 }}
+              style={{ marginBottom: 10 ,width:"180px" }}
             />
             <Select
               value={placeholderType}
               defaultValue="text"
-              style={{ width: 120, marginBottom: 10 }}
+              style={{ width: 100, marginBottom: 10 }}
               onChange={setPlaceholderType}
               options={[
                 { value: "text", label: "Text" },
@@ -339,10 +332,20 @@ const CreateTemplate = () => {
                 { value: "signature", label: "Signature" },
               ]}
             />
-            <Button type="primary" onClick={addPlaceholder}>
+            <Button style={{backgroundColor:"#01606F",color:"white"}} onClick={addPlaceholder} icon={<BookOutlined/>}>
               Add Placeholder
             </Button>
           </div>
+          <div style={{ marginTop: "20px" }}>
+              <Title level={4}>Upload Word Document</Title>
+              <Upload
+                accept=".docx"
+                showUploadList={false}
+                customRequest={({ file }) => handlerFileChange(file)}
+              >
+                <Button style={{backgroundColor:"#01606F",color:"white"}}icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
+            </div>
           <div
             style={{
               marginTop: "20px",
@@ -382,7 +385,7 @@ const CreateTemplate = () => {
             />
           </div>
           <div style={{ marginTop: "20px" }}>
-            <Button type="primary" onClick={generateTemplateJSON}>
+            <Button style={{backgroundColor:"#01606F",color:"white"}}  onClick={generateTemplateJSON} icon={<SaveOutlined/>}>
               Save
             </Button>
           </div>
