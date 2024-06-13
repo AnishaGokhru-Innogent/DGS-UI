@@ -82,7 +82,9 @@ export function CreateDocument() {
     const documentData = {
       documentName: documentName,
       documentBody: documentBody,
-      status: "PENDING",
+      status: fields.some((field) => field.placeholderType === "signature")
+        ? "PENDING"
+        : "COMPLETED",
       templateId: id,
       userId: userId,
       signatureEmails: fields
@@ -166,15 +168,6 @@ export function CreateDocument() {
               </Button>
             </Form.Item>
           </Form>
-        </Col>
-        <Col span={14}>
-          <div className="a4-paper">
-            <div
-              ref={documentPdf}
-              dangerouslySetInnerHTML={{ __html: documentBody }}
-              className="document-body"
-            ></div>
-          </div>
           <div style={{ marginTop: "20px", textAlign: "right" }}>
             <Button
               type="primary"
@@ -186,6 +179,15 @@ export function CreateDocument() {
             <Button type="primary" onClick={saveDocument}>
               Save & Send Email
             </Button>
+          </div>
+        </Col>
+        <Col span={14}>
+          <div className="a4-paper">
+            <div
+              ref={documentPdf}
+              dangerouslySetInnerHTML={{ __html: documentBody }}
+              className="document-body"
+            ></div>
           </div>
         </Col>
       </Row>
