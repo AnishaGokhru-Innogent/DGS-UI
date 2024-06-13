@@ -1,3 +1,4 @@
+import React, { useState, useRef, useEffect } from "react";
 import {
   Form,
   Input,
@@ -10,9 +11,8 @@ import {
   Row,
   Col,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, SaveOutlined, BookOutlined } from "@ant-design/icons";
 import axios from "axios";
-import React, { useState, useRef, useEffect } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import * as mammoth from "mammoth";
@@ -20,15 +20,14 @@ import "../CSS/createTemplate.css";
 
 // Register the custom placeholder blot
 const Inline = Quill.import("blots/inline");
-
 class PlaceholderBlot extends Inline {
   static create(value) {
     const node = super.create();
     node.setAttribute("data-placeholder", value);
     node.setAttribute("contenteditable", "false"); // make it non-editable
-    node.style.backgroundColor = "#bae7ff";
+    node.style.backgroundColor = "#F5F5F5";
     node.style.border = "1px solid black"; // add boundary for signature
-    node.style.padding = "2px 5px"; // reduced padding
+    node.style.padding = "1px 2px"; // reduced padding
     node.classList.add("placeholder-blot");
     node.innerHTML = `{{${value}}}`;
     return node;
@@ -38,7 +37,6 @@ class PlaceholderBlot extends Inline {
     return node.getAttribute("data-placeholder");
   }
 }
-
 PlaceholderBlot.blotName = "placeholder";
 PlaceholderBlot.tagName = "span";
 PlaceholderBlot.className = "placeholder-blot";
@@ -46,7 +44,7 @@ Quill.register(PlaceholderBlot);
 
 const { Title, Text } = Typography;
 
-const CreateTemplate = () => {
+const CreateTemplate = ({ uploadedFile }) => {
   const [placeholders, setPlaceholders] = useState([]);
   const [editorContent, setEditorContent] = useState("");
   const [placeholderName, setPlaceholderName] = useState("");
@@ -55,7 +53,6 @@ const CreateTemplate = () => {
   const [template, setTemplate] = useState({});
   const [resTemplate, setResTemplate] = useState({});
   const [templateName, setTemplateName] = useState("");
-
   const quillRef = useRef(null);
   const userid = localStorage.getItem("userId");
   const [userId, setUserId] = useState(userid);
@@ -64,6 +61,9 @@ const CreateTemplate = () => {
   useEffect(() => {
     if (quillRef.current) {
       quillRef.current.focus();
+      const editor = quillRef.current.getEditor();
+      const editorElement = editor.container.firstChild;
+      editorElement.style.minHeight = "50vh";
     }
   }, []);
 
@@ -76,14 +76,12 @@ const CreateTemplate = () => {
   useEffect(() => {
     if (!quillRef.current) return;
     const quill = quillRef.current.getEditor();
-
     const handleSelectionChange = () => {
       const selection = quill.getSelection();
       if (selection) {
         setCursorPosition(selection.index);
       }
     };
-
     const handleTextChange = () => {
       const selection = quill.getSelection();
       if (selection) {
@@ -97,18 +95,21 @@ const CreateTemplate = () => {
         )
       );
     };
-
     quill.on("selection-change", handleSelectionChange);
     quill.on("text-change", handleTextChange);
-
     quill.root.addEventListener("keydown", handleKeyDown, true);
-
     return () => {
       quill.off("selection-change", handleSelectionChange);
       quill.off("text-change", handleTextChange);
       quill.root.removeEventListener("keydown", handleKeyDown, true);
     };
   }, []);
+
+  useEffect(() => {
+    if (uploadedFile) {
+      handleFileChange(uploadedFile);
+    }
+  }, [uploadedFile]);
 
   const handleKeyDown = (event) => {
     const quill = quillRef.current.getEditor();
@@ -132,18 +133,19 @@ const CreateTemplate = () => {
       .post("http://localhost:8080/template/create", template, {
         headers: { Authorization: `Bearer ${bearerToken}` },
       })
-      .then((response) => response.data)
+      .then((response) => response.data, message.success("Template Saved"))
       .then((res) => setResTemplate(res))
-      .catch((error) => console.log(error));
+      .catch(
+        (error) => console.log(error),
+        message.error("Error Occured In Saving Tempalte")
+      );
   }
 
   const addPlaceholder = () => {
     if (!placeholderName) return;
-
     const quill = quillRef.current.getEditor();
     const cursorPos =
       cursorPosition === null ? quill.getLength() : cursorPosition;
-
     // Check if the cursor is immediately after an existing placeholder
     const [leaf] = quill.getLeaf(cursorPos - 1);
     if (
@@ -154,13 +156,11 @@ const CreateTemplate = () => {
     ) {
       return; // Do not add another placeholder
     }
-
     const existingPlaceholder = placeholders.find(
       (placeholder) =>
         placeholder.placeholderName === placeholderName &&
         placeholder.placeholderType === placeholderType
     );
-
     if (!existingPlaceholder) {
       const newPlaceholder = {
         placeholderName: placeholderName,
@@ -169,7 +169,6 @@ const CreateTemplate = () => {
       };
       setPlaceholders([...placeholders, newPlaceholder]);
     }
-
     quill.insertEmbed(cursorPos, "placeholder", placeholderName, "user");
     quill.insertText(cursorPos + placeholderName.length + 4, "");
     quill.setSelection(cursorPos + placeholderName.length + 5, " ");
@@ -188,10 +187,8 @@ const CreateTemplate = () => {
           )
       )
     );
-
     const quill = quillRef.current.getEditor();
     const content = quill.getContents();
-
     // Find and remove the placeholder blot
     const newOps = content.ops.filter((op) => {
       if (op.insert && typeof op.insert !== "string") {
@@ -204,7 +201,6 @@ const CreateTemplate = () => {
       }
       return true;
     });
-
     quill.setContents(newOps);
     setEditorContent(quill.root.innerHTML);
   };
@@ -226,7 +222,7 @@ const CreateTemplate = () => {
     setTemplate(templateJSON);
   }
 
-  const handlerFileChange = async (file) => {
+  const handleFileChange = async (file) => {
     if (
       file &&
       file.type ===
@@ -251,27 +247,39 @@ const CreateTemplate = () => {
   };
 
   return (
-    <div style={{ padding: "50px", backgroundColor: "#f0f0f0" }}>
+    <div style={{}}>
       <Row gutter={24}>
         <Col span={16}>
-          <Title level={3}>{resTemplate.templateId}</Title>
-          <Title>Template Creator</Title>
-          <Form.Item
-            label="Document Name"
-            name="Document Name"
-            rules={[{ required: true, message: "Please input!" }]}
+          <div
+            style={{
+              backgroundColor: "#01606F",
+              color: "white",
+              textAlign: "center",
+              borderRadius: "10px",
+              padding: "1px",
+            }}
           >
-            <Input
-              placeholder="Enter Template Name"
-              value={templateName}
-              onChange={(e) => setTemplateName(e.target.value)}
-              style={{ marginBottom: 20, width: "400px" }}
-            />
-          </Form.Item>
+            <h4>Create a New Template</h4>
+          </div>
+          <div style={{ marginTop: "20px" }}>
+            <Form.Item
+              label="Document Name"
+              name="Document Name"
+              rules={[{ required: true, message: "Please input!" }]}
+            >
+              <Input
+                placeholder="Enter Template Name"
+                value={templateName}
+                onChange={(e) => setTemplateName(e.target.value)}
+                style={{ width: "580px" }}
+              />
+            </Form.Item>
+          </div>
           <div
             style={{
               backgroundColor: "white",
-              height: "auto",
+              height: "calc(90vh - 200px)",
+              overflow: "auto",
             }}
           >
             <ReactQuill
@@ -279,21 +287,16 @@ const CreateTemplate = () => {
               value={editorContent}
               onChange={setEditorContent}
               theme="snow"
-              style={{ minHeight: "100px", height: "auto" }}
+              style={{
+                height: "auto",
+                width: "100%",
+                minHeight: "50vh",
+                overflow: "auto",
+              }}
             />
           </div>
-          <div style={{ marginTop: "20px" }}>
-            <Title level={4}>Upload Word Document</Title>
-            <Upload
-              accept=".docx"
-              showUploadList={false}
-              customRequest={({ file }) => handlerFileChange(file)}
-            >
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
-          </div>
         </Col>
-        <Col span={8}>
+        <Col span={7}>
           <Title level={5}>Add Placeholder</Title>
           <div>
             <Input
@@ -301,12 +304,12 @@ const CreateTemplate = () => {
               placeholder="Placeholder Name"
               value={placeholderName}
               onChange={(e) => setPlaceholderName(e.target.value)}
-              style={{ marginBottom: 10 }}
+              style={{ marginBottom: 10, width: "180px" }}
             />
             <Select
               value={placeholderType}
               defaultValue="text"
-              style={{ width: 120, marginBottom: 10 }}
+              style={{ width: 100, marginBottom: 10 }}
               onChange={setPlaceholderType}
               options={[
                 { value: "text", label: "Text" },
@@ -316,15 +319,29 @@ const CreateTemplate = () => {
                 { value: "signature", label: "Signature" },
               ]}
             />
-            <Button type="primary" onClick={addPlaceholder}>
+            <Button
+              style={{ backgroundColor: "#01606F", color: "white" }}
+              onClick={addPlaceholder}
+              icon={<BookOutlined />}
+            >
               Add Placeholder
             </Button>
           </div>
+          {/* <div style={{ marginTop: "20px" }}>
+            <Title level={4}>Upload Word Document</Title>
+            <Upload
+              accept=".docx"
+              showUploadList={false}
+              customRequest={({ file }) => handleFileChange(file)}
+            >
+              <Button icon={<UploadOutlined />}>Upload</Button>
+            </Upload>
+          </div> */}
           <div
             style={{
               marginTop: "20px",
               padding: "10px",
-              border: "1px solid #d9d9d9",
+              border: "1px solid #D9D9D9",
               borderRadius: "4px",
             }}
           >
@@ -359,7 +376,11 @@ const CreateTemplate = () => {
             />
           </div>
           <div style={{ marginTop: "20px" }}>
-            <Button type="primary" onClick={generateTemplateJSON}>
+            <Button
+              style={{ backgroundColor: "#01606F", color: "white" }}
+              onClick={generateTemplateJSON}
+              icon={<SaveOutlined />}
+            >
               Save
             </Button>
           </div>

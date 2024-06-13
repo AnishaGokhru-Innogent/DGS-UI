@@ -22,6 +22,7 @@ import { logout } from "../redux/authSlice";
 import Register from "./Register";
 import AllUser from "./AllUser";
 import "../CSS/home.css";
+import { ChooseCreateTemplate } from "./ChooseCreateTemplate";
 
 const { Header, Sider, Content } = Layout;
 const Home = () => {
@@ -29,6 +30,8 @@ const Home = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState({});
   const [currentView, setCurrentView] = useState("home");
+  const [uploadedFile, setUploadedFile] = useState(null);
+
   const dispatch = useDispatch();
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -65,7 +68,14 @@ const Home = () => {
       case "My Documents":
         return <Alldocument />;
       case "New Tempalte":
-        return <CreateTemplate />;
+        return (
+          <ChooseCreateTemplate
+            setCurrentView={setCurrentView}
+            setUploadedFile={setUploadedFile}
+          />
+        );
+      case "CreateTemplate":
+        return <CreateTemplate uploadedFile={uploadedFile} />;
       case "LogOut":
         return logOut();
       default:

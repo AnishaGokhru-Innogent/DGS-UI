@@ -12,6 +12,8 @@ import { Seedocument } from "./Components/JS/SeeDocument";
 import { Provider } from "react-redux";
 import PrivateRoute from "./Components/redux/PrivateRoute";
 import store from "./Components/redux/store";
+import { ChooseCreateTemplate } from "./Components/JS/ChooseCreateTemplate";
+import { Alldocument } from "./Components/JS/AllDocument";
 
 function App() {
   return (
@@ -92,6 +94,7 @@ function App() {
               </PrivateRoute>
             }
           />
+          {/* <Route path="/template/choose" element={<ChooseCreateTemplate />} /> */}
         </Routes>
       </>
     </>
