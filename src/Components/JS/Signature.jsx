@@ -167,6 +167,13 @@ const Signature = () => {
       signatureData.append("placeholder", decodedPlaceholder);
       signatureData.append("signed", true);
       signatureUrl = savedDataURL;
+      // signatureData = {
+      //   signatureType: signatureType,
+      //   signatureData: blob,
+      //   documentId: decodedDocumentId,
+      //   placeholder: decodedPlaceholder,
+      //   signed: true,
+      // };
     }
     if (signatureType !== "ELECTRONIC") {
       try {
