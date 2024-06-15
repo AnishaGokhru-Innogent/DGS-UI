@@ -79,6 +79,13 @@ export function CreateDocument() {
   });
 
   async function saveDocument() {
+    const signatureEmails = fields
+      .filter((field) => field.placeholderType === "signature")
+      .reduce((acc, field) => {
+        acc[field.placeholderName] = formValues[field.placeholderName];
+        return acc;
+      }, {});
+
     const documentData = {
       documentName: documentName,
       documentBody: documentBody,
@@ -87,9 +94,7 @@ export function CreateDocument() {
         : "COMPLETED",
       templateId: id,
       userId: userId,
-      signatureEmails: fields
-        .filter((field) => field.placeholderType === "signature")
-        .map((field) => formValues[field.placeholderName]),
+      signatureEmails: signatureEmails,
     };
 
     try {
