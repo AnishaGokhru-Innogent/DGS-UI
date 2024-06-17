@@ -4,7 +4,6 @@ import {
   Input,
   Select,
   Button,
-  Upload,
   message,
   List,
   Typography,
@@ -12,7 +11,7 @@ import {
   Col,
   Tooltip,
 } from "antd";
-import { UploadOutlined, SaveOutlined, BookOutlined } from "@ant-design/icons";
+import { SaveOutlined, BookOutlined } from "@ant-design/icons";
 import axios from "axios";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -126,6 +125,22 @@ const CreateTemplate = ({ uploadedFile }) => {
         event.preventDefault();
       }
     }
+    if (event.key === "Backspace" || event.key === "Delete") {
+      const [leaf] = quill.getLeaf(range.index - 1);
+      if (
+        leaf &&
+        leaf.domNode &&
+        leaf.domNode.classList &&
+        leaf.domNode.classList.contains("placeholder-blot")
+      ) {
+        const placeholderName = leaf.domNode.getAttribute("data-placeholder");
+        setPlaceholders((prevPlaceholders) =>
+          prevPlaceholders.filter(
+            (placeholder) => placeholder.placeholderName !== placeholderName
+          )
+        );
+      }
+    }
   };
 
   async function saveTemplate() {
@@ -178,51 +193,6 @@ const CreateTemplate = ({ uploadedFile }) => {
     setPlaceholderType("text");
   };
 
-  const deletePlaceholder = (name, type) => {
-    setPlaceholders(
-      placeholders.filter(
-        (placeholder) =>
-          !(
-            placeholder.placeholderName === name &&
-            placeholder.placeholderType === type
-          )
-      )
-    );
-    const quill = quillRef.current.getEditor();
-    const content = quill.getContents();
-    // Find and remove the placeholder blot
-    const newOps = content.ops.filter((op) => {
-      if (op.insert && typeof op.insert !== "string") {
-        return op.insert.placeholder !== name;
-      }
-      if (op.insert && typeof op.insert === "string") {
-        const regex = new RegExp(`{{${name}}}`, "g");
-        op.insert = op.insert.replace(regex, "");
-        return op.insert !== "";
-      }
-      return true;
-    });
-    quill.setContents(newOps);
-    setEditorContent(quill.root.innerHTML);
-  };
-
-  function generateTemplateJSON() {
-    const plainText = quillRef.current.getEditor().getText();
-    const templateJSON = {
-      templateName: templateName,
-      templateFormat: "DOCX",
-      templateBody: plainText,
-      userId: userId,
-      placeholderDTOS: placeholders.map(
-        ({ placeholderName, placeholderType }) => ({
-          placeholderName,
-          placeholderType,
-        })
-      ),
-    };
-    setTemplate(templateJSON);
-  }
-
   const handleFileChange = async (file) => {
     if (
       file &&
@@ -246,6 +216,23 @@ const CreateTemplate = ({ uploadedFile }) => {
       message.error("Please upload a valid Word document (.docx)");
     }
   };
+
+  function generateTemplateJSON() {
+    const plainText = quillRef.current.getEditor().getText();
+    const templateJSON = {
+      templateName: templateName,
+      templateFormat: "DOCX",
+      templateBody: plainText,
+      userId: userId,
+      placeholderDTOS: placeholders.map(
+        ({ placeholderName, placeholderType }) => ({
+          placeholderName,
+          placeholderType,
+        })
+      ),
+    };
+    setTemplate(templateJSON);
+  }
 
   return (
     <div style={{}}>
@@ -354,23 +341,7 @@ const CreateTemplate = ({ uploadedFile }) => {
               bordered
               dataSource={placeholders}
               renderItem={(placeholder) => (
-                <List.Item
-                  style={{ padding: "5px 10px" }} // compact list item
-                  actions={[
-                    <Button
-                      type="link"
-                      size="small"
-                      onClick={() =>
-                        deletePlaceholder(
-                          placeholder.placeholderName,
-                          placeholder.placeholderType
-                        )
-                      }
-                    >
-                      Delete
-                    </Button>,
-                  ]}
-                >
+                <List.Item style={{ padding: "5px 10px" }}>
                   <Text style={{ fontSize: "14px" }}>
                     {placeholder.placeholderName} ({placeholder.placeholderType}
                     )

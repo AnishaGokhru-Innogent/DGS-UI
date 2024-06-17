@@ -1,11 +1,19 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
-import { Button, Space, Table, notification,Popconfirm,message ,Tag} from "antd";
+import {
+  Button,
+  Space,
+  Table,
+  notification,
+  Popconfirm,
+  message,
+  Tag,
+} from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { render } from "@testing-library/react";
-import {EyeOutlined,DeleteOutlined} from "@ant-design/icons";
+import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState();
@@ -37,7 +45,7 @@ export function Alldocument() {
   };
   const cancel = (e) => {
     console.log(e);
-    message.error('Click on No');
+    message.error("Click on No");
   };
   async function DeleteDocument(id) {
     await axios
@@ -104,8 +112,8 @@ export function Alldocument() {
       render: (_, record) => (
         <Space>
           <Button
-            style={{backgroundColor:"#01606F",color:"white"}}
-            icon={<EyeOutlined/>}
+            style={{ backgroundColor: "#01606F", color: "white" }}
+            icon={<EyeOutlined />}
             onClick={() => {
               navigate(`/document/${record.documentId}`);
             }}
@@ -127,26 +135,28 @@ export function Alldocument() {
           okText="Yes"
           cancelText="No"
         >
-          <Button danger icon={<DeleteOutlined/>}>Delete</Button>
+          <Button danger icon={<DeleteOutlined />}>
+            Delete
+          </Button>
         </Popconfirm>
       ),
     },
   ];
   return (
     <div>
-    <h2>All Document</h2>
-    {contextHolder}
-    <div className="mt-4">
-      <Table
-        dataSource={documents}
-        columns={columns}
-        borderColor="black"
-        scroll={{
-          x: "100%",
-          y: 330,
-        }}
-      />
+      <h2>All Document</h2>
+      {contextHolder}
+      <div className="mt-4">
+        <Table
+          dataSource={documents}
+          columns={columns}
+          borderColor="black"
+          scroll={{
+            x: "100%",
+            y: 450,
+          }}
+        />
+      </div>
     </div>
-  </div>
   );
 }
