@@ -14,6 +14,7 @@ import PrivateRoute from "./Components/redux/PrivateRoute";
 import store from "./Components/redux/store";
 import { ChooseCreateTemplate } from "./Components/JS/ChooseCreateTemplate";
 import { Alldocument } from "./Components/JS/AllDocument";
+import { FinalDocument } from "./Components/JS/FinalDocument";
 
 function App() {
   return (
@@ -94,7 +95,7 @@ function App() {
               </PrivateRoute>
             }
           />
-          {/* <Route path="/template/choose" element={<ChooseCreateTemplate />} /> */}
+          <Route path="/final-document/:id" element={<FinalDocument />} />
         </Routes>
       </>
     </>

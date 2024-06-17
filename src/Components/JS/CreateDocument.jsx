@@ -8,6 +8,7 @@ import {
   Tooltip,
   Space,
   message,
+  Spin,
 } from "antd";
 import axios from "axios";
 import { useRef, useEffect, useState } from "react";
@@ -31,6 +32,8 @@ export function CreateDocument() {
   const documentPdf = useRef();
   const userId = localStorage.getItem("userId");
   const bearerToken = localStorage.getItem("token");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   async function getTemplateAndFields(templateId) {
@@ -86,6 +89,7 @@ export function CreateDocument() {
   });
 
   async function saveDocument() {
+    setLoading(true);
     const signatureEmails = fields
       .filter((field) => field.placeholderType === "signature")
       .reduce((acc, field) => {
@@ -112,6 +116,7 @@ export function CreateDocument() {
           Authorization: `Bearer ${bearerToken}`,
         },
       });
+      setLoading(false);
       message.success("Email Send");
     } catch (error) {
       console.error(error);

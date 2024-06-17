@@ -63,7 +63,6 @@ const Signature = () => {
     sign.clear();
   };
 
-
   useEffect(() => {
     getDocument(decodedDocumentId);
     checkSignatureStatus(decodedDocumentId, decodedPlaceholder);
@@ -86,7 +85,6 @@ const Signature = () => {
       .get(`${baseUrl}/document/get-document/${id}`)
       .then((response) => {
         setDocument(response.data);
-        toast.success("Document Success");
       })
       .catch((error) => {
         toast.error("Something Went Wrong");
@@ -138,7 +136,7 @@ const Signature = () => {
       signatureData.append("documentId", decodedDocumentId);
       signatureData.append("placeholder", decodedPlaceholder);
       signatureData.append("signed", true);
-      signatureData.append("recipientEmail",decodedEmail);
+      signatureData.append("recipientEmail", decodedEmail);
       signatureUrl = URL.createObjectURL(fileList[0].originFileObj);
     } else if (signatureType === "ELECTRONIC") {
       signatureData = {
@@ -183,7 +181,10 @@ const Signature = () => {
     }
     if (signatureType !== "ELECTRONIC") {
       try {
-        await axios.put(`${baseUrl}${apiEndpoint}/${decodedEmail}/${decodedDocumentId}`, signatureData);
+        await axios.put(
+          `${baseUrl}${apiEndpoint}/${decodedEmail}/${decodedDocumentId}`,
+          signatureData
+        );
         toast.success("Signature Added");
       } catch (error) {
         toast.error("Something went wrong");
@@ -200,7 +201,7 @@ const Signature = () => {
     } else {
       updatedDocumentBody = updatedDocumentBody.replace(
         /<img src="data:image\/png;base64,.*" alt="Signature" \/>/,
-       ` <img src="${signatureUrl}" alt="Signature" />`
+        ` <img src="${signatureUrl}" alt="Signature" />`
       );
     }
     setDocument({ ...document, documentBody: updatedDocumentBody });
@@ -210,7 +211,7 @@ const Signature = () => {
   const checkSignatureStatus = async (documentId, placeholder) => {
     try {
       const response = await axios.get(
-       `${baseUrl}/signature/status/${documentId}/${placeholder}`
+        `${baseUrl}/signature/status/${documentId}/${placeholder}`
       );
       console.log(response.data);
       setIsSignatureAdded(response.data);
