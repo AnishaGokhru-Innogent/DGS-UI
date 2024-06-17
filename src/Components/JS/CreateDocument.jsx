@@ -7,6 +7,7 @@ import {
   Typography,
   Tooltip,
   Space,
+  message,
 } from "antd";
 import axios from "axios";
 import { useRef, useEffect, useState } from "react";
@@ -85,6 +86,7 @@ export function CreateDocument() {
         acc[field.placeholderName] = formValues[field.placeholderName];
         return acc;
       }, {});
+    message.success("Document Saved");
 
     const documentData = {
       documentName: documentName,
@@ -104,8 +106,10 @@ export function CreateDocument() {
           Authorization: `Bearer ${bearerToken}`,
         },
       });
+      message.success("Email Send");
     } catch (error) {
       console.error(error);
+      message.error("Error Occurred in Saving Document and Sending Email");
     }
   }
 
