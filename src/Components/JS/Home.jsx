@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import mainImage from "../Images/mainImage.jpg"
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -79,7 +80,7 @@ const Home = () => {
       case "LogOut":
         return logOut();
       default:
-        return <div>Home Content</div>;
+        return <div><img src={mainImage} alt="" /></div>;
     }
   };
   console.log(currentView);

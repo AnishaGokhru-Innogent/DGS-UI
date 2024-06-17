@@ -87,6 +87,7 @@ export function Seedocument() {
             type="primary"
             icon={<HomeOutlined />}
             onClick={() => navigate("/home")}
+            style={{backgroundColor:"#01606F"}}
           >
             Home
           </Button>
@@ -96,6 +97,7 @@ export function Seedocument() {
             type="primary"
             icon={<DownloadOutlined />}
             onClick={generatePdf}
+            style={{backgroundColor:"#01606F"}}
           >
             Download as PDF
           </Button>

@@ -119,6 +119,7 @@ const Signature = () => {
     setIsModalOpen(false);
     const savedDataURL = handleSave();
     let signatureUrl = "";
+    let signed ="";
     const apiEndpoint = getApiEndpoint();
     if (!apiEndpoint) {
       toast.error("Invalid signature type.");
@@ -143,7 +144,8 @@ const Signature = () => {
       signatureData = {
         signatureType: signatureType,
         documentId: decodedDocumentId,
-        placeholder:decodedPlaceholder
+        placeholder:decodedPlaceholder,
+        signed:"true"
       };
       console.log(signatureData);
       headers = { "Content-Type": "application/json" };

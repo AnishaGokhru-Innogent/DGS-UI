@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import "../CSS/chooseCreateTemplate.css";
 import { Button, Col, Row, Tooltip, Typography, Upload, message } from "antd";
 import { UploadOutlined, FileAddOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import image from "../Images/mainImage3.jpg";
 
 export function ChooseCreateTemplate({ setCurrentView, setUploadedFile }) {
   const buttonStyle = {

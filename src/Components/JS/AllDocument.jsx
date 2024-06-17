@@ -5,7 +5,7 @@ import { Button, Space, Table, notification,Popconfirm,message ,Tag} from "antd"
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { render } from "@testing-library/react";
-import {EyeOutlined,DeleteOutlined} from "@ant-design/icons";
+import {FileImageOutlined,DeleteOutlined} from "@ant-design/icons";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState();
@@ -100,12 +100,12 @@ export function Alldocument() {
     },
     {
       title: "",
-      key: "use",
+      key: "view",
       render: (_, record) => (
         <Space>
           <Button
             style={{backgroundColor:"#01606F",color:"white"}}
-            icon={<EyeOutlined/>}
+            icon={<FileImageOutlined/>}
             onClick={() => {
               navigate(`/document/${record.documentId}`);
             }}

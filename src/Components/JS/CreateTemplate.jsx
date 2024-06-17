@@ -264,8 +264,8 @@ const CreateTemplate = ({ uploadedFile }) => {
           </div>
           <div style={{ marginTop: "20px" }}>
             <Form.Item
-              label="Document Name"
-              name="Document Name"
+              label="Template Name"
+              name="Template Name"
               rules={[{ required: true, message: "Please input!" }]}
             >
               <Input
@@ -302,7 +302,7 @@ const CreateTemplate = ({ uploadedFile }) => {
             <Typography.Link href="#API">How to use this? </Typography.Link>
           </Tooltip>
           <Title level={5}>Add Placeholder</Title>
-          <div>
+          <div style={{marginTop:"12px"}}>
             <Input
               type="text"
               placeholder="Placeholder Name"
@@ -324,7 +324,7 @@ const CreateTemplate = ({ uploadedFile }) => {
               ]}
             />
             <Button
-              style={{ backgroundColor: "#01606F", color: "white" }}
+              style={{ backgroundColor: "#01606F", color: "white",marginTop:"10px" }}
               onClick={addPlaceholder}
               icon={<BookOutlined />}
             >
