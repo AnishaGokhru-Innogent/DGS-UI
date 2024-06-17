@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Col, Row, Upload, message } from "antd";
+import { Button, Col, Row, Tooltip, Typography, Upload, message } from "antd";
 import { UploadOutlined, FileAddOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
@@ -37,47 +37,65 @@ export function ChooseCreateTemplate({ setCurrentView, setUploadedFile }) {
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center"
-      style={{ height: "60vh" }}
-    >
-      <Row gutter={[16, 16]} justify="center" align="middle">
-        <Col>
-          <Upload
-            accept=".docx"
-            showUploadList={false}
-            customRequest={({ file }) => handleFileChange(file)}
-          >
-            <Button
-              // type="primary"
-              style={buttonStyle}
-              className="d-flex justify-content-center align-items-center"
-              icon={
-                <UploadOutlined
-                  style={{ fontSize: "24px", marginRight: "10px" }}
-                />
-              }
-            >
-              Upload Word File
-            </Button>
-          </Upload>
-        </Col>
-        <Col>
-          <Button
-            onClick={() => setCurrentView("CreateTemplate")}
-            danger
-            style={buttonStyle}
-            className="d-flex justify-content-center align-items-center"
-            icon={
-              <FileAddOutlined
-                style={{ fontSize: "24px", marginRight: "10px" }}
-              />
-            }
-          >
-            Create
-          </Button>
-        </Col>
-      </Row>
+    <div>
+      <h1 className="d-flex justify-content-center">Create Template</h1>
+
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "60vh" }}
+      >
+        <Row gutter={[16, 16]} justify="center" align="middle">
+          <Col>
+            <Row>
+              <Upload
+                accept=".docx"
+                showUploadList={false}
+                customRequest={({ file }) => handleFileChange(file)}
+              >
+                <Button
+                  // type="primary"
+                  style={buttonStyle}
+                  className="d-flex justify-content-center align-items-center"
+                  icon={
+                    <UploadOutlined
+                      style={{ fontSize: "24px", marginRight: "10px" }}
+                    />
+                  }
+                >
+                  Upload Word File
+                </Button>
+              </Upload>
+            </Row>
+            <Row className="d-flex justify-content-center">
+              <Tooltip title="Upload Word Document and insert the placeholder">
+                <Typography.Link href="#API">Need Help? </Typography.Link>
+              </Tooltip>
+            </Row>
+          </Col>
+          <Col>
+            <Row>
+              <Button
+                onClick={() => setCurrentView("CreateTemplate")}
+                danger
+                style={buttonStyle}
+                className="d-flex justify-content-center align-items-center"
+                icon={
+                  <FileAddOutlined
+                    style={{ fontSize: "24px", marginRight: "10px" }}
+                  />
+                }
+              >
+                Create
+              </Button>
+            </Row>
+            <Row className="d-flex justify-content-center">
+              <Tooltip title="Create Document Template from the scratch">
+                <Typography.Link href="#API">Need Help? </Typography.Link>
+              </Tooltip>
+            </Row>
+          </Col>
+        </Row>
+      </div>
     </div>
   );
 }

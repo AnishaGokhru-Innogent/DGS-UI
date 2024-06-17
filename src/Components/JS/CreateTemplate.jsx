@@ -10,6 +10,7 @@ import {
   Typography,
   Row,
   Col,
+  Tooltip,
 } from "antd";
 import { UploadOutlined, SaveOutlined, BookOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -136,8 +137,8 @@ const CreateTemplate = ({ uploadedFile }) => {
       .then((response) => response.data, message.success("Template Saved"))
       .then((res) => setResTemplate(res))
       .catch(
-        (error) => console.log(error),
-        message.error("Error Occured In Saving Tempalte")
+        (error) => console.log(error)
+        // message.error("Error Occured In Saving Tempalte")
       );
   }
 
@@ -297,6 +298,9 @@ const CreateTemplate = ({ uploadedFile }) => {
           </div>
         </Col>
         <Col span={7}>
+          <Tooltip title="Create Document Template from the scratch">
+            <Typography.Link href="#API">How to use this? </Typography.Link>
+          </Tooltip>
           <Title level={5}>Add Placeholder</Title>
           <div>
             <Input

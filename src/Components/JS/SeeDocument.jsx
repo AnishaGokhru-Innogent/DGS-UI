@@ -37,6 +37,7 @@ export function Seedocument() {
         }
       );
       const signaturesData = signatureResponse.data;
+      console.log(signaturesData);
 
       let updatedDocumentBody = documentData.documentBody;
 
