@@ -20,7 +20,7 @@ import {
   DownloadOutlined,
   SendOutlined,
   FileAddOutlined,
-  BackwardOutlined
+  BackwardOutlined,
 } from "@ant-design/icons";
 
 export function CreateDocument() {
@@ -126,11 +126,18 @@ export function CreateDocument() {
 
   return (
     <div className="create-document-container ">
-      <div className="d-flex justify-content-between">
-      <div>
-      <Button style={{backgroundColor:"#01606F",color:"white"}} icon={<BackwardOutlined/>} onClick={() => navigate("/home")}>HOME</Button>
-      </div>
-           <div >
+      <Spin spinning={loading} size="large">
+        <div className="d-flex justify-content-between">
+          <div>
+            <Button
+              style={{ backgroundColor: "#01606F", color: "white" }}
+              icon={<BackwardOutlined />}
+              onClick={() => navigate("/home")}
+            >
+              HOME
+            </Button>
+          </div>
+          <div>
             <Button
               type="primary"
               onClick={generatePdf}
@@ -148,99 +155,106 @@ export function CreateDocument() {
               Save & Send Email
             </Button>
           </div>
-      
-      </div>
-     
-      <div className="ms-5">
-      <Row  gutter={24} style={{marginTop:"20px"}} >
-        <Col span={9} style={{boxShadow:"2px 2px 2px 2px grey",padding:"20px"}} className="p-4">
-          <div style={{textAlign:"center"}}>
-          <h3>Create Document</h3>
-          <hr style={{width:"440px",backgroundColor:"#01606F"}}></hr>
-          </div>
-          <div className="d-flex" style={{marginTop:"20px"}}>
-            <h6 className="mt-1">Document Name:</h6>
-            <Input
-              style={{ width: "60%", marginBottom: "20px" ,marginLeft:"20px"}}
-              value={documentName}
-              onChange={(e) => setDocumentName(e.target.value)}
-              placeholder="Enter Document Name"
-            />
-          </div>
-          <Form
-            name="basic"
-            // labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            initialValues={{ remember: true }}
-            autoComplete="on"
-            onFinish={populateTemplate}
-            style={{marginTop:"15px"}}
-          >
-            {fields.map((field, index) => (
-              <Form.Item
-                label={field.placeholderName}
-                name={field.placeholderName}
-                key={index}
-                rules={[
-                  {
-                    required: true,
-                    message: `Please input valid ${field.placeholderName.toLowerCase()}`,
-                  },
-                  field.placeholderType === "email" && {
-                    type: "email",
-                    message: "Please enter a valid email address",
-                  },
-                ]}
+        </div>
+
+        <div className="ms-5">
+          <Row gutter={24} style={{ marginTop: "20px" }}>
+            <Col span={9} style={{ padding: "20px" }} className="p-4">
+              <div style={{ textAlign: "center" }}>
+                <h3>Create Document</h3>
+                <hr style={{ width: "440px", backgroundColor: "#01606F" }}></hr>
+              </div>
+              <div className="d-flex" style={{ marginTop: "20px" }}>
+                <h6 className="mt-1">Document Name:</h6>
+                <Input
+                  style={{
+                    width: "60%",
+                    marginBottom: "20px",
+                    marginLeft: "20px",
+                  }}
+                  value={documentName}
+                  onChange={(e) => setDocumentName(e.target.value)}
+                  placeholder="Enter Document Name"
+                />
+              </div>
+              <Form
+                name="basic"
+                // labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                initialValues={{ remember: true }}
+                autoComplete="on"
+                onFinish={populateTemplate}
+                style={{ marginTop: "15px" }}
               >
-                {field.placeholderType === "signature" ? (
-                  // <Tooltip title="Enter the email of the person whose signature is required">
-                  <Space direction="horizontal">
-                    To
-                    <Input type="email" placeholder="Receipient Email" />
-                    <Tooltip title="Input valid Receipient Email for Signature">
-                      <Typography.Link href="#API">Need Help? </Typography.Link>
-                    </Tooltip>
-                    {/* <Typography.Text type="secondary">
+                {fields.map((field, index) => (
+                  <Form.Item
+                    label={field.placeholderName}
+                    name={field.placeholderName}
+                    key={index}
+                    rules={[
+                      {
+                        required: true,
+                        message: `Please input valid ${field.placeholderName.toLowerCase()}`,
+                      },
+                      field.placeholderType === "email" && {
+                        type: "email",
+                        message: "Please enter a valid email address",
+                      },
+                    ]}
+                  >
+                    {field.placeholderType === "signature" ? (
+                      // <Tooltip title="Enter the email of the person whose signature is required">
+                      <Space direction="horizontal">
+                        To
+                        <Input type="email" placeholder="Receipient Email" />
+                        <Tooltip title="Input valid Receipient Email for Signature">
+                          <Typography.Link href="#API">
+                            Need Help?{" "}
+                          </Typography.Link>
+                        </Tooltip>
+                        {/* <Typography.Text type="secondary">
                         Please enter the email address of the recipient who needs
                         to sign this document.
                       </Typography.Text> */}
-                  </Space>
-                ) : (
-                  <Input
-                    type={field.placeholderType}
-                    style={{width:"220px"}}
-                    placeholder={`Enter ${field.placeholderName} value`}
-                  />
-                )}
-              </Form.Item>
-            ))}
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button
-                type="primary"
-                htmlType="submit"
-                style={{ backgroundColor: "#01606F",marginRight:"150px",position:"relative",right:"150px"}}
-                icon={<FileAddOutlined />}
-
-              >
-                Populate Template
-              </Button>
-              
-            </Form.Item>
-          </Form>
-          
-        </Col>
-        <Col span={14}>
-          <div className="a4-paper">
-            <div
-              ref={documentPdf}
-              dangerouslySetInnerHTML={{ __html: documentBody }}
-              className="document-body"
-            ></div>
-          </div>
-        </Col>
-      </Row>
-      </div>
-     </div>
-   
+                      </Space>
+                    ) : (
+                      <Input
+                        type={field.placeholderType}
+                        style={{ width: "220px" }}
+                        placeholder={`Enter ${field.placeholderName} value`}
+                      />
+                    )}
+                  </Form.Item>
+                ))}
+                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{
+                      backgroundColor: "#01606F",
+                      marginRight: "150px",
+                      position: "relative",
+                      right: "150px",
+                    }}
+                    icon={<FileAddOutlined />}
+                  >
+                    Populate Template
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Col>
+            <Col span={14}>
+              <div className="a4-paper">
+                <div
+                  ref={documentPdf}
+                  dangerouslySetInnerHTML={{ __html: documentBody }}
+                  className="document-body"
+                ></div>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </Spin>
+    </div>
   );
 }

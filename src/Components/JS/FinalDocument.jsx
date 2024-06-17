@@ -1,19 +1,15 @@
 import axios from "axios";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import baseUrl from "../../BootApi";
 import { useEffect, useRef, useState } from "react";
 import { Button, message } from "antd";
 import { useReactToPrint } from "react-to-print";
-import { HomeOutlined, DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined } from "@ant-design/icons";
 
 export function FinalDocument() {
-  const documentId = useParams();
-  const [document, setDocument] = useState();
+  const { documentId } = useParams();
+  const [document, setDocument] = useState(null);
   const signatureRef = useRef();
-
-  useEffect(() => {
-    getDocumentAndSignature(decodedDocumentId);
-  }, []);
 
   const decodeBase64Url = (encodedWord) => {
     try {
@@ -23,8 +19,17 @@ export function FinalDocument() {
       return null;
     }
   };
-
   const decodedDocumentId = decodeBase64Url(documentId);
+
+  console.log(decodedDocumentId);
+
+  useEffect(() => {
+    if (decodedDocumentId) {
+      getDocumentAndSignature(decodedDocumentId);
+    }
+  }, [decodedDocumentId]);
+
+  console.log(document);
 
   async function getDocumentAndSignature(id) {
     try {
@@ -62,33 +67,36 @@ export function FinalDocument() {
 
   const generatePdf = useReactToPrint({
     content: () => signatureRef.current,
-    // documentTitle: document.documentName,
+    // documentTitle: document ? document.documentName : "Document",
     onAfterPrint: () => message.success("Document Downloaded"),
   });
+
   return (
     <div>
       <h1>Final Document</h1>
       <Button type="primary" icon={<DownloadOutlined />} onClick={generatePdf}>
         Download as PDF
       </Button>
-      <div
-        ref={signatureRef}
-        // dangerouslySetInnerHTML={{ __html: document.documentBody }}
-        style={{
-          color: "black",
-          whiteSpace: "pre-wrap",
-          overflowWrap: "break-word",
-          padding: "20px",
-          // border: "2px solid black",
-          width: "794px",
-          height: "1123px",
-          background: "white",
-          boxShadow: "0 0 10px rgba(0,0,0,0.2)",
-          // margin: "0 auto",
-          overflow: "hidden",
-          transform: "scale(1)",
-        }}
-      ></div>
+      {document ? (
+        <div
+          ref={signatureRef}
+          dangerouslySetInnerHTML={{ __html: document.documentBody }}
+          style={{
+            color: "black",
+            whiteSpace: "pre-wrap",
+            overflowWrap: "break-word",
+            padding: "20px",
+            width: "794px",
+            height: "1123px",
+            background: "white",
+            boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+            overflow: "hidden",
+            transform: "scale(1)",
+          }}
+        ></div>
+      ) : (
+        <p>Loading document...</p>
+      )}
     </div>
   );
 }

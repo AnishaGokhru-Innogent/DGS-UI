@@ -95,7 +95,10 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/final-document/:id" element={<FinalDocument />} />
+          <Route
+            path="/final-document/:documentId"
+            element={<FinalDocument />}
+          />
         </Routes>
       </>
     </>

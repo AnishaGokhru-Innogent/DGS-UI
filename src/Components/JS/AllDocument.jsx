@@ -9,68 +9,74 @@ import {
   Popconfirm,
   message,
   Tag,
+  Spin,
 } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import { render } from "@testing-library/react";
-import {FileImageOutlined,DeleteOutlined} from "@ant-design/icons";
+import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
 
 export function Alldocument() {
-  const [documents, setDocuments] = useState();
-
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const userId = localStorage.getItem("userId");
   const bearerToken = localStorage.getItem("token");
-  async function getDocumentsOfUser(Id) {
-    await axios
-      .get(`${baseUrl}/document/get-documents/${Id}`, {
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
-      .then((response) => response.data)
-      .then((data) => setDocuments(data))
-      .catch((error) => console.log(error));
-  }
+
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotificationWithIcon = (type, msg) => {
+    api[type]({
+      message: msg,
+    });
+  };
+
+  const getDocumentsOfUser = async (id) => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/document/get-documents/${id}`,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
+      );
+      setDocuments(response.data);
+    } catch (error) {
+      console.error(error);
+      openNotificationWithIcon("error", "Failed to fetch documents");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getDocumentsOfUser(userId);
-  }, []);
-  // console.log(documents);
-  const [api, contextHolder] = notification.useNotification();
+  }, [userId]);
 
-  const openNotificationWithIcon = (type, message) => {
-    api[type]({
-      message: message,
-    });
-  };
-  const cancel = (e) => {
-    console.log(e);
-    message.error("Click on No");
-  };
-  async function DeleteDocument(id) {
-    await axios
-      .delete(`${baseUrl}/document/delete-doc/${id}`, {
+  const deleteDocument = async (id) => {
+    try {
+      await axios.delete(`${baseUrl}/document/delete-doc/${id}`, {
         headers: { Authorization: `Bearer ${bearerToken}` },
-      })
-      .then((response) => {
-        message.success("Document Deleted Succesfully");
-      })
-      .catch((error) => {
-        openNotificationWithIcon("error", `Error Occured in Deletion`);
       });
-    setDocuments(documents.filter((doc) => doc.documentId !== id));
-  }
+      message.success("Document deleted successfully");
+      setDocuments((prevDocuments) =>
+        prevDocuments.filter((doc) => doc.documentId !== id)
+      );
+    } catch (error) {
+      openNotificationWithIcon("error", "Error occurred in deletion");
+    }
+  };
 
   const columns = [
     {
       title: "Sno",
       key: "Sno",
       render: (_, __, index) => index + 1,
+      width: "80px",
     },
     {
       title: "Document Name",
       dataIndex: "documentName",
-      key: "Document Name",
+      key: "documentName",
     },
     {
       title: "Date Of Creation",
@@ -89,11 +95,17 @@ export function Alldocument() {
         }
         return null;
       },
+      sorter: (a, b) => moment(b.createdAt).diff(moment(a.createdAt)),
+      defaultSortOrder: "descend",
     },
     {
       title: "Status",
-      // dataIndex: "status",
-      key: "Status",
+      key: "status",
+      filters: [
+        { text: "SIGNED", value: "SIGNED" },
+        { text: "PENDING", value: "PENDING" },
+      ],
+      onFilter: (value, record) => record.status === value,
       render: (_, record) => {
         let color = "magenta";
         if (record.status === "SIGNED") {
@@ -112,11 +124,9 @@ export function Alldocument() {
       render: (_, record) => (
         <Space>
           <Button
-            style={{backgroundColor:"#01606F",color:"white"}}
-            icon={<FileImageOutlined/>}
-            onClick={() => {
-              navigate(`/document/${record.documentId}`);
-            }}
+            style={{ backgroundColor: "#01606F", color: "white" }}
+            icon={<FileImageOutlined />}
+            onClick={() => navigate(`/document/${record.documentId}`)}
           >
             View
           </Button>
@@ -128,9 +138,9 @@ export function Alldocument() {
       key: "use",
       render: (_, record) => (
         <Popconfirm
-          title="Delete the task"
-          description="Are you sure to delete this task?"
-          onConfirm={() => DeleteDocument(record.documentId)}
+          title="Delete the document"
+          description="Are you sure you want to delete this document?"
+          onConfirm={() => deleteDocument(record.documentId)}
           onCancel={cancel}
           okText="Yes"
           cancelText="No"
@@ -142,21 +152,31 @@ export function Alldocument() {
       ),
     },
   ];
+
+  const cancel = (e) => {
+    console.log(e);
+    message.error("Click on No");
+  };
+
   return (
-    <div>
-      <h2>All Document</h2>
+    <div style={{ padding: "20px" }}>
+      <h2>All Documents</h2>
       {contextHolder}
-      <div className="mt-4">
-        <Table
-          dataSource={documents}
-          columns={columns}
-          borderColor="black"
-          scroll={{
-            x: "100%",
-            y: 450,
-          }}
-        />
-      </div>
+      <Spin spinning={loading}>
+        <div
+          className="mt-4"
+          style={{ transform: "scale(0.9)", marginTop: "20px" }}
+        >
+          <Table
+            dataSource={documents}
+            columns={columns}
+            rowKey="documentId"
+            bordered
+            scroll={{ x: "100%", y: 450 }}
+            pagination={{ pageSize: 6 }}
+          />
+        </div>
+      </Spin>
     </div>
   );
 }

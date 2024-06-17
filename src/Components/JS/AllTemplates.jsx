@@ -1,59 +1,64 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
-import { render } from "@testing-library/react";
-import { Button, Space, Table, notification ,Popconfirm , message} from "antd";
+import {
+  Button,
+  Space,
+  Table,
+  notification,
+  Popconfirm,
+  message,
+  Spin,
+} from "antd";
 import { useNavigate } from "react-router-dom";
-import { log } from "util";
 import moment from "moment";
-import {FileImageOutlined,DeleteOutlined} from "@ant-design/icons";
+import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
 
-export function Alltemplate() {
+export function AllTemplate() {
   const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const userid = localStorage.getItem("userId");
+  const userId = localStorage.getItem("userId");
   const bearerToken = localStorage.getItem("token");
-  const [userId, setUserId] = useState(userid); //we will use this for getting user object from database
 
   const [api, contextHolder] = notification.useNotification();
-  const openNotificationWithIcon = (type, message) => {
+
+  const openNotificationWithIcon = (type, msg) => {
     api[type]({
-      message: message,
+      message: msg,
     });
   };
-  async function getTemplate() {
-    await axios
-      .get(`${baseUrl}/template/all/${userId}`, {
+
+  const getTemplate = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/template/all/${userId}`, {
         headers: { Authorization: `Bearer ${bearerToken}` },
-      }) //we have to extract userId
-      .then((response) => response.data)
-      .then((data) => setTemplates(data))
-      .catch((error) => console.log(error));
-  }
+      });
+      setTemplates(response.data);
+    } catch (error) {
+      console.error(error);
+      openNotificationWithIcon("error", "Failed to fetch templates");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getTemplate();
   }, []);
 
-  console.log(templates);
-
-  async function DeleteTemplate(Id) {
-    await axios
-      .delete(`${baseUrl}/template/deleteTemplate/${Id}`, {
+  const deleteTemplate = async (id) => {
+    try {
+      await axios.delete(`${baseUrl}/template/deleteTemplate/${id}`, {
         headers: { Authorization: `Bearer ${bearerToken}` },
-      })
-      .then((response) => {
-        message.success("Template Deleted Successfully")
-      })
-      .catch((error) => {
-        message.error("Template Not Deleted");
       });
-    setTemplates(templates.filter((temp) => temp.templateId !== Id));
-  }
-
-  const cancel = (e) => {
-    console.log(e);
-    message.error('Click on No');
+      message.success("Template deleted successfully");
+      setTemplates((prevTemplates) =>
+        prevTemplates.filter((temp) => temp.templateId !== id)
+      );
+    } catch (error) {
+      message.error("Template not deleted");
+    }
   };
 
   const columns = [
@@ -65,7 +70,7 @@ export function Alltemplate() {
     {
       title: "Template Name",
       dataIndex: "templateName",
-      key: "Template Name",
+      key: "templateName",
     },
     {
       title: "Date Of Creation",
@@ -82,58 +87,64 @@ export function Alltemplate() {
             </span>
           );
         }
+        return null;
       },
+      sorter: (a, b) => moment(b.createdAt).diff(moment(a.createdAt)),
+      defaultSortOrder: "descend",
     },
     {
-      title: "",
-      key: "use",
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
         <Space>
           <Button
-            icon={<FileImageOutlined/>}
-            style={{backgroundColor:"#01606F",color:"white"}}
-            onClick={() => {
-              navigate(`/create-document/${record.templateId}`);
-            }}
+            icon={<FileImageOutlined />}
+            style={{ backgroundColor: "#01606F", color: "white" }}
+            onClick={() => navigate(`/create-document/${record.templateId}`)}
           >
             Use
           </Button>
+          <Popconfirm
+            title="Delete Template"
+            description="Are you sure you want to delete this template?"
+            onConfirm={() => deleteTemplate(record.templateId)}
+            onCancel={() => message.error("Click on No")}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button icon={<DeleteOutlined />} danger>
+              Delete
+            </Button>
+          </Popconfirm>
         </Space>
-      ),
-    },
-    {
-      title: "",
-      key: "use",
-      render: (_, record) => (
-        <Popconfirm
-          title="Delete the task"
-          description="Are you sure to delete this task?"
-          onConfirm={() => DeleteTemplate(record.templateId)}
-          onCancel={cancel}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button icon={<DeleteOutlined/>} danger>Delete</Button>
-        </Popconfirm>
       ),
     },
   ];
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h2>All Templates</h2>
       {contextHolder}
-      <div className="mt-4">
-        <Table
-          dataSource={templates}
-          columns={columns}
-          borderColor="black"
-          scroll={{
-            x: "100%",
-            y: 330,
+      <Spin spinning={loading}>
+        <div
+          className="mt-4"
+          style={{
+            marginTop: "20px",
           }}
-        />
-      </div>
+        >
+          <Table
+            dataSource={templates}
+            columns={columns}
+            rowKey="templateId"
+            bordered
+            scroll={{
+              x: "100%",
+              y: 330,
+            }}
+            pagination={{ pageSize: 10 }}
+          />
+        </div>
+      </Spin>
     </div>
   );
 }

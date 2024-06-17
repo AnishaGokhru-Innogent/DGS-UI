@@ -64,7 +64,7 @@ const Signature = () => {
   };
 
   useEffect(() => {
-    getDocument(decodedDocumentId);
+    getDocumentAndSignature(decodedDocumentId);
     checkSignatureStatus(decodedDocumentId, decodedPlaceholder);
   }, [decodedDocumentId, decodedPlaceholder]);
 
@@ -80,16 +80,39 @@ const Signature = () => {
     }
   };
 
-  const getDocument = (id) => {
-    axios
-      .get(`${baseUrl}/document/get-document/${id}`)
-      .then((response) => {
-        setDocument(response.data);
-      })
-      .catch((error) => {
-        toast.error("Something Went Wrong");
+  async function getDocumentAndSignature(id) {
+    try {
+      const documentResponse = await axios.get(
+        `${baseUrl}/document/getDocument/${id}`
+      );
+      const documentData = documentResponse.data;
+      setDocument(documentData);
+
+      const signatureResponse = await axios.get(
+        `${baseUrl}/signature/getSignatures/${id}`
+      );
+      const signaturesData = signatureResponse.data;
+      console.log(signaturesData);
+
+      let updatedDocumentBody = documentData.documentBody;
+
+      signaturesData.forEach((signature) => {
+        const { signatureData: signatureBase64, placeholder } = signature;
+        const signatureUrl = `data:image/png;base64,${signatureBase64}`;
+        updatedDocumentBody = updatedDocumentBody.replace(
+          placeholder,
+          `<img src="${signatureUrl}" alt="Signature" width="200" height="100"/>`
+        );
       });
-  };
+
+      setDocument((prevDocument) => ({
+        ...prevDocument,
+        documentBody: updatedDocumentBody,
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const getApiEndpoint = () => {
     switch (signatureType) {
@@ -117,7 +140,7 @@ const Signature = () => {
     setIsModalOpen(false);
     const savedDataURL = handleSave();
     let signatureUrl = "";
-    let signed ="";
+    let signed = "";
     const apiEndpoint = getApiEndpoint();
     if (!apiEndpoint) {
       toast.error("Invalid signature type.");
@@ -142,8 +165,8 @@ const Signature = () => {
       signatureData = {
         signatureType: signatureType,
         documentId: decodedDocumentId,
-        placeholder:decodedPlaceholder,
-        signed:"true"
+        placeholder: decodedPlaceholder,
+        signed: "true",
       };
       console.log(signatureData);
       headers = { "Content-Type": "application/json" };
