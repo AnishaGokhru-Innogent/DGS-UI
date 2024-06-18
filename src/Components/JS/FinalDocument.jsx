@@ -67,33 +67,45 @@ export function FinalDocument() {
 
   const generatePdf = useReactToPrint({
     content: () => signatureRef.current,
-    // documentTitle: document ? document.documentName : "Document",
+    documentTitle: document ? document.documentName : "Document",
     onAfterPrint: () => message.success("Document Downloaded"),
   });
 
   return (
     <div>
-      <h1>Final Document</h1>
-      <Button type="primary" icon={<DownloadOutlined />} onClick={generatePdf}>
-        Download as PDF
-      </Button>
+      <div>
+        <h1 className="d-flex justify-content-center">
+          {document.documentName}
+        </h1>
+        <div className="d-flex justify-content-center">
+          <Button
+            type="primary"
+            icon={<DownloadOutlined />}
+            onClick={generatePdf}
+          >
+            Download as PDF
+          </Button>
+        </div>
+      </div>
       {document ? (
-        <div
-          ref={signatureRef}
-          dangerouslySetInnerHTML={{ __html: document.documentBody }}
-          style={{
-            color: "black",
-            whiteSpace: "pre-wrap",
-            overflowWrap: "break-word",
-            padding: "20px",
-            width: "794px",
-            height: "1123px",
-            background: "white",
-            boxShadow: "0 0 10px rgba(0,0,0,0.2)",
-            overflow: "hidden",
-            transform: "scale(1)",
-          }}
-        ></div>
+        <div className="d-flex justify-content-center">
+          <div
+            ref={signatureRef}
+            dangerouslySetInnerHTML={{ __html: document.documentBody }}
+            style={{
+              color: "black",
+              whiteSpace: "pre-wrap",
+              overflowWrap: "break-word",
+              padding: "20px",
+              width: "794px",
+              height: "1123px",
+              background: "white",
+              boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+              overflow: "hidden",
+              transform: "scale(1)",
+            }}
+          ></div>
+        </div>
       ) : (
         <p>Loading document...</p>
       )}

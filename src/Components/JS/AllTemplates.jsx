@@ -13,6 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
+import CryptoJS from "crypto-js";
 
 export function AllTemplate() {
   const [templates, setTemplates] = useState([]);
@@ -22,6 +23,30 @@ export function AllTemplate() {
   const bearerToken = localStorage.getItem("token");
 
   const [api, contextHolder] = notification.useNotification();
+
+  const secretKey =
+    "sD3rReEbZ+kjdUCCYD9ov/0fBb5ttGwzzZd1VRBmFwFAUTo3gwfBxBZ3UwngzTFn";
+
+  const urlSafeBase64Encode = (str) => {
+    return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  };
+
+  const encryptTemplateId = (templateId) => {
+    const stringTemplateId = String(templateId);
+
+    // console.log("Encrypting TemplateId:", stringTemplateId);
+
+    const encrypted = CryptoJS.AES.encrypt(
+      stringTemplateId,
+      secretKey
+    ).toString();
+    return urlSafeBase64Encode(encrypted);
+  };
+
+  const handleUseClick = (templateId) => {
+    const encryptedTemplateId = encryptTemplateId(templateId);
+    navigate(`/create-document/${encryptedTemplateId}`);
+  };
 
   const openNotificationWithIcon = (type, msg) => {
     api[type]({
@@ -100,8 +125,9 @@ export function AllTemplate() {
           <Button
             icon={<FileImageOutlined />}
             style={{ backgroundColor: "#01606F", color: "white" }}
-            onClick={() => navigate(`/create-document/${record.templateId}`)}
+            onClick={() => handleUseClick(record.templateId)}
           >
+            {/* navigate(`/create-document/${record.templateId}`) */}
             Use
           </Button>
           <Popconfirm

@@ -14,6 +14,7 @@ import {
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
+import CryptoJS from "crypto-js";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState([]);
@@ -46,6 +47,31 @@ export function Alldocument() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const secretKey =
+    "sD3rReEbZ+kjdUCCYD9ov/0fBb5ttGwzzZd1VRBmFwFAUTo3gwfBxBZ3UwngzTFn";
+
+  const urlSafeBase64Encode = (str) => {
+    return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  };
+
+  const encryptDocumentId = (documentId) => {
+    const stringDocumentId = String(documentId);
+
+    console.log("Encrypting documentId:", stringDocumentId);
+
+    const encrypted = CryptoJS.AES.encrypt(
+      stringDocumentId,
+      secretKey
+    ).toString();
+    return urlSafeBase64Encode(encrypted);
+  };
+
+  const handleViewClick = (documentId) => {
+    const encryptedDocumentId = encryptDocumentId(documentId);
+    // console.log(encryptedDocumentId);
+    navigate(`/document/${encryptedDocumentId}`);
   };
 
   useEffect(() => {
@@ -126,7 +152,7 @@ export function Alldocument() {
           <Button
             style={{ backgroundColor: "#01606F", color: "white" }}
             icon={<FileImageOutlined />}
-            onClick={() => navigate(`/document/${record.documentId}`)}
+            onClick={() => handleViewClick(record.documentId)}
           >
             View
           </Button>

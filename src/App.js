@@ -1,5 +1,4 @@
 import "./App.css";
-import ModalSignature from "./ModalSignature";
 import Signature from "./Components/JS/Signature";
 import Home from "./Components/JS/Home";
 import { ToastContainer } from "react-toastify";

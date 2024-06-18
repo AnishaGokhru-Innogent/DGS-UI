@@ -22,6 +22,7 @@ import {
   FileAddOutlined,
   BackwardOutlined,
 } from "@ant-design/icons";
+import CryptoJS from "crypto-js";
 
 export function CreateDocument() {
   const { id } = useParams();
@@ -35,6 +36,27 @@ export function CreateDocument() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    decryptTemplateId(id);
+  }, []);
+
+  const secretKey =
+    "sD3rReEbZ+kjdUCCYD9ov/0fBb5ttGwzzZd1VRBmFwFAUTo3gwfBxBZ3UwngzTFn";
+
+  const urlSafeBase64Decode = (str) => {
+    str = str.replace(/-/g, "+").replace(/_/g, "/");
+    while (str.length % 4) {
+      str += "=";
+    }
+    return str;
+  };
+
+  const decryptTemplateId = (encrypteTemplateId) => {
+    const decoded = urlSafeBase64Decode(encrypteTemplateId);
+    const bytes = CryptoJS.AES.decrypt(decoded, secretKey);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  };
 
   async function getTemplateAndFields(templateId) {
     try {
@@ -59,7 +81,8 @@ export function CreateDocument() {
   }
 
   useEffect(() => {
-    getTemplateAndFields(id);
+    const decodedTemplateId = decryptTemplateId(id);
+    getTemplateAndFields(decodedTemplateId);
   }, [id]);
 
   async function populateTemplate(values) {
@@ -69,7 +92,7 @@ export function CreateDocument() {
         formData.append(key, value);
       }
       const response = await axios.post(
-        `${baseUrl}/document/populate/${id}`,
+        `${baseUrl}/document/populate/${decryptTemplateId(id)}`,
         formData,
         {
           headers: { Authorization: `Bearer ${bearerToken}` },
@@ -98,13 +121,15 @@ export function CreateDocument() {
       }, {});
     message.success("Document Saved");
 
+    const decodedTemplateId = decryptTemplateId(id);
+
     const documentData = {
       documentName: documentName,
       documentBody: documentBody,
       status: fields.some((field) => field.placeholderType === "signature")
         ? "PENDING"
         : "COMPLETED",
-      templateId: id,
+      templateId: decodedTemplateId,
       userId: userId,
       signatureEmails: signatureEmails,
     };
