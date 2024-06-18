@@ -1,11 +1,12 @@
-import React, { useState ,useEffect} from "react";
-import axios  from "axios";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 // import baseUrl from "../../Components/JS/BootApi"
 const { Option } = Select;
 const Register = () => {
+
     const [open, setOpen] = useState(false);
     const [departments, setDepartments] = useState([]);
     const [designations, setDesignations] = useState([]);
@@ -14,15 +15,15 @@ const Register = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [departmentName, setDepartmentName] = useState('');
-     const [designationName, setDesignationName] = useState('');
-     const [form] = Form.useForm();
+    const [designationName, setDesignationName] = useState('');
+    const [form] = Form.useForm();
     const showDrawer = () => {
         setOpen(true);
     };
     const onClose = () => {
         setOpen(false);
         form.resetFields();
-        resetState(); 
+        resetState();
     };
     const resetState = () => {
         setEmail('');
@@ -34,7 +35,13 @@ const Register = () => {
     };
     const fetchDepartments = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/department/getAll');
+            const token = localStorage.getItem("token");
+            const response = await axios.get('http://localhost:8080/department/getAll', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
             setDepartments(response.data);
             // console.log(response.data);
         } catch (error) {
@@ -43,16 +50,26 @@ const Register = () => {
     };
     const fetchDesignations = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/designation/getAll');
+            const token = localStorage.getItem("token");
+            const response = await axios.get('http://localhost:8080/designation/getAll', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setDesignations(response.data);
-            // console.log(response.data);
+            //console.log(response.data);
         } catch (error) {
             console.error('Error fetching designations:', error);
         }
     };
     const getDepartmentIdByName = async (name) => {
         try {
-            const response = await axios.get(`http://localhost:8080/department/getByName/${name}`);
+            const token = localStorage.getItem("token");
+            const response = await axios.get(`http://localhost:8080/department/getByName/${name}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             return response.data.departmentId;
         } catch (error) {
             console.error('Error fetching department by name:', error);
@@ -63,7 +80,12 @@ const Register = () => {
 
     const getDesignationByName = async (name) => {
         try {
-            const response = await axios.get(`http://localhost:8080/designation/getByName/${name}`);
+            const token = localStorage.getItem("token");
+            const response = await axios.get(`http://localhost:8080/designation/getByName/${name}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             return response.data.designationId;
         } catch (error) {
             console.error('Error fetching designation by name:', error);
@@ -72,6 +94,7 @@ const Register = () => {
         }
     };
     useEffect(() => {
+
         fetchDepartments();
         fetchDesignations();
     }, []);
@@ -93,7 +116,7 @@ const Register = () => {
             departmentId: departmentId,
             designationId: designationId
         };
-        console.log('Register data:', registerData); 
+        console.log('Register data:', registerData);
         try {
             await axios.post(
                 'http://localhost:8080/api/v1/auth/register',
@@ -111,7 +134,7 @@ const Register = () => {
         }
     };
     return <>
-        <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />} style={{backgroundColor:"#01606F"}}>
+        <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />} style={{ backgroundColor: "#01606F" }}>
             Create New User
         </Button>
         <Drawer
@@ -127,7 +150,7 @@ const Register = () => {
             extra={
                 <Space>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button style={{backgroundColor:"#589A65" , color:"white"}} onClick={handleRegister}>
+                    <Button style={{ backgroundColor: "#589A65", color: "white" }} onClick={handleRegister}>
                         Register
                     </Button>
                 </Space>
@@ -150,7 +173,7 @@ const Register = () => {
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                    <Form.Item
+                        <Form.Item
                             name="lastname"
                             label="Last Name"
                             rules={[
@@ -160,7 +183,7 @@ const Register = () => {
                                 },
                             ]}
                         >
-                            <Input placeholder="Please Enter Last name" onChange={(e) => setLastName(e.target.value)}/>
+                            <Input placeholder="Please Enter Last name" onChange={(e) => setLastName(e.target.value)} />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -177,11 +200,11 @@ const Register = () => {
                             ]}
                         >
                             <Select placeholder="Please select an department" onChange={(value) => setDepartmentName(value)}>
-                            {departments.map(dep => (
-                                        <Option key={dep.departmentName} value={dep.departmentName}>
-                                            {dep.departmentName}
-                                        </Option>
-                                    ))}
+                                {departments.map(dep => (
+                                    <Option key={dep.departmentName} value={dep.departmentName}>
+                                        {dep.departmentName}
+                                    </Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </Col>
@@ -197,18 +220,18 @@ const Register = () => {
                             ]}
                         >
                             <Select placeholder="Please choose the designation" onChange={(value) => setDesignationName(value)}>
-                            {designations.map(des => (
-                                        <Option key={des.designationName} value={des.designationName}>
-                                            {des.designationName}
-                                        </Option>
-                                    ))}
+                                {designations.map(des => (
+                                    <Option key={des.designationName} value={des.designationName}>
+                                        {des.designationName}
+                                    </Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </Col>
                 </Row>
                 <Row gutter={16}>
                     <Col span={12}>
-                    <Form.Item
+                        <Form.Item
                             name="email"
                             label="Email"
                             rules={[
@@ -217,13 +240,13 @@ const Register = () => {
                                     message: 'Please Enter Email',
                                 },
                             ]}
-                           
+
                         >
-                            <Input placeholder="Please Enter Email"  onChange={(e) => setEmail(e.target.value)}/>
+                            <Input placeholder="Please Enter Email" onChange={(e) => setEmail(e.target.value)} />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                    <Form.Item
+                        <Form.Item
                             name="password"
                             label="Password"
                             rules={[
@@ -233,13 +256,13 @@ const Register = () => {
                                 },
                             ]}
                         >
-                            <Input placeholder="Please Enter Password"  onChange={(e) => setPassword(e.target.value)}/>
+                            <Input placeholder="Please Enter Password" onChange={(e) => setPassword(e.target.value)} />
                         </Form.Item>
                     </Col>
                 </Row>
                 <Row gutter={16}>
                     <Col span={24}>
-                    <Form.Item
+                        <Form.Item
                             name="role"
                             label="Role"
                             rules={[

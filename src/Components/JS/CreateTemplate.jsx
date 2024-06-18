@@ -62,6 +62,7 @@ const CreateTemplate = () => {
   const [userId, setUserId] = useState(userid);
   const bearerToken = localStorage.getItem("token");
 
+
   const [api, contextHolder] = notification.useNotification();
 
   const openNotificationWithIcon = (type, message) => {

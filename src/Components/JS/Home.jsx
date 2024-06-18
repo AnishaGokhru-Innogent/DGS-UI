@@ -167,19 +167,15 @@ const Home = () => {
     ]
   
   //  console.log(user);
-  const menuItems = user.role === "ADMIN" ? adminMenuItems : userMenuItems;
+  const menuItems = user.role === "ROLE_ADMIN" ? adminMenuItems : userMenuItems;
   const renderContent =
-    user.role === "ADMIN" ? renderContentAdmin : renderContentUser;
+    user.role === "ROLE_ADMIN" ? renderContentAdmin : renderContentUser;
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu
-<<<<<<< HEAD
-          style={{ backgroundColor: "#4F576B", height: "100vh" }}
-=======
           style={{ backgroundColor: "#1A2037", height: "100vh" }}
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
           mode="inline"
           defaultSelectedKeys={["1"]}
           selectedKeys={[currentView]}

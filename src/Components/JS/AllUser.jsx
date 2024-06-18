@@ -1,9 +1,5 @@
 
 import React, { useEffect, useRef, useState } from "react";
-<<<<<<< HEAD
-import { SearchOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, message, Popconfirm, Drawer, Form, Select } from "antd";
-=======
 import { SearchOutlined , EditOutlined , DeleteOutlined} from "@ant-design/icons";
 import {
   Button,
@@ -19,17 +15,12 @@ import {
   Row,
   Select,
 } from "antd";
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
 import Highlighter from "react-highlight-words";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
-
-=======
 import { log } from "util";
 import { icons } from "antd/es/image/PreviewGroup";
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
 const { Option } = Select;
 
 const AllUser = () => {
@@ -39,26 +30,23 @@ const AllUser = () => {
   const [allUser, setAllUser] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [designations, setDesignations] = useState([]);
-<<<<<<< HEAD
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [departmentName, setDepartmentName] = useState("");
-  const [designationName, setDesignationName] = useState("");
-  const [form] = Form.useForm();
-  const [userId, setUserId] = useState(null);
-  const [open, setOpen] = useState(false);
-
-=======
   const [form] = Form.useForm();
   const [userId,setUserId] = useState(null);
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("token");
         const [departmentsResponse, designationsResponse] = await Promise.all([
-          axios.get("http://localhost:8080/department/getAll"),
-          axios.get("http://localhost:8080/designation/getAll"),
+          axios.get("http://localhost:8080/department/getAll",{
+             headers:{
+              Authorization:`Bearer ${token}`,
+             },
+      }),
+          axios.get("http://localhost:8080/designation/getAll",{
+            headers:{
+              Authorization:` Bearer ${token}`,
+            },
+          }),
         ]);
 
         setDepartments(departmentsResponse.data);
@@ -84,16 +72,11 @@ const AllUser = () => {
     setSearchText("");
   };
 
-<<<<<<< HEAD
-  const showDrawer = (record) => {
-    setUserId(record.userId);
-=======
   const [open, setOpen] = useState(false);
   const showDrawer = (record) => {
     setUserId(record.userId);
     console.log(record.firstName);
     console.log(record.lastName);
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
     form.setFieldsValue({
       firstName: record.firstName,
       lastName: record.lastName,
@@ -104,19 +87,6 @@ const AllUser = () => {
     });
     setOpen(true);
   };
-<<<<<<< HEAD
-
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  const findDepartmentIdByName = (name) => departments.find((dep) => dep.departmentName === name);
-  const findDesignationByName = (name) => designations.find((des) => des.designationName === name);
-
-  const updateUser = async () => {
-    const department = findDepartmentIdByName(departmentName);
-    const designation = findDesignationByName(designationName);
-=======
   const onClose = (id) => {
     setOpen(false);
   };
@@ -128,43 +98,10 @@ const AllUser = () => {
     console.log(values);
     const department = findDepartmentIdByName(values.department);
     const designation = findDesignationByName(values.designation);
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
 
     const departmentId = department.departmentId;
     const designationId = designation.designationId;
 
-<<<<<<< HEAD
-    const updateData = {
-      firstName,
-      lastName,
-      email,
-      departmentId,
-      designationId,
-    };
-
-    try {
-      let token = localStorage.getItem("token");
-      const response = await axios.put(
-        `http://localhost:8080/api/v1/users/updateUser/${userId}`,
-        updateData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      if (response.data) {
-        message.success("Updated Successfully");
-        setOpen(false);
-        fetchUsers(departments, designations);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const confirmDelete = async (id) => {
-    try {
-      let token = localStorage.getItem("token");
-=======
 
     const updateData = {
        firstName:values.firstName,
@@ -195,36 +132,31 @@ const AllUser = () => {
     try {
       let token = localStorage.getItem("token");
       console.log(id);
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
       const response = await axios.delete(
         `http://localhost:8080/api/v1/users/user/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-<<<<<<< HEAD
-      setAllUser(allUser.filter((user) => user.userId !== id));
-      message.success("Deleted Successfully");
-=======
       setAllUser(allUser.filter((user) => user.userId != id));
       message.success("Deleted SuccessFully");
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
     } catch (error) {
       toast.error("Something went wrong");
     }
   };
-<<<<<<< HEAD
-
-  const cancelDelete = () => {
-=======
   const cancel = (e) => {
     console.log(e);
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
     message.error("Click on No");
   };
 
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
       <div
         style={{
           padding: 8,
@@ -235,7 +167,9 @@ const AllUser = () => {
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
@@ -320,22 +254,9 @@ const AllUser = () => {
 
   const fetchUsers = async (departments, designations) => {
     try {
+    
       const token = localStorage.getItem("token");
-<<<<<<< HEAD
-      const response = await axios.get("http://localhost:8080/api/v1/users/getallUser", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const userWithDepartmentNames = response.data.map((user) => {
-        const department = departments.find((dept) => dept.departmentId === user.departmentId);
-        const designation = designations.find((des) => des.designationId === user.designationId);
-        return {
-          ...user,
-          departmentName: department ? department.departmentName : "Unknown",
-          designationName: designation ? designation.designationName : "Unknown",
-=======
+    
       const response = await axios.get(
         "http://localhost:8080/api/v1/users/getallUser",
         {
@@ -344,7 +265,8 @@ const AllUser = () => {
           },
         }
       );
-
+      //console.log("TOKEN",token);
+      console.log(response.data);
       const userWithDepartmentNames = response.data.map((user) => {
         const department = departments.find(
           (dept) => dept.departmentId === user.departmentId
@@ -358,7 +280,6 @@ const AllUser = () => {
           designationName: designation
             ? designation.designationName
             : "Unknown",
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
         };
       });
 
@@ -368,6 +289,7 @@ const AllUser = () => {
       console.error("Error fetching users:", error);
     }
   };
+  console.log(allUser);
 
   const columns = [
     {
@@ -405,33 +327,15 @@ const AllUser = () => {
     },
     {
       title: "",
-<<<<<<< HEAD
-      key: "updateAction",
-      render: (text, record) => (
-        <Button type="primary" onClick={() => showDrawer(record)} icon={<EditOutlined />}>
-=======
       key: "action",
       render: (text, record) => (
         <Button type="primary" onClick={()=>showDrawer(record)} icon={<EditOutlined/>}>
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
           Update
         </Button>
       ),
     },
     {
       title: "",
-<<<<<<< HEAD
-      key: "deleteAction",
-      render: (text, record) => (
-        <Popconfirm
-          title="Sure to delete?"
-          onConfirm={() => confirmDelete(record.userId)}
-          onCancel={cancelDelete}
-        >
-          <Button type="primary" danger icon={<DeleteOutlined />}>
-            Delete
-          </Button>
-=======
       key: "action",
       render: (text, record) => (
         <Popconfirm
@@ -443,7 +347,6 @@ const AllUser = () => {
           cancelText="No"
         >
           <Button danger icon={<DeleteOutlined/>}>Delete</Button>
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
         </Popconfirm>
       ),
     },
@@ -451,49 +354,6 @@ const AllUser = () => {
 
   return (
     <>
-<<<<<<< HEAD
-      <Table columns={columns} dataSource={allUser} />
-      <Drawer
-        title="Update User"
-        width={300}
-        onClose={onClose}
-        open={open}
-        bodyStyle={{
-          paddingBottom: 80,
-        }}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item name="firstName" label="First Name">
-            <Input
-              placeholder="Please enter user name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item name="lastName" label="Last Name">
-            <Input
-              placeholder="Please enter user name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item name="email" label="Email">
-            <Input
-              placeholder="Please enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item name="department" label="Department">
-            <Select
-              placeholder="Please select department"
-              value={departmentName}
-              onChange={(value) => setDepartmentName(value)}
-            >
-              {departments.map((department) => (
-                <Option key={department.departmentId} value={department.departmentName}>
-                  {department.departmentName}
-=======
       <div className="mt-4">
         <Table
           columns={columns}
@@ -582,22 +442,10 @@ const AllUser = () => {
               {departments.map((dep) => (
                 <Option key={dep.departmentName} value={dep.departmentName}>
                   {dep.departmentName}
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
                 </Option>
               ))}
             </Select>
           </Form.Item>
-<<<<<<< HEAD
-          <Form.Item name="designation" label="Designation">
-            <Select
-              placeholder="Please select designation"
-              value={designationName}
-              onChange={(value) => setDesignationName(value)}
-            >
-              {designations.map((designation) => (
-                <Option key={designation.designationId} value={designation.designationName}>
-                  {designation.designationName}
-=======
           <Form.Item
             name="designation"
             label="Designation"
@@ -614,24 +462,10 @@ const AllUser = () => {
               {designations.map((des) => (
                 <Option key={des.designationName} value={des.designationName}>
                   {des.designationName}
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
                 </Option>
               ))}
             </Select>
           </Form.Item>
-<<<<<<< HEAD
-          <Form.Item name="role" label="Role">
-            <Select>
-              <Option value="ROLE_USER">ROLE_USER</Option>
-              <Option value="ROLE_ADMIN">ROLE_ADMIN</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button onClick={updateUser} type="primary">
-              Update
-            </Button>
-          </Form.Item>
-=======
           <Form.Item
             name="role"
             label="Role"
@@ -655,7 +489,6 @@ const AllUser = () => {
             <Button onClick={onClose} style={{marginLeft:"15px"}}>Cancel</Button>
           </Space>
            </Form.Item>
->>>>>>> 14894ad48daa3bdd455e886cebd02a485945440b
         </Form>
       </Drawer>
     </>

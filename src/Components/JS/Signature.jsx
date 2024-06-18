@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { Button, Dropdown, Space, Form, Input, Upload, Modal } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
-import AnvilSignatureFrame from "@anvilco/react-signature-frame";
+//import AnvilSignatureFrame from "@anvilco/react-signature-frame";
 const items = [
   {
     key: "ELECTRONIC",
