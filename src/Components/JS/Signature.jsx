@@ -6,28 +6,18 @@ import { toast } from "react-toastify";
 import { Button, Dropdown, Space, Form, Input, Upload, Modal } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
-import { log } from "util";
 
 const items = [
-  {
-    key: "ELECTRONIC",
-    label: <span>ELECTRONIC</span>,
-  },
-  {
-    key: "DRAWN",
-    label: <span>DRAWN</span>,
-  },
-  {
-    key: "INITIAL",
-    label: <span>INITIAL</span>,
-  },
+  { key: "ELECTRONIC", label: "ELECTRONIC" },
+  { key: "DRAWN", label: "DRAWN" },
+  { key: "INITIAL", label: "INITIAL" },
 ];
 
 const decodeBase64Url = (encodedWord) => {
   try {
     return atob(encodedWord);
   } catch (e) {
-    console.log("Failed to decode URL:", e);
+    console.error("Failed to decode URL:", e);
     return null;
   }
 };
@@ -56,19 +46,16 @@ const Signature = () => {
     }
     setIsModalOpen(true);
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
   const handleClear = () => {
     sign.clear();
   };
 
-  useEffect(() => {
-    getDocument(decodedDocumentId);
-    checkSignatureStatus(decodedDocumentId, decodedPlaceholder);
-  }, [decodedDocumentId, decodedPlaceholder]);
-
-  const handleUploadChange = ({ file, fileList }) => {
+  const handleUploadChange = ({ fileList }) => {
     setFileList(fileList);
   };
 
@@ -80,23 +67,11 @@ const Signature = () => {
     }
   };
 
-  const getDocument = (id) => {
-    axios
-      .get(`${baseUrl}/document/get-document/${id}`)
-      .then((response) => {
-        setDocument(response.data);
-      })
-      .catch((error) => {
-        toast.error("Something Went Wrong");
-      });
-  };
-
   const getApiEndpoint = () => {
     switch (signatureType) {
       case "ELECTRONIC":
         return "/signature/addSignatureElectronic";
       case "INITIAL":
-        return "/signature/updateSign";
       case "DRAWN":
         return "/signature/updateSign";
       default:
@@ -117,37 +92,38 @@ const Signature = () => {
     setIsModalOpen(false);
     const savedDataURL = handleSave();
     let signatureUrl = "";
-    let signed ="";
     const apiEndpoint = getApiEndpoint();
     if (!apiEndpoint) {
       toast.error("Invalid signature type.");
       return;
     }
+
     let signatureData;
-    let headers;
-    if (signatureType === "INITIAL") {
-      if (fileList.length === 0) {
-        toast.error("Please upload a signature file.");
-        return;
-      }
-      signatureData = new FormData();
-      signatureData.append("signatureType", signatureType);
-      signatureData.append("signatureData", fileList[0].originFileObj);
-      signatureData.append("documentId", decodedDocumentId);
-      signatureData.append("placeholder", decodedPlaceholder);
-      signatureData.append("signed", true);
-      signatureData.append("recipientEmail", decodedEmail);
-      signatureUrl = URL.createObjectURL(fileList[0].originFileObj);
-    } else if (signatureType === "ELECTRONIC") {
-      signatureData = {
-        signatureType: signatureType,
-        documentId: decodedDocumentId,
-        placeholder:decodedPlaceholder,
-        signed:"true"
-      };
-      console.log(signatureData);
-      headers = { "Content-Type": "application/json" };
-      try {
+    let headers = {};
+
+    try {
+      if (signatureType === "INITIAL") {
+        if (fileList.length === 0) {
+          toast.error("Please upload a signature file.");
+          return;
+        }
+        signatureData = new FormData();
+        signatureData.append("signatureType", signatureType);
+        signatureData.append("signatureData", fileList[0].originFileObj);
+        signatureData.append("documentId", decodedDocumentId);
+        signatureData.append("placeholder", decodedPlaceholder);
+        signatureData.append("signed", true);
+        signatureData.append("recipientEmail", decodedEmail);
+        signatureUrl = URL.createObjectURL(fileList[0].originFileObj);
+      } else if (signatureType === "ELECTRONIC") {
+        signatureData = {
+          signatureType,
+          documentId: decodedDocumentId,
+          placeholder: decodedPlaceholder,
+          signed: "true",
+        };
+        headers = { "Content-Type": "application/json" };
+
         const response = await axios.put(
           `${baseUrl}${apiEndpoint}/${decodedEmail}/${decodedDocumentId}/${name}`,
           signatureData,
@@ -155,95 +131,118 @@ const Signature = () => {
         );
         const { signatureData: signatureBase64 } = response.data;
         signatureUrl = `data:image/png;base64,${signatureBase64}`;
-        console.log(signatureUrl);
-        toast.success("Signature Added");
-      } catch (error) {
-        toast.error("Something went wrong");
-        console.log(error);
+      } else if (signatureType === "DRAWN") {
+        const byteArray = base64ToByteArray(savedDataURL.split(",")[1]);
+        const blob = new Blob([byteArray], { type: "image/png" });
+        signatureData = new FormData();
+        signatureData.append("signatureType", signatureType);
+        signatureData.append("signatureData", blob);
+        signatureData.append("documentId", decodedDocumentId);
+        signatureData.append("placeholder", decodedPlaceholder);
+        signatureData.append("signed", true);
+        signatureUrl = savedDataURL;
       }
-    } else if (signatureType === "DRAWN") {
-      const byteArray = base64ToByteArray(savedDataURL.split(",")[1]);
-      const blob = new Blob([byteArray], { type: "image/png" });
-      signatureData = new FormData();
-      signatureData.append("signatureType", signatureType);
-      signatureData.append("signatureData", blob);
-      signatureData.append("documentId", decodedDocumentId);
-      signatureData.append("placeholder", decodedPlaceholder);
-      signatureData.append("signed", true);
-      signatureUrl = savedDataURL;
-      // signatureData = {
-      //   signatureType: signatureType,
-      //   signatureData: blob,
-      //   documentId: decodedDocumentId,
-      //   placeholder: decodedPlaceholder,
-      //   signed: true,
-      // };
-    }
-    if (signatureType !== "ELECTRONIC") {
-      try {
+
+      if (signatureType !== "ELECTRONIC") {
         await axios.put(
           `${baseUrl}${apiEndpoint}/${decodedEmail}/${decodedDocumentId}`,
           signatureData
         );
-        toast.success("Signature Added");
-      } catch (error) {
-        toast.error("Something went wrong");
-        console.log(error);
       }
+
+      let updatedDocumentBody = document.documentBody;
+      if (updatedDocumentBody.includes(decodedPlaceholder)) {
+        updatedDocumentBody = updatedDocumentBody.replace(
+          decodedPlaceholder,
+          `<img src="${signatureUrl}" alt="Signature" width="200" height="100"/>`
+        );
+      } else {
+        updatedDocumentBody = updatedDocumentBody.replace(
+          /<img src="data:image\/png;base64,.*" alt="Signature" \/>/,
+          `<img src="${signatureUrl}" alt="Signature" />`
+        );
+      }
+      setDocument((prevDocument) => ({
+        ...prevDocument,
+        documentBody: updatedDocumentBody,
+      }));
+      setIsSignatureAdded(true);
+      toast.success("Signature Added");
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.error(error);
     }
-    let updatedDocumentBody = document.documentBody;
-    console.log(decodedPlaceholder);
-    if (updatedDocumentBody.includes(decodedPlaceholder)) {
-      updatedDocumentBody = updatedDocumentBody.replace(
-        decodedPlaceholder,
-        `<img src="${signatureUrl}" alt="Signature" width="200" height="100"/>`
-      );
-    } else {
-      updatedDocumentBody = updatedDocumentBody.replace(
-        /<img src="data:image\/png;base64,.*" alt="Signature" \/>/,
-        ` <img src="${signatureUrl}" alt="Signature" />`
-      );
-    }
-    setDocument({ ...document, documentBody: updatedDocumentBody });
-    setIsSignatureAdded(true);
   };
 
-  const checkSignatureStatus = async (documentId, placeholder) => {
-    try {
-      const response = await axios.get(
-        `${baseUrl}/signature/status/${documentId}/${placeholder}`
-      );
-      console.log(response.data);
-      setIsSignatureAdded(response.data);
-    } catch (error) {
-      console.log("Error fetching signature status: " + error);
-    }
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const documentResponse = await axios.get(
+          `${baseUrl}/document/getDocument/${decodedDocumentId}`
+        );
+        const documentData = documentResponse.data;
+        setDocument(documentData);
+
+        const signatureResponse = await axios.get(
+          `${baseUrl}/signature/getSignatures/${decodedDocumentId}`
+        );
+        const signaturesData = signatureResponse.data;
+
+        let updatedDocumentBody = documentData.documentBody;
+
+        signaturesData.forEach((signature) => {
+          const { signatureData: signatureBase64, placeholder } = signature;
+          const signatureUrl = `data:image/png;base64,${signatureBase64}`;
+          updatedDocumentBody = updatedDocumentBody.replace(
+            placeholder,
+            `<img src="${signatureUrl}" alt="Signature" width="200" height="100"/>`
+          );
+        });
+
+        setDocument((prevDocument) => ({
+          ...prevDocument,
+          documentBody: updatedDocumentBody,
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const checkSignatureStatus = async () => {
+      try {
+        const response = await axios.get(
+          `${baseUrl}/signature/status/${decodedDocumentId}/${decodedPlaceholder}`
+        );
+        setIsSignatureAdded(response.data);
+      } catch (error) {
+        console.error("Error fetching signature status:", error);
+      }
+    };
+
+    fetchData();
+    checkSignatureStatus();
+  }, [decodedDocumentId, decodedPlaceholder]);
 
   const handleMenuClick = (e) => {
     setSignatureType(e.key);
   };
+
   return (
     <div className="box">
       <Modal
         title="Signature"
         open={isModalOpen}
-        // onOk={submit}
         onCancel={handleCancel}
-        footer={(_, {}) => (
-          <>
-            <Button onClick={submit}>Submit</Button>
-            <Button onClick={handleCancel} primary>
-              Cancel
-            </Button>
-          </>
-        )}
+        footer={[
+          <Button key="submit" type="primary" onClick={submit}>
+            Submit
+          </Button>,
+          <Button key="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>,
+        ]}
       >
-        <Form
-          onFinish={submit}
-          style={{ width: "450px", height: "auto" }}
-          className="form"
-        >
+        <Form onFinish={submit} style={{ width: "450px", height: "auto" }}>
           <Space direction="vertical">
             <Dropdown
               menu={{
@@ -253,9 +252,7 @@ const Signature = () => {
                 })),
               }}
               placement="bottomLeft"
-              arrow={{
-                pointAtCenter: true,
-              }}
+              arrow={{ pointAtCenter: true }}
             >
               <Button>Signature type</Button>
             </Dropdown>
@@ -270,8 +267,6 @@ const Signature = () => {
               <Button icon={<UploadOutlined />}>Click to Upload</Button>
             </Upload>
           )}
-          <h1></h1>
-          <h1></h1>
           {signatureType === "DRAWN" && (
             <div>
               <div style={{ border: "2px solid black" }}>
@@ -284,55 +279,47 @@ const Signature = () => {
                   }}
                 />
               </div>
-              <div>
-                <button onClick={handleClear}>Clear</button>
-              </div>
+              <Button onClick={handleClear}>Clear</Button>
             </div>
           )}
           {signatureType === "ELECTRONIC" && (
-            <div>
-              <Form.Item>
-                <Input
-                  size="large"
-                  placeholder="Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  style={{ width: "270px" }}
-                />
-              </Form.Item>
-            </div>
+            <Form.Item>
+              <Input
+                size="large"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{ width: "270px" }}
+              />
+            </Form.Item>
           )}
         </Form>
       </Modal>
-
+      <div className="d-flex justify-content-center" style={{ margin: "20px" }}>
+        <Button type="primary" onClick={showModal} disabled={isSignatureAdded}>
+          Click Here To Sign
+        </Button>
+      </div>
       <div className="d-flex justify-content-center">
         <div
           ref={signatureRef}
           dangerouslySetInnerHTML={{ __html: document.documentBody }}
           style={{
             color: "black",
-            height: "auto",
-            whiteSpace: "pre",
+            whiteSpace: "pre-wrap",
             overflowWrap: "break-word",
             padding: "20px",
-            margin: "20px",
-            backgroundColor: "lightgrey",
-            width: "auto",
-            minWidth: "800px",
+            width: "794px",
+            height: "1123px",
+            background: "white",
+            boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+            overflow: "hidden",
+            transform: "scale(1)",
           }}
         ></div>
-      </div>
-      <div className="d-flex">
-        <Button
-          type="primary"
-          onClick={showModal}
-          disabled={isSignatureAdded}
-          style={{ marginLeft: "280px" }}
-        >
-          Click Here To Sign
-        </Button>
       </div>
     </div>
   );
 };
+
 export default Signature;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import mainImage from "../Images/mainImage.jpg"
+import mainImage from "../Images/mainImage.jpg";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -13,7 +13,7 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
-import { Alltemplate } from "./AllTemplates";
+import { AllTemplate, Alltemplate } from "./AllTemplates";
 import { log } from "util";
 import { Alldocument } from "./AllDocument";
 import CreateTemplate from "./CreateTemplate";
@@ -24,6 +24,7 @@ import Register from "./Register";
 import AllUser from "./AllUser";
 import "../CSS/home.css";
 import { ChooseCreateTemplate } from "./ChooseCreateTemplate";
+import EditTemplate from "./EditTemplate";
 
 const { Header, Sider, Content } = Layout;
 const Home = () => {
@@ -32,6 +33,7 @@ const Home = () => {
   const [user, setUser] = useState({});
   const [currentView, setCurrentView] = useState("home");
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [templateId, setTemplateId] = useState();
 
   const dispatch = useDispatch();
   const {
@@ -65,7 +67,12 @@ const Home = () => {
   const renderContentUser = () => {
     switch (currentView) {
       case "Templates":
-        return <Alltemplate />;
+        return (
+          <AllTemplate
+            setCurrentView={setCurrentView}
+            setTemplateId={setTemplateId}
+          />
+        );
       case "My Documents":
         return <Alldocument />;
       case "New Tempalte":
@@ -77,10 +84,16 @@ const Home = () => {
         );
       case "CreateTemplate":
         return <CreateTemplate uploadedFile={uploadedFile} />;
+      case "EditTemplate":
+        return <EditTemplate templateId={templateId} />;
       case "LogOut":
         return logOut();
       default:
-        return <div><img src={mainImage} alt="" /></div>;
+        return (
+          <div>
+            <img src={mainImage} alt="" />
+          </div>
+        );
     }
   };
   console.log(currentView);
@@ -188,7 +201,7 @@ const Home = () => {
         <div className="demo-logo-vertical" />
         <Menu
           className="slideBar"
-          style={{  height: "100vh",backgroundColor:"#01606F"}}
+          style={{ height: "100vh", backgroundColor: "#01606F" }}
           mode="inline"
           defaultSelectedKeys={["1"]}
           selectedKeys={[currentView]}
