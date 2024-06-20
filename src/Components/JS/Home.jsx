@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import mainImage from "../Images/mainImage.jpg"
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -21,12 +22,17 @@ import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import Register from "./Register";
 import AllUser from "./AllUser";
+import "../CSS/home.css";
+import { ChooseCreateTemplate } from "./ChooseCreateTemplate";
+
 const { Header, Sider, Content } = Layout;
 const Home = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState({});
   const [currentView, setCurrentView] = useState("home");
+  const [uploadedFile, setUploadedFile] = useState(null);
+
   const dispatch = useDispatch();
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -41,6 +47,7 @@ const Home = () => {
 
   const userName = async () => {
     try {
+      
       const response = await axios.get(
         `http://localhost:8080/api/v1/users/getUser/${userId}`,
         {
@@ -63,30 +70,37 @@ const Home = () => {
       case "My Documents":
         return <Alldocument />;
       case "New Tempalte":
-        return <CreateTemplate />;
+        return (
+          <ChooseCreateTemplate
+            setCurrentView={setCurrentView}
+            setUploadedFile={setUploadedFile}
+          />
+        );
+      case "CreateTemplate":
+        return <CreateTemplate uploadedFile={uploadedFile} />;
       case "LogOut":
         return logOut();
       default:
-        return <div>Home Content</div>;
+        return <div><img src={mainImage} alt="" /></div>;
     }
   };
   console.log(currentView);
 
-  const renderContentAdmin = ()=>{
-      switch(currentView){
-         case "Home":
-          return (
-            <>
-              <Register/>
-              <AllUser/>
-            </>
-          );
-          case "LogOut":
-            return logOut();
-        default :
-        return <Register/>
-      }
-  }
+  const renderContentAdmin = () => {
+    switch (currentView) {
+      case "Home":
+        return (
+          <>
+            <Register />
+            <AllUser />
+          </>
+        );
+      case "LogOut":
+        return logOut();
+      default:
+        return <Register />;
+    }
+  };
 
   // console.log(user);
   const userMenuItems = [
@@ -140,32 +154,31 @@ const Home = () => {
   ];
 
   const adminMenuItems = [
-      {
-        key: "1",
-        icon: <UserOutlined />,
-        label: `${user.firstName}`,
-        style:{color:"white",fontSize:"18px"}
+    {
+      key: "1",
+      icon: <UserOutlined />,
+      label: `${user.firstName}`,
+      style: { color: "white", fontSize: "18px" },
+    },
+    {
+      key: "2",
+      label: "DocMaster",
+      style: { color: "white", fontSize: "21px" },
+    },
+    {
+      key: "Home",
+      icon: <HomeOutlined />,
+      label: "Home",
+      style: { color: "white" },
+    },
+    {
+      key: "LogOut",
+      icon: <LogoutOutlined />,
+      label: "LogOut",
+      style: { color: "white" },
+    },
+  ];
 
-      },
-      {
-        key: "2",
-        label: "DocMaster",
-        style: { color: "white", fontSize: "21px" },
-      },
-      {
-        key: "Home",
-        icon: <HomeOutlined />,
-        label: "Home",
-        style: { color: "white" } 
-       },
-       {
-        key: "LogOut",
-        icon: <LogoutOutlined />,
-        label: "LogOut",
-        style: { color: "white" },
-      }
-    ]
-  
   //  console.log(user);
   const menuItems = user.role === "ROLE_ADMIN" ? adminMenuItems : userMenuItems;
   const renderContent =
@@ -175,7 +188,8 @@ const Home = () => {
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu
-          style={{ backgroundColor: "#1A2037", height: "100vh" }}
+          className="slideBar"
+          style={{  height: "100vh",backgroundColor:"#01606F"}}
           mode="inline"
           defaultSelectedKeys={["1"]}
           selectedKeys={[currentView]}
@@ -210,10 +224,7 @@ const Home = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {
-             renderContent()
-          }
-           
+          {renderContent()}
         </Content>
       </Layout>
     </Layout>

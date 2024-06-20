@@ -6,6 +6,7 @@ import { Button, Space, Table, notification ,Popconfirm , message} from "antd";
 import { useNavigate } from "react-router-dom";
 import { log } from "util";
 import moment from "moment";
+import {FileImageOutlined,DeleteOutlined} from "@ant-design/icons";
 
 export function Alltemplate() {
   const [templates, setTemplates] = useState([]);
@@ -89,7 +90,8 @@ export function Alltemplate() {
       render: (_, record) => (
         <Space>
           <Button
-            type="primary"
+            icon={<FileImageOutlined/>}
+            style={{backgroundColor:"#01606F",color:"white"}}
             onClick={() => {
               navigate(`/create-document/${record.templateId}`);
             }}
@@ -111,7 +113,7 @@ export function Alltemplate() {
           okText="Yes"
           cancelText="No"
         >
-          <Button danger>Delete</Button>
+          <Button icon={<DeleteOutlined/>} danger>Delete</Button>
         </Popconfirm>
       ),
     },

@@ -12,6 +12,9 @@ import { Seedocument } from "./Components/JS/SeeDocument";
 import { Provider } from "react-redux";
 import PrivateRoute from "./Components/redux/PrivateRoute";
 import store from "./Components/redux/store";
+import { ChooseCreateTemplate } from "./Components/JS/ChooseCreateTemplate";
+import { Alldocument } from "./Components/JS/AllDocument";
+import { FinalDocument } from "./Components/JS/FinalDocument";
 
 function App() {
   return (
@@ -21,7 +24,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />}></Route>
           <Route
-            path="/sign/:documentId/:placeholder"
+            path="/sign/:documentId/:placeholder/:email"
             element={
               // <PrivateRoute>
               <Signature />
@@ -92,6 +95,7 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/final-document/:id" element={<FinalDocument />} />
         </Routes>
       </>
     </>

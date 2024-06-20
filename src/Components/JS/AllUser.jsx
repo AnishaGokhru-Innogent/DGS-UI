@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
+import "../CSS/allUser.css"
 import { SearchOutlined , EditOutlined , DeleteOutlined} from "@ant-design/icons";
 import {
   Button,
@@ -15,6 +16,7 @@ import {
   Row,
   Select,
 } from "antd";
+
 import Highlighter from "react-highlight-words";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -329,7 +331,7 @@ const AllUser = () => {
       title: "",
       key: "action",
       render: (text, record) => (
-        <Button type="primary" onClick={()=>showDrawer(record)} icon={<EditOutlined/>}>
+        <Button type="primary" onClick={()=>showDrawer(record)} style={{backgroundColor:"#01606F"}} icon={<EditOutlined/>}>
           Update
         </Button>
       ),
@@ -374,14 +376,6 @@ const AllUser = () => {
             paddingBottom: 80,
           },
         }}
-        // extra={
-        //   <Space>
-        //     <Button onClick={onClose}>Cancel</Button>
-        //     <Button htmlType="submit" icon={<EditOutlined/>} type="primary">
-        //       Update
-        //     </Button>
-        //   </Space>
-        // }
       >
         <Form layout="vertical" hideRequiredMark form={form} onFinish={updateUser}>
           <Form.Item
@@ -483,7 +477,7 @@ const AllUser = () => {
           </Form.Item>
           <Form.Item>
            <Space>
-           <Button htmlType="submit" icon={<EditOutlined/>} type="primary">
+           <Button htmlType="submit" icon={<EditOutlined/>  } style={{backgroundColor:"#01606F",color:"white"}}>
               Update
             </Button>
             <Button onClick={onClose} style={{marginLeft:"15px"}}>Cancel</Button>

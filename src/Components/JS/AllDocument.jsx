@@ -1,10 +1,19 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
-import { Button, Space, Table, notification,Popconfirm,message ,Tag} from "antd";
+import {
+  Button,
+  Space,
+  Table,
+  notification,
+  Popconfirm,
+  message,
+  Tag,
+} from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { render } from "@testing-library/react";
+import {FileImageOutlined,DeleteOutlined} from "@ant-design/icons";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState();
@@ -36,7 +45,7 @@ export function Alldocument() {
   };
   const cancel = (e) => {
     console.log(e);
-    message.error('Click on No');
+    message.error("Click on No");
   };
   async function DeleteDocument(id) {
     await axios
@@ -91,7 +100,7 @@ export function Alldocument() {
           color = "geekblue";
         }
         return (
-          <Tag color={color} style={{ fontSize: "20px" }}>
+          <Tag color={color} style={{ fontSize: "14px" }}>
             {record.status}
           </Tag>
         );
@@ -99,11 +108,12 @@ export function Alldocument() {
     },
     {
       title: "",
-      key: "use",
+      key: "view",
       render: (_, record) => (
         <Space>
           <Button
-            type="primary"
+            style={{backgroundColor:"#01606F",color:"white"}}
+            icon={<FileImageOutlined/>}
             onClick={() => {
               navigate(`/document/${record.documentId}`);
             }}
@@ -125,26 +135,28 @@ export function Alldocument() {
           okText="Yes"
           cancelText="No"
         >
-          <Button danger>Delete</Button>
+          <Button danger icon={<DeleteOutlined />}>
+            Delete
+          </Button>
         </Popconfirm>
       ),
     },
   ];
   return (
     <div>
-    <h2>All Document</h2>
-    {contextHolder}
-    <div className="mt-4">
-      <Table
-        dataSource={documents}
-        columns={columns}
-        borderColor="black"
-        scroll={{
-          x: "100%",
-          y: 330,
-        }}
-      />
+      <h2>All Document</h2>
+      {contextHolder}
+      <div className="mt-4">
+        <Table
+          dataSource={documents}
+          columns={columns}
+          borderColor="black"
+          scroll={{
+            x: "100%",
+            y: 450,
+          }}
+        />
+      </div>
     </div>
-  </div>
   );
 }

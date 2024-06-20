@@ -5,16 +5,22 @@
 .create-document-container {
   padding: 20px;
   background-color: #f0f0f0;
+  width:100%;
+
 }
 
 .a4-paper {
-  width: 793.7px; /* Width of A4 paper in pixels */
-  height: 1122.5px; /* Height of A4 paper in pixels */
+  /* width: 793.7px; 
+  height: 1122.5px;  */
   margin: 0 auto;
   border: 1px solid #d9d9d9;
   background-color: #fff;
   padding: 20px;
   box-sizing: border-box;
+  width: calc(200mm); /* A4 paper width in mm */
+  overflow-y: auto;
+  max-height: calc(297mm);
+  height: calc(140mm);
 }
 
 .document-body {

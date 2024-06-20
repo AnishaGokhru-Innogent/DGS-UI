@@ -7,6 +7,8 @@ import {
   Typography,
   Tooltip,
   Space,
+  message,
+  Spin,
 } from "antd";
 import axios from "axios";
 import { useRef, useEffect, useState } from "react";
@@ -14,6 +16,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import baseUrl from "../../BootApi";
 import "../CSS/createDocument.css"; // Ensure you import your CSS for custom styling
+import {
+  DownloadOutlined,
+  SendOutlined,
+  FileAddOutlined,
+  BackwardOutlined
+} from "@ant-design/icons";
 
 export function CreateDocument() {
   const { id } = useParams();
@@ -23,7 +31,9 @@ export function CreateDocument() {
   const [formValues, setFormValues] = useState({});
   const documentPdf = useRef();
   const userId = localStorage.getItem("userId");
-  const bearerToken = localStorage.getItem("token");
+ const bearerToken = localStorage.getItem("token");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   async function getTemplateAndFields(templateId) {
@@ -52,8 +62,10 @@ export function CreateDocument() {
     getTemplateAndFields(id);
   }, [id]);
 
+   
   async function populateTemplate(values) {
     try {
+     
       const formData = new FormData();
       for (const [key, value] of Object.entries(values)) {
         formData.append(key, value);
@@ -79,17 +91,26 @@ export function CreateDocument() {
   });
 
   async function saveDocument() {
+    setLoading(true);
+    const signatureEmails = fields
+      .filter((field) => field.placeholderType === "signature")
+      .reduce((acc, field) => {
+        acc[field.placeholderName] = formValues[field.placeholderName];
+        return acc;
+      }, {});
+    message.success("Document Saved");
+
     const documentData = {
       documentName: documentName,
       documentBody: documentBody,
-      status: "PENDING",
+      status: fields.some((field) => field.placeholderType === "signature")
+        ? "PENDING"
+        : "COMPLETED",
       templateId: id,
       userId: userId,
-      signatureEmails: fields
-        .filter((field) => field.placeholderType === "signature")
-        .map((field) => formValues[field.placeholderName]),
+      signatureEmails: signatureEmails,
     };
-
+   
     try {
       await axios.post(`${baseUrl}/document/save`, documentData, {
         headers: {
@@ -97,31 +118,65 @@ export function CreateDocument() {
           Authorization: `Bearer ${bearerToken}`,
         },
       });
+      setLoading(false);
+      message.success("Email Send");
     } catch (error) {
       console.error(error);
+      message.error("Error Occurred in Saving Document and Sending Email");
     }
   }
 
   return (
-    <div className="create-document-container">
-      <Button onClick={() => navigate("/home")}>HOME</Button>
-      <Typography.Title level={2}>Create Document</Typography.Title>
-      <Row gutter={24}>
-        <Col span={10}>
-          <Typography.Title level={4}>Enter Document Name:</Typography.Title>
-          <Input
-            style={{ width: "100%", marginBottom: "20px" }}
-            value={documentName}
-            onChange={(e) => setDocumentName(e.target.value)}
-            placeholder="Enter Document Name"
-          />
+    <div className="create-document-container ">
+      <div className="d-flex justify-content-between">
+      <div>
+      <Button style={{backgroundColor:"#01606F",color:"white"}} icon={<BackwardOutlined/>} onClick={() => navigate("/home")}>HOME</Button>
+      </div>
+           <div >
+            <Button
+              type="primary"
+              onClick={generatePdf}
+              style={{ marginRight: "10px", backgroundColor: "#01606F" }}
+              icon={<DownloadOutlined />}
+            >
+              Download Pdf
+            </Button>
+            <Button
+              type="primary"
+              onClick={saveDocument}
+              icon={<SendOutlined />}
+              style={{ backgroundColor: "#01606F" }}
+            >
+              Save & Send Email
+            </Button>
+          </div>
+      
+      </div>
+     
+      <div className="ms-5">
+      <Row  gutter={24} style={{marginTop:"20px"}} >
+        <Col span={9} style={{boxShadow:"2px 2px 2px 2px grey",padding:"20px"}} className="p-4">
+          <div style={{textAlign:"center"}}>
+          <h3>Create Document</h3>
+          <hr style={{width:"440px",backgroundColor:"#01606F"}}></hr>
+          </div>
+          <div className="d-flex" style={{marginTop:"20px"}}>
+            <h6 className="mt-1">Document Name:</h6>
+            <Input
+              style={{ width: "60%", marginBottom: "20px" ,marginLeft:"20px"}}
+              value={documentName}
+              onChange={(e) => setDocumentName(e.target.value)}
+              placeholder="Enter Document Name"
+            />
+          </div>
           <Form
             name="basic"
-            labelCol={{ span: 8 }}
+            // labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             initialValues={{ remember: true }}
             autoComplete="on"
             onFinish={populateTemplate}
+            style={{marginTop:"15px"}}
           >
             {fields.map((field, index) => (
               <Form.Item
@@ -142,30 +197,39 @@ export function CreateDocument() {
                 {field.placeholderType === "signature" ? (
                   // <Tooltip title="Enter the email of the person whose signature is required">
                   <Space direction="horizontal">
-                    To:
+                    To
                     <Input type="email" placeholder="Receipient Email" />
                     <Tooltip title="Input valid Receipient Email for Signature">
                       <Typography.Link href="#API">Need Help? </Typography.Link>
                     </Tooltip>
                     {/* <Typography.Text type="secondary">
-                      Please enter the email address of the recipient who needs
-                      to sign this document.
-                    </Typography.Text> */}
+                        Please enter the email address of the recipient who needs
+                        to sign this document.
+                      </Typography.Text> */}
                   </Space>
                 ) : (
                   <Input
                     type={field.placeholderType}
+                    style={{width:"220px"}}
                     placeholder={`Enter ${field.placeholderName} value`}
                   />
                 )}
               </Form.Item>
             ))}
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="primary" htmlType="submit">
+            <Button
+                type="primary"
+                htmlType="submit"
+                style={{ backgroundColor: "#01606F",marginRight:"150px",position:"relative",right:"150px"}}
+                icon={<FileAddOutlined />}
+
+              >
                 Populate Template
               </Button>
+              
             </Form.Item>
           </Form>
+          
         </Col>
         <Col span={14}>
           <div className="a4-paper">
@@ -175,20 +239,10 @@ export function CreateDocument() {
               className="document-body"
             ></div>
           </div>
-          <div style={{ marginTop: "20px", textAlign: "right" }}>
-            <Button
-              type="primary"
-              onClick={generatePdf}
-              style={{ marginRight: "10px" }}
-            >
-              Download Pdf
-            </Button>
-            <Button type="primary" onClick={saveDocument}>
-              Save & Send Email
-            </Button>
-          </div>
         </Col>
       </Row>
-    </div>
+      </div>
+     </div>
+   
   );
 }

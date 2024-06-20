@@ -6,7 +6,8 @@ import { toast } from "react-toastify";
 import { Button, Dropdown, Space, Form, Input, Upload, Modal } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
-//import AnvilSignatureFrame from "@anvilco/react-signature-frame";
+import { log } from "util";
+
 const items = [
   {
     key: "ELECTRONIC",
@@ -36,7 +37,8 @@ const Signature = () => {
   const [dataURL, setDataURL] = useState(null);
   const [signatureType, setSignatureType] = useState();
   const [fileList, setFileList] = useState([]);
-  const { documentId, placeholder } = useParams();
+  const { documentId, placeholder, email } = useParams();
+  const decodedEmail = decodeBase64Url(email);
   const decodedDocumentId = decodeBase64Url(documentId);
   const decodedPlaceholder = decodeBase64Url(placeholder);
   const [name, setName] = useState("");
@@ -60,12 +62,16 @@ const Signature = () => {
   const handleClear = () => {
     sign.clear();
   };
+
   useEffect(() => {
     getDocument(decodedDocumentId);
-  }, [decodedDocumentId]);
+    checkSignatureStatus(decodedDocumentId, decodedPlaceholder);
+  }, [decodedDocumentId, decodedPlaceholder]);
+
   const handleUploadChange = ({ file, fileList }) => {
     setFileList(fileList);
   };
+
   const handleSave = () => {
     if (sign) {
       const trimmedDataUrl = sign.getTrimmedCanvas().toDataURL("image/png");
@@ -73,29 +79,31 @@ const Signature = () => {
       return trimmedDataUrl;
     }
   };
+
   const getDocument = (id) => {
     axios
       .get(`${baseUrl}/document/get-document/${id}`)
       .then((response) => {
         setDocument(response.data);
-        toast.success("Document Success");
       })
       .catch((error) => {
         toast.error("Something Went Wrong");
       });
   };
+
   const getApiEndpoint = () => {
     switch (signatureType) {
       case "ELECTRONIC":
         return "/signature/addSignatureElectronic";
       case "INITIAL":
-        return "/signature/addSignature";
+        return "/signature/updateSign";
       case "DRAWN":
-        return "/signature/addSignatureDrawn";
+        return "/signature/updateSign";
       default:
         return "";
     }
   };
+
   const base64ToByteArray = (base64String) => {
     const binaryString = window.atob(base64String);
     const byteArray = new Uint8Array(binaryString.length);
@@ -104,10 +112,12 @@ const Signature = () => {
     }
     return byteArray;
   };
+
   const submit = async () => {
     setIsModalOpen(false);
     const savedDataURL = handleSave();
     let signatureUrl = "";
+    let signed ="";
     const apiEndpoint = getApiEndpoint();
     if (!apiEndpoint) {
       toast.error("Invalid signature type.");
@@ -125,16 +135,21 @@ const Signature = () => {
       signatureData.append("signatureData", fileList[0].originFileObj);
       signatureData.append("documentId", decodedDocumentId);
       signatureData.append("placeholder", decodedPlaceholder);
+      signatureData.append("signed", true);
+      signatureData.append("recipientEmail", decodedEmail);
       signatureUrl = URL.createObjectURL(fileList[0].originFileObj);
     } else if (signatureType === "ELECTRONIC") {
       signatureData = {
         signatureType: signatureType,
         documentId: decodedDocumentId,
+        placeholder:decodedPlaceholder,
+        signed:"true"
       };
+      console.log(signatureData);
       headers = { "Content-Type": "application/json" };
       try {
-        const response = await axios.post(
-          `${baseUrl}${apiEndpoint}?name=${name}`,
+        const response = await axios.put(
+          `${baseUrl}${apiEndpoint}/${decodedEmail}/${decodedDocumentId}/${name}`,
           signatureData,
           { headers }
         );
@@ -154,11 +169,22 @@ const Signature = () => {
       signatureData.append("signatureData", blob);
       signatureData.append("documentId", decodedDocumentId);
       signatureData.append("placeholder", decodedPlaceholder);
+      signatureData.append("signed", true);
       signatureUrl = savedDataURL;
+      // signatureData = {
+      //   signatureType: signatureType,
+      //   signatureData: blob,
+      //   documentId: decodedDocumentId,
+      //   placeholder: decodedPlaceholder,
+      //   signed: true,
+      // };
     }
     if (signatureType !== "ELECTRONIC") {
       try {
-        await axios.post(`${baseUrl}${apiEndpoint}`, signatureData);
+        await axios.put(
+          `${baseUrl}${apiEndpoint}/${decodedEmail}/${decodedDocumentId}`,
+          signatureData
+        );
         toast.success("Signature Added");
       } catch (error) {
         toast.error("Something went wrong");
@@ -166,6 +192,7 @@ const Signature = () => {
       }
     }
     let updatedDocumentBody = document.documentBody;
+    console.log(decodedPlaceholder);
     if (updatedDocumentBody.includes(decodedPlaceholder)) {
       updatedDocumentBody = updatedDocumentBody.replace(
         decodedPlaceholder,
@@ -174,12 +201,25 @@ const Signature = () => {
     } else {
       updatedDocumentBody = updatedDocumentBody.replace(
         /<img src="data:image\/png;base64,.*" alt="Signature" \/>/,
-        `<img src="${signatureUrl}" alt="Signature" />`
+        ` <img src="${signatureUrl}" alt="Signature" />`
       );
     }
     setDocument({ ...document, documentBody: updatedDocumentBody });
     setIsSignatureAdded(true);
   };
+
+  const checkSignatureStatus = async (documentId, placeholder) => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/signature/status/${documentId}/${placeholder}`
+      );
+      console.log(response.data);
+      setIsSignatureAdded(response.data);
+    } catch (error) {
+      console.log("Error fetching signature status: " + error);
+    }
+  };
+
   const handleMenuClick = (e) => {
     setSignatureType(e.key);
   };
@@ -188,8 +228,16 @@ const Signature = () => {
       <Modal
         title="Signature"
         open={isModalOpen}
-        onOk={submit}
+        // onOk={submit}
         onCancel={handleCancel}
+        footer={(_, {}) => (
+          <>
+            <Button onClick={submit}>Submit</Button>
+            <Button onClick={handleCancel} primary>
+              Cancel
+            </Button>
+          </>
+        )}
       >
         <Form
           onFinish={submit}
@@ -226,14 +274,16 @@ const Signature = () => {
           <h1></h1>
           {signatureType === "DRAWN" && (
             <div>
-              <SignatureCanvas
-                ref={(ref) => setSign(ref)}
-                canvasProps={{
-                  width: 400,
-                  height: 150,
-                  className: "sigCanvas",
-                }}
-              />
+              <div style={{ border: "2px solid black" }}>
+                <SignatureCanvas
+                  ref={(ref) => setSign(ref)}
+                  canvasProps={{
+                    width: 400,
+                    height: 150,
+                    className: "sigCanvas",
+                  }}
+                />
+              </div>
               <div>
                 <button onClick={handleClear}>Clear</button>
               </div>

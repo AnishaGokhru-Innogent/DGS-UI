@@ -118,6 +118,7 @@ const Register = () => {
         };
         console.log('Register data:', registerData);
         try {
+            const token = localStorage.getItem("token");
             await axios.post(
                 'http://localhost:8080/api/v1/auth/register',
                 registerData,
@@ -150,7 +151,7 @@ const Register = () => {
             extra={
                 <Space>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button style={{ backgroundColor: "#589A65", color: "white" }} onClick={handleRegister}>
+                    <Button style={{backgroundColor:"#01606F" , color:"white"}} onClick={handleRegister}>
                         Register
                     </Button>
                 </Space>
