@@ -24,6 +24,7 @@ import Register from "./Register";
 import AllUser from "./AllUser";
 import "../CSS/home.css";
 import { ChooseCreateTemplate } from "./ChooseCreateTemplate";
+import EditTemplate from "./EditTemplate";
 
 const { Header, Sider, Content } = Layout;
 const Home = () => {
@@ -32,6 +33,7 @@ const Home = () => {
   const [user, setUser] = useState({});
   const [currentView, setCurrentView] = useState("home");
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [templateId, setTemplateId] = useState();
 
   const dispatch = useDispatch();
   const {
@@ -65,7 +67,12 @@ const Home = () => {
   const renderContentUser = () => {
     switch (currentView) {
       case "Templates":
-        return <AllTemplate />;
+        return (
+          <AllTemplate
+            setCurrentView={setCurrentView}
+            setTemplateId={setTemplateId}
+          />
+        );
       case "My Documents":
         return <Alldocument />;
       case "New Tempalte":
@@ -77,6 +84,8 @@ const Home = () => {
         );
       case "CreateTemplate":
         return <CreateTemplate uploadedFile={uploadedFile} />;
+      case "EditTemplate":
+        return <EditTemplate templateId={templateId} />;
       case "LogOut":
         return logOut();
       default:

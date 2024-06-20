@@ -7,6 +7,7 @@
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
     "@ckeditor/ckeditor5-react": "^7.0.0",
     "@reduxjs/toolkit": "^2.2.5",
+    "@syncfusion/ej2-react-documenteditor": "^26.1.35",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

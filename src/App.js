@@ -14,6 +14,7 @@ import store from "./Components/redux/store";
 import { ChooseCreateTemplate } from "./Components/JS/ChooseCreateTemplate";
 import { Alldocument } from "./Components/JS/AllDocument";
 import { FinalDocument } from "./Components/JS/FinalDocument";
+import EditTemplate from "./Components/JS/EditTemplate";
 
 function App() {
   return (
@@ -98,6 +99,7 @@ function App() {
             path="/final-document/:documentId"
             element={<FinalDocument />}
           />
+          <Route path="/edit-template/:templateId" element={<EditTemplate />} />
         </Routes>
       </>
     </>

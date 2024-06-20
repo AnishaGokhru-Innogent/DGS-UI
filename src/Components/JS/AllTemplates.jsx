@@ -9,20 +9,38 @@ import {
   Popconfirm,
   message,
   Spin,
+  Modal,
+  Form,
+  Input,
+  List,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  MailOutlined,
+  FileImageOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import CryptoJS from "crypto-js";
+import Item from "antd/es/list/Item";
+import Title from "antd/es/skeleton/Title";
+import { addListener } from "@reduxjs/toolkit";
+import { useForm } from "antd/es/form/Form";
 
-export function AllTemplate() {
+export function AllTemplate({ setCurrentView, setTemplateId }) {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const bearerToken = localStorage.getItem("token");
+  const [form] = useForm();
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const [api, contextHolder] = notification.useNotification();
+
+  const [visible, setVisible] = useState(false);
+
+  const [accessEmail, setAccessEmail] = useState();
 
   const secretKey =
     "sD3rReEbZ+kjdUCCYD9ov/0fBb5ttGwzzZd1VRBmFwFAUTo3gwfBxBZ3UwngzTFn";
@@ -46,6 +64,13 @@ export function AllTemplate() {
   const handleUseClick = (templateId) => {
     const encryptedTemplateId = encryptTemplateId(templateId);
     navigate(`/create-document/${encryptedTemplateId}`);
+  };
+
+  const handleEditClick = (templateId) => {
+    const encryptedTemplateId = encryptTemplateId(templateId);
+    // navigate(`/edit-template/${encryptedTemplateId}`);
+    setTemplateId(templateId);
+    setCurrentView("EditTemplate");
   };
 
   const openNotificationWithIcon = (type, msg) => {
@@ -91,6 +116,7 @@ export function AllTemplate() {
       title: "Sno",
       key: "Sno",
       render: (_, __, index) => index + 1,
+      width: "80px",
     },
     {
       title: "Template Name",
@@ -123,11 +149,16 @@ export function AllTemplate() {
       render: (_, record) => (
         <Space>
           <Button
+            style={{ backgroundColor: "#01606F", color: "white" }}
+            onClick={() => handleEditClick(record.templateId)}
+          >
+            Edit
+          </Button>
+          <Button
             icon={<FileImageOutlined />}
             style={{ backgroundColor: "#01606F", color: "white" }}
             onClick={() => handleUseClick(record.templateId)}
           >
-            {/* navigate(`/create-document/${record.templateId}`) */}
             Use
           </Button>
           <Popconfirm
@@ -142,10 +173,23 @@ export function AllTemplate() {
               Delete
             </Button>
           </Popconfirm>
+          <Button onClick={() => setVisible(true)}>Access</Button>
         </Space>
       ),
     },
   ];
+
+  function handleAccessEmail() {
+    // form
+    //   .validateFields()
+    //   .then((values) => {
+    //     const AccessObject = {
+    //       template
+    //     }
+    //     axios.post(`${baseUrl}/accessControl/addAccess`);
+    //   })
+    //   .catch((error) => console.log(error));
+  }
 
   return (
     <div style={{ padding: "20px" }}>
@@ -171,6 +215,38 @@ export function AllTemplate() {
           />
         </div>
       </Spin>
+
+      <Modal open={visible} onCancel={() => setVisible(false)}>
+        <Form form={form} onFinish={handleAccessEmail}>
+          <Title level={5}>Access on {document.documentName}</Title>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Please input your email!" },
+              {
+                type: "email",
+                message: "Please enter a valid email!",
+              },
+              {
+                pattern: emailPattern,
+                message: "Email does not match the required pattern!",
+              },
+            ]}
+          >
+            <Input
+              size="large"
+              placeholder="Email"
+              prefix={<MailOutlined />}
+              style={{ width: "270px" }}
+            />
+          </Form.Item>
+          <Button type="primary" htmlType="submit">
+            Send
+          </Button>
+          <List bordered />
+        </Form>
+      </Modal>
     </div>
   );
 }

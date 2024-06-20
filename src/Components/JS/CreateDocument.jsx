@@ -271,6 +271,8 @@ export function CreateDocument() {
             <Col span={14}>
               <div className="a4-paper">
                 <div
+                  // contentEditable={true}
+                  // suppressContentEditableWarning={true}
                   ref={documentPdf}
                   dangerouslySetInnerHTML={{ __html: documentBody }}
                   className="document-body"
