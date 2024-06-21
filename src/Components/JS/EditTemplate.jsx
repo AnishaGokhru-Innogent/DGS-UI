@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import {
   Form,
   Input,
@@ -17,6 +17,9 @@ import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import * as mammoth from "mammoth";
 import "../CSS/createTemplate.css";
+import baseUrl from "../../BootApi";
+import { useParams } from "react-router-dom";
+import CryptoJS from "crypto-js";
 
 // Register the custom placeholder blot
 const Inline = Quill.import("blots/inline");
@@ -25,9 +28,8 @@ class PlaceholderBlot extends Inline {
     const node = super.create();
     node.setAttribute("data-placeholder", value);
     node.setAttribute("contenteditable", "false");
-    node.style.backgroundColor = "#e6f3ff";
-    // node.style.border = "1px solid black";
-    node.style.borderRadius = "2px";
+    node.style.backgroundColor = "#F5F5F5";
+    node.style.border = "1px solid black";
     node.style.padding = "1px 1px";
     node.classList.add("placeholder-blot");
     node.innerHTML = `{{${value}}}`;
@@ -45,7 +47,7 @@ Quill.register(PlaceholderBlot);
 
 const { Title, Text } = Typography;
 
-const CreateTemplate = ({ uploadedFile }) => {
+const EditTemplate = ({ templateId }) => {
   const [placeholders, setPlaceholders] = useState([]);
   const [editorContent, setEditorContent] = useState("");
   const [placeholderName, setPlaceholderName] = useState("");
@@ -58,6 +60,7 @@ const CreateTemplate = ({ uploadedFile }) => {
   const userid = localStorage.getItem("userId");
   const [userId, setUserId] = useState(userid);
   const bearerToken = localStorage.getItem("token");
+  const [decodedTemplateId, setDecodedTemplateId] = useState();
 
   useEffect(() => {
     if (quillRef.current) {
@@ -68,21 +71,15 @@ const CreateTemplate = ({ uploadedFile }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (Object.keys(template).length > 0) {
-      saveTemplate();
-    }
-  }, [template]);
+  // useEffect(() => {
+  //   if (Object.keys(template).length > 0) {
+  //     saveTemplate();
+  //   }
+  // }, [template]);
 
   useEffect(() => {
     handleChange();
   }, []);
-
-  useEffect(() => {
-    if (uploadedFile) {
-      handleFileChange(uploadedFile);
-    }
-  }, [uploadedFile]);
 
   const handleChange = () => {
     if (!quillRef.current) return;
@@ -131,10 +128,10 @@ const CreateTemplate = ({ uploadedFile }) => {
         leaf.domNode.classList.contains("placeholder-blot")
       ) {
         event.preventDefault();
-        quill.insertText(range.index, "");
+        quill.insertText(range.index, "\n");
         quill.setSelection(range.index + 1);
       } else {
-        quill.insertText(range.index, "");
+        quill.insertText(range.index, "\n");
         quill.setSelection(range.index + 1);
       }
     }
@@ -160,20 +157,21 @@ const CreateTemplate = ({ uploadedFile }) => {
       }
     }
   };
-  async function saveTemplate() {
-    console.log(template);
-    await axios
-      .post("http://localhost:8080/template/create", template, {
-        headers: { Authorization: `Bearer ${bearerToken}` },
-      })
-      .then((response) => response.data, message.success("Template Saved"))
-      .then((res) => setResTemplate(res))
-      .catch(
-        (error) => console.log(error)
-        // message.error("Error Occured In Saving Tempalte")  
-      );
-  }
- 
+
+  // async function saveTemplate() {
+  // console.log(template);
+  // await axios
+  //   .post(`${baseUrl}/template/create`, template, {
+  //     headers: { Authorization: `Bearer ${bearerToken}` },
+  //   })
+  //   .then((response) => response.data, message.success("Template Saved"))
+  //   .then((res) => setResTemplate(res))
+  //   .catch(
+  //     (error) => console.log(error)
+  //     // message.error("Error Occured In Saving Tempalte")
+  //   );
+  // }
+
   const addPlaceholder = () => {
     if (!placeholderName) return;
     const quill = quillRef.current.getEditor();
@@ -210,31 +208,7 @@ const CreateTemplate = ({ uploadedFile }) => {
     setPlaceholderType("text");
   };
 
-  const handleFileChange = async (file) => {
-    if (
-      file &&
-      file.type ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ) {
-      const reader = new FileReader();
-      reader.onload = async function () {
-        const arrayBuffer = reader.result;
-        mammoth
-          .convertToHtml({ arrayBuffer })
-          .then((result) => {
-            const html = result.value;
-            setEditorContent(html);
-            quillRef.current.getEditor().clipboard.dangerouslyPasteHTML(html);
-          })
-          .catch((error) => console.log(error));
-      };
-      reader.readAsArrayBuffer(file);
-    } else {
-      message.error("Please upload a valid Word document (.docx)");
-    }
-  };
-
-  function generateTemplateJSON() {
+  async function updateTemplateAndPlaceholders() {
     const plainText = quillRef.current.getEditor().getText();
     const templateJSON = {
       templateName: templateName,
@@ -249,7 +223,83 @@ const CreateTemplate = ({ uploadedFile }) => {
       ),
     };
     setTemplate(templateJSON);
+
+    await axios
+      .put(`${baseUrl}/template/update-template/${templateId}`, templateJSON, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => response.data)
+      .then((data) => setResTemplate(data))
+      .catch((error) => console.log(error));
+
+    message.success("Template Updated");
   }
+
+  // const { templateId } = useParams();
+
+  const secretKey =
+    "sD3rReEbZ+kjdUCCYD9ov/0fBb5ttGwzzZd1VRBmFwFAUTo3gwfBxBZ3UwngzTFn";
+
+  const urlSafeBase64Decode = (str) => {
+    str = str.replace(/-/g, "+").replace(/_/g, "/");
+    while (str.length % 4) {
+      str += "=";
+    }
+    return str;
+  };
+
+  const decryptTemplateId = (encrypteTemplateId) => {
+    const decoded = urlSafeBase64Decode(encrypteTemplateId);
+    const bytes = CryptoJS.AES.decrypt(decoded, secretKey);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  };
+
+  function handlePlaceholders(templateBody) {
+    placeholders.map((placeholder) => {
+      const regex = new RegExp(`{{${placeholder.placeholderName}}}`, "g");
+      templateBody = templateBody.replace(
+        regex,
+        `<span class="placeholder-blot" data-placeholder="${placeholder.placeholderName}" style="border:2px solid black;">{{${placeholder.placeholderName}}}</span>`
+      );
+    });
+    const quill = quillRef.current.getEditor();
+    quill.clipboard.dangerouslyPasteHTML(templateBody);
+  }
+
+  async function getTemplateAndPlaceholders(id) {
+    try {
+      const responseTemplate = await axios.get(
+        `${baseUrl}/template/get/${id}`,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
+      );
+      const template = responseTemplate.data;
+      setTemplate(template);
+      setTemplateName(template.templateName); // Set the templateName state here
+      setEditorContent(template.templateBody);
+
+      const responsePlaceholders = await axios.get(
+        `${baseUrl}/placeholder/template/${id}`,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
+      );
+      const placeholdersData = responsePlaceholders.data;
+      setPlaceholders(placeholdersData);
+      handlePlaceholders(template.templateBody);
+    } catch (error) {
+      console.log(error);
+      message.error("Failed to fetch template and placeholders");
+    }
+  }
+
+  useEffect(() => {
+    // const decodedTemplateId = decryptTemplateId(templateId);
+    getTemplateAndPlaceholders(templateId);
+    // setDecodedTemplateId(decodedTemplateId);
+  }, []);
+  console.log(templateId);
 
   return (
     <div style={{}}>
@@ -264,10 +314,10 @@ const CreateTemplate = ({ uploadedFile }) => {
               padding: "1px",
             }}
           >
-            <h4>Create a New Template</h4>
+            <h4>Edit a Template</h4>
           </div>
           <div style={{ marginTop: "20px" }}>
-            <Form.Item
+            {/* <Form.Item
               label="Template Name"
               name="Template Name"
               rules={[{ required: true, message: "Please input!" }]}
@@ -278,7 +328,8 @@ const CreateTemplate = ({ uploadedFile }) => {
                 onChange={(e) => setTemplateName(e.target.value)}
                 style={{ width: "580px" }}
               />
-            </Form.Item>
+            </Form.Item> */}
+            <Title level={4}>Template Name: {templateName}</Title>
           </div>
           <div
             style={{
@@ -297,6 +348,8 @@ const CreateTemplate = ({ uploadedFile }) => {
                 width: "100%",
                 minHeight: "50vh",
                 overflow: "auto",
+                whiteSpace: "pre-wrap",
+                overflowWrap: "break-word",
               }}
             />
           </div>
@@ -364,10 +417,10 @@ const CreateTemplate = ({ uploadedFile }) => {
           <div style={{ marginTop: "20px" }}>
             <Button
               style={{ backgroundColor: "#01606F", color: "white" }}
-              onClick={generateTemplateJSON}
+              onClick={updateTemplateAndPlaceholders}
               icon={<SaveOutlined />}
             >
-              Save
+              Update
             </Button>
           </div>
         </Col>
@@ -376,4 +429,4 @@ const CreateTemplate = ({ uploadedFile }) => {
   );
 };
 
-export default CreateTemplate;
+export default EditTemplate;

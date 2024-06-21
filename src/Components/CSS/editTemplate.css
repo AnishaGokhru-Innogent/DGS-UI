@@ -1,0 +1,8 @@
+/* Add this CSS to your stylesheet */
+.no-background-pre {
+  background: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  white-space: pre-wrap; /* Ensures the content wraps correctly */
+}
