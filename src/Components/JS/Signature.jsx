@@ -3,7 +3,7 @@ import SignatureCanvas from "react-signature-canvas";
 import axios from "axios";
 import baseUrl from "../../BootApi";
 import { toast } from "react-toastify";
-import { Button, Dropdown, Space, Form, Input, Upload, Modal } from "antd";
+import { Button, Dropdown, Space, Form, Input, Upload, Modal,message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { log } from "util";
@@ -120,7 +120,7 @@ const Signature = () => {
     let signed ="";
     const apiEndpoint = getApiEndpoint();
     if (!apiEndpoint) {
-      toast.error("Invalid signature type.");
+      message.error("Invalid signature type.");
       return;
     }
     let signatureData;
@@ -156,7 +156,7 @@ const Signature = () => {
         const { signatureData: signatureBase64 } = response.data;
         signatureUrl = `data:image/png;base64,${signatureBase64}`;
         console.log(signatureUrl);
-        toast.success("Signature Added");
+        message.success("Signature Added");
       } catch (error) {
         toast.error("Something went wrong");
         console.log(error);
@@ -185,7 +185,7 @@ const Signature = () => {
           `${baseUrl}${apiEndpoint}/${decodedEmail}/${decodedDocumentId}`,
           signatureData
         );
-        toast.success("Signature Added");
+        message.success("Signature Added");
       } catch (error) {
         toast.error("Something went wrong");
         console.log(error);
@@ -316,7 +316,7 @@ const Signature = () => {
             overflowWrap: "break-word",
             padding: "20px",
             margin: "20px",
-            backgroundColor: "lightgrey",
+            backgroundColor: "#f0f0f0",
             width: "auto",
             minWidth: "800px",
           }}
@@ -327,7 +327,8 @@ const Signature = () => {
           type="primary"
           onClick={showModal}
           disabled={isSignatureAdded}
-          style={{ marginLeft: "280px" }}
+          style={{ marginLeft: "280px",backgroundColor:"#01606F"}}
+
         >
           Click Here To Sign
         </Button>

@@ -125,7 +125,9 @@ export function CreateDocument() {
   }
 
   return (
+
     <div className="create-document-container ">
+      <Spin spinning={loading} size="large">
       <div className="d-flex justify-content-between">
       <div>
       <Button style={{backgroundColor:"#01606F",color:"white"}} icon={<BackwardOutlined/>} onClick={() => navigate("/home")}>HOME</Button>
@@ -240,6 +242,7 @@ export function CreateDocument() {
         </Col>
       </Row>
       </div>
+      </Spin>
      </div>
    
   );

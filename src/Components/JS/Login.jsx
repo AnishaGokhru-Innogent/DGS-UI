@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../CSS/Login.css";
 import { MailOutlined, LockOutlined, LoginOutlined } from "@ant-design/icons";
-import { Input, Button, Form ,message} from "antd";
+import { Input, Button, Form, message } from "antd";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -59,7 +59,15 @@ const Login = () => {
               className="d-flex flex-column justify-content-center mt-4"
               style={{ width: "280px" }}
             >
-              <Form.Item>
+              <Form.Item
+                name="email"
+                rules={[
+                  {
+                    pattern:"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
+                    message: "Enter a valid email address",
+                  },
+                ]}
+              >
                 <Input
                   size="large"
                   placeholder="Email"
@@ -69,7 +77,15 @@ const Login = () => {
                   style={{ width: "270px" }}
                 />
               </Form.Item>
-              <Form.Item>
+              <Form.Item
+                // name="password"
+                rules={[
+                  // {
+                  //   min: 8,
+                  //   message: "Password must be at least 8 character",
+                  // },
+                ]}
+              >
                 <Input
                   size="large"
                   placeholder="Password"
@@ -91,7 +107,7 @@ const Login = () => {
                   type="primary"
                   icon={<LockOutlined />}
                   size={size}
-                  style={{ width: "280px", backgroundColor: "#589A65" }}
+                  style={{ width: "280px", backgroundColor: "#01606F" }}
                 >
                   Login
                 </Button>

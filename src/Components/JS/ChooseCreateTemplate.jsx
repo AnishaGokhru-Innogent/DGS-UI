@@ -40,7 +40,7 @@ export function ChooseCreateTemplate({ setCurrentView, setUploadedFile }) {
 
   return (
     <div>
-      <h1 className="d-flex justify-content-center">Create Template</h1>
+      <h1 className="d-flex justify-content-center mt-2">Create Template</h1>
 
       <div
         className="d-flex justify-content-center align-items-center"

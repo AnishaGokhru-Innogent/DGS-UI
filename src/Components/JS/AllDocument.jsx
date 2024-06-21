@@ -153,7 +153,7 @@ export function Alldocument() {
           borderColor="black"
           scroll={{
             x: "100%",
-            y: 450,
+            y: 330,
           }}
         />
       </div>
