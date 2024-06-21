@@ -131,10 +131,10 @@ const CreateTemplate = ({ uploadedFile }) => {
         leaf.domNode.classList.contains("placeholder-blot")
       ) {
         event.preventDefault();
-        quill.insertText(range.index, "");
+        quill.insertText(range.index, "\n");
         quill.setSelection(range.index + 1);
       } else {
-        quill.insertText(range.index, "");
+        quill.insertText(range.index, "\n");
         quill.setSelection(range.index + 1);
       }
     }
