@@ -8,7 +8,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 
 export function FinalDocument() {
   const { documentId } = useParams();
-  const [document, setDocument] = useState(null);
+  const [document, setDocument] = useState("");
   const signatureRef = useRef();
 
   const decodeBase64Url = (encodedWord) => {
@@ -21,7 +21,7 @@ export function FinalDocument() {
   };
   const decodedDocumentId = decodeBase64Url(documentId);
 
-  console.log(decodedDocumentId);
+  // console.log(decodedDocumentId);
 
   useEffect(() => {
     if (decodedDocumentId) {
@@ -29,7 +29,7 @@ export function FinalDocument() {
     }
   }, [decodedDocumentId]);
 
-  console.log(document);
+  // console.log(document);
 
   async function getDocumentAndSignature(id) {
     try {
@@ -43,7 +43,7 @@ export function FinalDocument() {
         `${baseUrl}/signature/getSignatures/${id}`
       );
       const signaturesData = signatureResponse.data;
-      console.log(signaturesData);
+      // console.log(signaturesData);
 
       let updatedDocumentBody = documentData.documentBody;
 

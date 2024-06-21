@@ -255,16 +255,16 @@ const EditTemplate = ({ templateId }) => {
   };
 
   function handlePlaceholders(templateBody) {
-    placeholders.map((placeholder) => {
-      const regex = new RegExp(`{{${placeholder.placeholderName}}}`, "g");
-      console.log(regex);
-      templateBody = templateBody.replace(
-        regex,
-        `<span class="placeholder-blot" data-placeholder="${placeholder.placeholderName}" style="border:2px solid black;">{{${placeholder.placeholderName}}}</span>`
-      );
-    });
-    const quill = quillRef.current.getEditor();
-    quill.clipboard.dangerouslyPasteHTML(templateBody);
+    // placeholders.map((placeholder) => {
+    //   const regex = new RegExp(`{{${placeholder.placeholderName}}}`, "g");
+    //   console.log(regex);
+    //   templateBody = templateBody.replace(
+    //     regex,
+    //     `<span class="placeholder-blot" data-placeholder="${placeholder.placeholderName}" style="border:2px solid black;">{{${placeholder.placeholderName}}}</span>`
+    //   );
+    // });
+    // const quill = quillRef.current.getEditor();
+    // quill.clipboard.dangerouslyPasteHTML(templateBody);
   }
 
   async function getTemplateAndPlaceholders(id) {
