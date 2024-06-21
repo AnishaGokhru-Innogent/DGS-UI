@@ -6,6 +6,7 @@ import { useReactToPrint } from "react-to-print";
 import { Button, notification, Row, Col, Typography } from "antd";
 import { HomeOutlined, DownloadOutlined } from "@ant-design/icons";
 import "../CSS/viewDocument.css";
+import CryptoJS from "crypto-js";
 
 const { Title } = Typography;
 
@@ -18,6 +19,23 @@ export function Seedocument() {
   const navigate = useNavigate();
 
   const { id } = useParams();
+
+  const secretKey =
+    "sD3rReEbZ+kjdUCCYD9ov/0fBb5ttGwzzZd1VRBmFwFAUTo3gwfBxBZ3UwngzTFn";
+
+  const urlSafeBase64Decode = (str) => {
+    str = str.replace(/-/g, "+").replace(/_/g, "/");
+    while (str.length % 4) {
+      str += "=";
+    }
+    return str;
+  };
+
+  const decryptDocumentId = (encryptesDocumentId) => {
+    const decoded = urlSafeBase64Decode(encryptesDocumentId);
+    const bytes = CryptoJS.AES.decrypt(decoded, secretKey);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  };
 
   async function getDocumentAndSignature(id) {
     try {
@@ -75,7 +93,8 @@ export function Seedocument() {
   });
 
   useEffect(() => {
-    getDocumentAndSignature(id);
+    const documentId = decryptDocumentId(id);
+    getDocumentAndSignature(documentId);
   }, [id]);
 
   return (
@@ -87,7 +106,7 @@ export function Seedocument() {
             type="primary"
             icon={<HomeOutlined />}
             onClick={() => navigate("/home")}
-            style={{backgroundColor:"#01606F"}}
+            style={{ backgroundColor: "#01606F" }}
           >
             Home
           </Button>
@@ -97,7 +116,7 @@ export function Seedocument() {
             type="primary"
             icon={<DownloadOutlined />}
             onClick={generatePdf}
-            style={{backgroundColor:"#01606F"}}
+            style={{ backgroundColor: "#01606F" }}
           >
             Download as PDF
           </Button>

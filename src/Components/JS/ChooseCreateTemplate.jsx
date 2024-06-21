@@ -38,6 +38,11 @@ export function ChooseCreateTemplate({ setCurrentView, setUploadedFile }) {
     }
   };
 
+  function handleCreateClick() {
+    setCurrentView("CreateTemplate");
+    setUploadedFile("");
+  }
+
   return (
     <div>
       <h1 className="d-flex justify-content-center mt-2">Create Template</h1>
@@ -77,7 +82,7 @@ export function ChooseCreateTemplate({ setCurrentView, setUploadedFile }) {
           <Col>
             <Row>
               <Button
-                onClick={() => setCurrentView("CreateTemplate")}
+                onClick={() => handleCreateClick()}
                 danger
                 style={buttonStyle}
                 className="d-flex justify-content-center align-items-center"

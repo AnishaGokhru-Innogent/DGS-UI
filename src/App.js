@@ -1,5 +1,4 @@
 import "./App.css";
-import ModalSignature from "./ModalSignature";
 import Signature from "./Components/JS/Signature";
 import Home from "./Components/JS/Home";
 import { ToastContainer } from "react-toastify";
@@ -15,6 +14,7 @@ import store from "./Components/redux/store";
 import { ChooseCreateTemplate } from "./Components/JS/ChooseCreateTemplate";
 import { Alldocument } from "./Components/JS/AllDocument";
 import { FinalDocument } from "./Components/JS/FinalDocument";
+import EditTemplate from "./Components/JS/EditTemplate";
 
 function App() {
   return (
@@ -95,7 +95,11 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/final-document/:id" element={<FinalDocument />} />
+          <Route
+            path="/final-document/:documentId"
+            element={<FinalDocument />}
+          />
+          <Route path="/edit-template/:templateId" element={<EditTemplate />} />
         </Routes>
       </>
     </>
