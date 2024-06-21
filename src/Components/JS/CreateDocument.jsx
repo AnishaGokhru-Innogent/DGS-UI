@@ -135,14 +135,14 @@ export function CreateDocument() {
     };
 
     try {
+      message.success("Email Send");
+      setLoading(false);
       await axios.post(`${baseUrl}/document/save`, documentData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${bearerToken}`,
         },
       });
-      setLoading(false);
-      message.success("Email Send");
     } catch (error) {
       console.error(error);
       message.error("Error Occurred in Saving Document and Sending Email");
