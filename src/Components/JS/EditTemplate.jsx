@@ -257,6 +257,7 @@ const EditTemplate = ({ templateId }) => {
   function handlePlaceholders(templateBody) {
     placeholders.map((placeholder) => {
       const regex = new RegExp(`{{${placeholder.placeholderName}}}`, "g");
+      console.log(regex);
       templateBody = templateBody.replace(
         regex,
         `<span class="placeholder-blot" data-placeholder="${placeholder.placeholderName}" style="border:2px solid black;">{{${placeholder.placeholderName}}}</span>`
@@ -277,6 +278,7 @@ const EditTemplate = ({ templateId }) => {
       const template = responseTemplate.data;
       setTemplate(template);
       setTemplateName(template.templateName); // Set the templateName state here
+      // console.log(template);
       setEditorContent(template.templateBody);
 
       const responsePlaceholders = await axios.get(
@@ -298,8 +300,8 @@ const EditTemplate = ({ templateId }) => {
     // const decodedTemplateId = decryptTemplateId(templateId);
     getTemplateAndPlaceholders(templateId);
     // setDecodedTemplateId(decodedTemplateId);
-  }, []);
-  console.log(templateId);
+  }, [templateId]);
+  // console.log(templateId);
 
   return (
     <div style={{}}>
