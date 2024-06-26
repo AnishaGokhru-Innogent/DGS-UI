@@ -12,7 +12,21 @@ import {
   ContactsOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme } from "antd";
+import {
+  Button,
+  Layout,
+  Menu,
+  theme,
+  message,
+  FloatButton,
+  Flex,
+  Dropdown,
+  Space,
+  Modal,
+  Form,
+  Input,
+  Checkbox,
+} from "antd";
 import { AllTemplate, Alltemplate } from "./AllTemplates";
 import { log } from "util";
 import { Alldocument } from "./AllDocument";
@@ -27,6 +41,7 @@ import { ChooseCreateTemplate } from "./ChooseCreateTemplate";
 import EditTemplate from "./EditTemplate";
 
 const { Header, Sider, Content } = Layout;
+
 const Home = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
@@ -34,6 +49,7 @@ const Home = () => {
   const [currentView, setCurrentView] = useState("home");
   const [uploadedFile, setUploadedFile] = useState(null);
   const [templateId, setTemplateId] = useState();
+  const [users, setUsers] = useState([]);
 
   const dispatch = useDispatch();
   const {
@@ -42,11 +58,62 @@ const Home = () => {
 
   const bearerToken = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     userName();
+    getallUser();
   }, []);
 
+  const changePassword = () => {
+    showModal();
+  };
+
+  const items = [
+    {
+      key: "1",
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.antgroup.com"
+          style={{ textDecoration: "none" }}
+        >
+          My Profile
+        </a>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <a style={{ textDecoration: "none" }} onClick={() => changePassword()}>
+          Change Password
+        </a>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.luohanacademy.com"
+          style={{ textDecoration: "none" }}
+        >
+          LogOut
+        </a>
+      ),
+    },
+  ];
   const userName = async () => {
     try {
       const response = await axios.get(
@@ -59,6 +126,53 @@ const Home = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+  const onFinish = async (values) => {
+    console.log("Success:", values);
+    updatePassword(values);
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+  const updatePassword = async (values) => {
+    try {
+      const email = user.email;
+      // const email = "harsh@gmail.com";
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/users/changePassword/${email}`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log(response.data);
+      message.success("Password Updated Successfully");
+      handleCancel();
+    } catch (error) {
+      message.error("Password is not updated");
+    }
+  };
+  const getallUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "http://localhost:8080/api/v1/users/getallUser",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setUsers(response.data);
+      console.log(response.data);
+    } catch (error) {
+      message.error("Error in Fetching Users");
+    }
+  };
+  const handleUserCreated = (newUser) => {
+    setUsers((prevUsers) => [...prevUsers, newUser]);
   };
   function logOut() {
     dispatch(logout());
@@ -94,6 +208,7 @@ const Home = () => {
             <img src={mainImage} alt="" />
           </div>
         );
+        return <div>Home Content</div>;
     }
   };
   console.log(currentView);
@@ -110,11 +225,15 @@ const Home = () => {
       case "LogOut":
         return logOut();
       default:
-        return <Register />;
+        return (
+          <>
+            <Register />
+            <AllUser />
+          </>
+        );
     }
   };
 
-  // console.log(user);
   const userMenuItems = [
     {
       key: "1",
@@ -191,10 +310,39 @@ const Home = () => {
     },
   ];
 
-  //  console.log(user);
   const menuItems = user.role === "ADMIN" ? adminMenuItems : userMenuItems;
   const renderContent =
     user.role === "ADMIN" ? renderContentAdmin : renderContentUser;
+  const validatePassword = (_, value) => {
+    if (!value) {
+      return Promise.reject("Please input your password!");
+    }
+    if (value.length < 8) {
+      return Promise.reject("Password must be at least 6 characters long!");
+    }
+    if (value.length > 12) {
+      return Promise.reject("Password cannot exceed 12 characters!");
+    }
+    if (!/[A-Z]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one uppercase letter!"
+      );
+    }
+    if (!/[a-z]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one lowercase letter!"
+      );
+    }
+    if (!/[0-9]/.test(value)) {
+      return Promise.reject("Password must contain at least one digit!");
+    }
+    if (!/[!@#$%^&*]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one special character!"
+      );
+    }
+    return Promise.resolve();
+  };
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -214,6 +362,7 @@ const Home = () => {
           style={{
             padding: 0,
             background: colorBgContainer,
+            position: "relative",
           }}
         >
           <Button
@@ -226,6 +375,33 @@ const Home = () => {
               height: 64,
             }}
           />
+          <div
+            style={{
+              float: "right",
+              position: "relative",
+              right: "50px",
+            }}
+          >
+            <Dropdown
+              menu={{
+                items,
+              }}
+              placement="bottom"
+              arrow={{
+                pointAtCenter: true,
+              }}
+            >
+              <Button
+                icon={<UserOutlined />}
+                style={{
+                  borderRadius: "50%",
+                  height: "40px",
+                  width: "50px",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                }}
+              ></Button>
+            </Dropdown>
+          </div>
         </Header>
         <Content
           style={{
@@ -237,6 +413,101 @@ const Home = () => {
           }}
         >
           {renderContent()}
+          <div>
+            <Modal
+              title="Change Password"
+              open={isModalOpen}
+              footer={null}
+              // onOk={handleOk}
+              onCancel={handleCancel}
+            >
+              <Form
+                name="basic"
+                labelCol={{
+                  span: 8,
+                }}
+                wrapperCol={{
+                  span: 16,
+                }}
+                style={{
+                  maxWidth: 600,
+                  maxHeight: 270,
+                  // border:"2px solid black",
+                  paddingTop: "20px",
+                }}
+                initialValues={{
+                  remember: true,
+                }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                autoComplete="off"
+              >
+                <Form.Item
+                  label="Old Password"
+                  name="oldPassword"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input old password!",
+                    },
+                    {
+                      validator: validatePassword,
+                    },
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item
+                  label="New Password"
+                  name="newPassword"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input new password!",
+                    },
+                    {
+                      validator: validatePassword,
+                    },
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  dependencies={["newPassword"]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input confirm password!",
+                    },
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item
+                  wrapperCol={{
+                    offset: 8,
+                    span: 16,
+                  }}
+                >
+                  <div className="float-end">
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{
+                        backgroundColor: "#01606F",
+                        marginRight: "20px",
+                      }}
+                    >
+                      Submit
+                    </Button>
+                    <Button onClick={handleCancel}>Cancel</Button>
+                  </div>
+                </Form.Item>
+              </Form>
+            </Modal>
+          </div>
         </Content>
       </Layout>
     </Layout>

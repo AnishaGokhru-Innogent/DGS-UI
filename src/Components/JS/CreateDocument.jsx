@@ -150,6 +150,7 @@ export function CreateDocument() {
   }
 
   return (
+
     <div className="create-document-container ">
       <Spin spinning={loading} size="large">
         <div className="d-flex justify-content-between">

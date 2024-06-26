@@ -15,6 +15,7 @@ import { ChooseCreateTemplate } from "./Components/JS/ChooseCreateTemplate";
 import { Alldocument } from "./Components/JS/AllDocument";
 import { FinalDocument } from "./Components/JS/FinalDocument";
 import EditTemplate from "./Components/JS/EditTemplate";
+import { AccessTemplates } from "./Components/JS/AccessTemplates";
 
 function App() {
   return (
@@ -100,6 +101,7 @@ function App() {
             element={<FinalDocument />}
           />
           <Route path="/edit-template/:templateId" element={<EditTemplate />} />
+          <Route path="/access-template" element={<AccessTemplates />} />
         </Routes>
       </>
     </>
