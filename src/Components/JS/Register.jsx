@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
@@ -21,10 +20,11 @@ import {
   SaveOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
+import baseUrl from "../../BootApi";
 
 const { Option } = Select;
 
-const Register = ({ onUserCreated }) => {
+const Register = () => {
   const [open, setOpen] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [designations, setDesignations] = useState([]);
@@ -34,10 +34,11 @@ const Register = ({ onUserCreated }) => {
   const [lastName, setLastName] = useState("");
   const [departmentName, setDepartmentName] = useState("");
   const [designationName, setDesignationName] = useState("");
-  const [manager,setManager] = useState("");
+  const [manager, setManager] = useState("");
   const [form] = Form.useForm();
   const [desName, setDesName] = useState("");
   const [deptName, setDeptName] = useState("");
+  const bearerToken = localStorage.getItem("token");
 
   const [editingDepartment, setEditingDepartment] = useState(null);
   const [editingDeptName, setEditingDeptName] = useState("");
@@ -65,8 +66,11 @@ const Register = ({ onUserCreated }) => {
     };
     try {
       const response = await axios.post(
-        `http://localhost:8080/designation/add`,
-        designationData
+        `${baseUrl}/designation/add`,
+        designationData,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
       );
       setDesignations([...designations, { designationName: desName }]);
       setDesName("");
@@ -84,8 +88,11 @@ const Register = ({ onUserCreated }) => {
     };
     try {
       const response = await axios.post(
-        `http://localhost:8080/department/addDept`,
-        departmentData
+        `${baseUrl}/department/addDept`,
+        departmentData,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
       );
       setDepartments([...departments, { departmentName: deptName }]);
       setDeptName("");
@@ -117,9 +124,9 @@ const Register = ({ onUserCreated }) => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/department/getAll"
-      );
+      const response = await axios.get(`${baseUrl}/department/getAll`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      });
       setDepartments(response.data);
     } catch (error) {
       console.error("Error fetching departments:", error);
@@ -128,9 +135,9 @@ const Register = ({ onUserCreated }) => {
 
   const fetchDesignations = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/designation/getAll"
-      );
+      const response = await axios.get(`${baseUrl}/designation/getAll`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      });
       setDesignations(response.data);
     } catch (error) {
       console.error("Error fetching designations:", error);
@@ -140,7 +147,10 @@ const Register = ({ onUserCreated }) => {
   const getDepartmentIdByName = async (name) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/department/getByName/${name}`
+        `${baseUrl}/department/getByName/${name}`,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
       );
       return response.data.departmentId;
     } catch (error) {
@@ -153,7 +163,10 @@ const Register = ({ onUserCreated }) => {
   const getDesignationByName = async (name) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/designation/getByName/${name}`
+        `${baseUrl}/designation/getByName/${name}`,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
       );
       return response.data.designationId;
     } catch (error) {
@@ -177,7 +190,7 @@ const Register = ({ onUserCreated }) => {
       password: password,
       firstName: firstName,
       lastName: lastName,
-      manager:manager,
+      manager: manager,
       departmentId: departmentId,
       designationId: designationId,
     };
@@ -185,7 +198,7 @@ const Register = ({ onUserCreated }) => {
     console.log("Register data:", registerData);
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/register",
+        `${baseUrl}/api/v1/auth/register`,
         registerData,
         {
           headers: {
@@ -198,6 +211,7 @@ const Register = ({ onUserCreated }) => {
     } catch (error) {
       message.error("Register Failed");
     }
+    window.location.reload();
   };
 
   const startEditingDepartment = (dept) => {
@@ -227,8 +241,11 @@ const Register = ({ onUserCreated }) => {
   const saveEditingDepartment = async (dept) => {
     try {
       const response = await axios.put(
-        `http://localhost:8080/department/update/${dept.departmentId}`,
-        { departmentName: editingDeptName }
+        `${baseUrl}/department/update/${dept.departmentId}`,
+        { departmentName: editingDeptName },
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
       );
       const updatedDepartments = departments.map((d) =>
         d.departmentId === dept.departmentId
@@ -246,8 +263,11 @@ const Register = ({ onUserCreated }) => {
   const saveEditingDesignation = async (des) => {
     try {
       const response = await axios.put(
-        `http://localhost:8080/designation/update/${des.designationId}`,
-        { designationName: editingDesName }
+        `${baseUrl}/designation/update/${des.designationId}`,
+        { designationName: editingDesName },
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
       );
       const updatesDesignations = designations.map((d) =>
         d.designationId === des.designationId
@@ -507,9 +527,7 @@ const Register = ({ onUserCreated }) => {
                         {des.designationName}
                         <Button
                           type="text"
-                          icon={
-                            <EditOutlined/>
-                          }
+                          icon={<EditOutlined />}
                           onClick={() => startEditingDesignation(des)}
                         />
                       </>

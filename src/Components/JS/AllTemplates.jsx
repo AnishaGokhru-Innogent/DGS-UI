@@ -13,19 +13,18 @@ import {
   Form,
   Input,
   List,
+  Select,
+  Segmented,
+  Typography,
+  Skeleton,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import {
-  MailOutlined,
-  FileImageOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
 import CryptoJS from "crypto-js";
-import Item from "antd/es/list/Item";
-import Title from "antd/es/skeleton/Title";
-import { addListener } from "@reduxjs/toolkit";
 import { useForm } from "antd/es/form/Form";
+import { log } from "util";
+import { AccessTemplates } from "./AccessTemplates";
 
 export function AllTemplate({ setCurrentView, setTemplateId }) {
   const [templates, setTemplates] = useState([]);
@@ -35,12 +34,21 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   const bearerToken = localStorage.getItem("token");
   const [form] = useForm();
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const [accessTemplateId, setAccessTemplateId] = useState();
+  const [accesses, setAccesses] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [templateAccess, setTemplateAccess] = useState([]);
+  const [access, setAccess] = useState();
+  const [accessDetails, setAccessDetails] = useState([]);
+  const [currnetUser, setCurrentUser] = useState();
+
+  const { Title, Text } = Typography;
 
   const [api, contextHolder] = notification.useNotification();
 
   const [visible, setVisible] = useState(false);
 
-  const [accessEmail, setAccessEmail] = useState();
+  const [accessUserId, setAccessUserId] = useState();
 
   const secretKey =
     "sD3rReEbZ+kjdUCCYD9ov/0fBb5ttGwzzZd1VRBmFwFAUTo3gwfBxBZ3UwngzTFn";
@@ -93,8 +101,34 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
     }
   };
 
+  const getCurrentUser = async (userId) => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/api/v1/users/getUser/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
+      );
+      setCurrentUser(response.data);
+    } catch (error) {
+      console.error("Failed to fetch current user data", error);
+    }
+  };
+
+  async function getAllUserForAccess() {
+    await axios
+      .get(`${baseUrl}/api/v1/users/getallUser`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => response.data)
+      .then((data) => setAllUsers(data))
+      .catch((error) => console.log(error));
+  }
+  // console.log(allUsers);
+
   useEffect(() => {
     getTemplate();
+    getCurrentUser(Number(userId));
   }, []);
 
   const deleteTemplate = async (id) => {
@@ -173,27 +207,117 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
               Delete
             </Button>
           </Popconfirm>
-          <Button onClick={() => setVisible(true)}>Access</Button>
+          <Button onClick={() => handleAccessClick(record.templateId)}>
+            Access
+          </Button>
         </Space>
       ),
     },
   ];
 
-  function handleAccessEmail() {
-    // form
-    //   .validateFields()
-    //   .then((values) => {
-    //     const AccessObject = {
-    //       template
-    //     }
-    //     axios.post(`${baseUrl}/accessControl/addAccess`);
-    //   })
-    //   .catch((error) => console.log(error));
+  async function getAllAccessOfTemplate(templateId) {
+    await axios
+      .get(`${baseUrl}/accessControl/template/access/user/${templateId}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => response.data)
+      .then((data) => setTemplateAccess(data))
+      .catch((error) => console.log(error));
   }
 
+  // console.log(templateAccess);
+
+  function handleAccessClick(templateId) {
+    setVisible(true);
+    setAccessTemplateId(templateId);
+    getAllUserForAccess();
+  }
+
+  useEffect(() => {
+    getAllAccessOfTemplate(Number(accessTemplateId));
+    getAllAccessDetails(Number(accessTemplateId));
+  }, [accessTemplateId]);
+
+  async function handleAccessEmail() {
+    const accessTemplate = {
+      template: accessTemplateId,
+      userId: accessUserId,
+      templateAccess: access,
+      ownerId: userId,
+      ownerName: `${currnetUser.firstName} ${currnetUser.lastName}`,
+    };
+    console.log(accessTemplate);
+
+    try {
+      const response = await axios.post(
+        `${baseUrl}/accessControl/addAccess`,
+        accessTemplate,
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
+      );
+      // console.log(response);
+      setAccesses((prevAccesses) => [...prevAccesses, response.data]);
+    } catch (error) {
+      console.log(error);
+    }
+    getAllAccessOfTemplate(Number(accessTemplateId));
+    getAllAccessDetails(Number(accessTemplateId));
+  }
+  function handleAccess(value) {
+    setAccess(value);
+  }
+  async function getAllAccessDetails(templateId) {
+    await axios
+      .get(`${baseUrl}/accessControl/template/access/${templateId}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((reponse) => reponse.data)
+      .then((data) => setAccessDetails(data))
+      .catch((error) => console.log(error));
+  }
+
+  // console.log(accessDetails);
+
+  const mergedData = templateAccess
+    .map((item) => {
+      if (item.userId !== userId) {
+        const details = accessDetails.find(
+          (detail) => detail.userId === item.userId
+        );
+        return { ...item, ...details };
+      }
+      return null;
+    })
+    .filter((item) => item !== null);
+
+  async function deleteAccess(accessId) {
+    await axios
+      .delete(`${baseUrl}/accessControl/delete/access/${accessId}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => response.data, message.success("Access Deleted"))
+      .catch((error) => {
+        console.log(error);
+        message.error("Error Occurred");
+      });
+
+    getAllAccessOfTemplate(Number(accessTemplateId));
+    getAllAccessDetails(Number(accessTemplateId));
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <div style={{ padding: "20px" }}>
       <h2>All Templates</h2>
+      <Segmented
+        options={["My Templates", "Access"]}
+        onChange={(value) => {
+          if (value === "Access") {
+            <AccessTemplates />;
+          } // string
+        }}
+      />
       {contextHolder}
       <Spin spinning={loading}>
         <div
@@ -220,31 +344,71 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
         <Form form={form} onFinish={handleAccessEmail}>
           <Title level={5}>Access on {document.documentName}</Title>
           <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Please input your email!" },
-              {
-                type: "email",
-                message: "Please enter a valid email!",
-              },
-              {
-                pattern: emailPattern,
-                message: "Email does not match the required pattern!",
-              },
-            ]}
+            label="Name"
+            name="Name"
+            rules={[{ required: true, message: "Please input valid Name" }]}
           >
-            <Input
-              size="large"
-              placeholder="Email"
-              prefix={<MailOutlined />}
-              style={{ width: "270px" }}
-            />
+            <Space wrap>
+              <Select
+                style={{ width: 240 }}
+                showSearch
+                placeholder="Select a person"
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={allUsers
+                  .filter((user) => user.userId != userId) // Filter out the logged-in user
+                  .map((user) => ({
+                    label: `${user.firstName} ${user.lastName}`,
+                    value: user.userId,
+                  }))}
+                onChange={(e) => setAccessUserId(e)}
+              />
+              <Select
+                style={{ width: 120 }}
+                onChange={handleAccess}
+                options={[
+                  {
+                    value: "ALL",
+                    label: "ALL",
+                  },
+                  {
+                    value: "EDIT",
+                    label: "EDIT",
+                  },
+                  {
+                    value: "SHARE",
+                    label: "SHARE",
+                  },
+                ]}
+              />
+              <Button type="primary" htmlType="submit">
+                Send
+              </Button>
+            </Space>
           </Form.Item>
-          <Button type="primary" htmlType="submit">
-            Send
-          </Button>
-          <List bordered />
+          <List
+            bordered
+            dataSource={mergedData}
+            renderItem={(access) => (
+              <List.Item style={{ padding: "5px 10px" }}>
+                <Text
+                  style={{ fontSize: "14px" }}
+                >{`${access.firstName} ${access.lastName}`}</Text>
+                <Text style={{ marginLeft: "10px" }}>
+                  ({access.templateAccess})
+                </Text>
+                <Button
+                  style={{ marginLeft: "auto" }}
+                  onClick={() => deleteAccess(access.accessControlId)}
+                >
+                  <DeleteOutlined />
+                </Button>
+              </List.Item>
+            )}
+          />
         </Form>
       </Modal>
     </div>

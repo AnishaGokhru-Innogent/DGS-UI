@@ -1,7 +1,10 @@
-
 import React, { useEffect, useRef, useState } from "react";
-import "../CSS/allUser.css"
-import { SearchOutlined , EditOutlined , DeleteOutlined} from "@ant-design/icons";
+import "../CSS/allUser.css";
+import {
+  SearchOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Input,
@@ -33,13 +36,19 @@ const AllUser = () => {
   const [departments, setDepartments] = useState([]);
   const [designations, setDesignations] = useState([]);
   const [form] = Form.useForm();
-  const [userId,setUserId] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const bearerToken = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [departmentsResponse, designationsResponse] = await Promise.all([
-          axios.get("http://localhost:8080/department/getAll"),
-          axios.get("http://localhost:8080/designation/getAll"),
+          axios.get("http://localhost:8080/department/getAll", {
+            headers: { Authorization: `Bearer ${bearerToken}` },
+          }),
+          axios.get("http://localhost:8080/designation/getAll", {
+            headers: { Authorization: `Bearer ${bearerToken}` },
+          }),
         ]);
 
         setDepartments(departmentsResponse.data);
@@ -83,10 +92,12 @@ const AllUser = () => {
   const onClose = (id) => {
     setOpen(false);
   };
-  const findDepartmentIdByName=(name) => departments.find((dep)=>dep.departmentName===name);
-  const findDesignationByName=(name) => designations.find((des)=>des.designationName===name);
+  const findDepartmentIdByName = (name) =>
+    departments.find((dep) => dep.departmentName === name);
+  const findDesignationByName = (name) =>
+    designations.find((des) => des.designationName === name);
 
-  const updateUser = async(values)=>{
+  const updateUser = async (values) => {
     console.log("Called");
     console.log(values);
     const department = findDepartmentIdByName(values.department);
@@ -95,31 +106,32 @@ const AllUser = () => {
     const departmentId = department.departmentId;
     const designationId = designation.designationId;
 
-
     const updateData = {
-       firstName:values.firstName,
-       lastName:values.lastName,
-       email:values.email,
-       departmentId:departmentId,
-       designationId:designationId
-    }
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      departmentId: departmentId,
+      designationId: designationId,
+    };
     console.log(updateData);
-    try{  
+    try {
       let token = localStorage.getItem("token");
-       const response = await axios.put(`http://localhost:8080/api/v1/users/updateUser/${userId}`,updateData,{
-          headers:{Authorization :`Bearer ${token}` },
-       });
-      if(response.data){
+      const response = await axios.put(
+        `http://localhost:8080/api/v1/users/updateUser/${userId}`,
+        updateData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.data) {
         message.success("Updated Successfully");
         setOpen(false);
       }
-      fetchUsers(departments,designations);
-   }
-   catch(error){
+      fetchUsers(departments, designations);
+    } catch (error) {
       console.log(error);
-   }
- 
-  }
+    }
+  };
 
   const confirm = async (id) => {
     try {
@@ -318,7 +330,12 @@ const AllUser = () => {
       title: "",
       key: "action",
       render: (text, record) => (
-        <Button type="primary" onClick={()=>showDrawer(record)} style={{backgroundColor:"#01606F"}} icon={<EditOutlined/>}>
+        <Button
+          type="primary"
+          onClick={() => showDrawer(record)}
+          style={{ backgroundColor: "#01606F" }}
+          icon={<EditOutlined />}
+        >
           Update
         </Button>
       ),
@@ -335,7 +352,9 @@ const AllUser = () => {
           okText="Yes"
           cancelText="No"
         >
-          <Button danger icon={<DeleteOutlined/>}>Delete</Button>
+          <Button danger icon={<DeleteOutlined />}>
+            Delete
+          </Button>
         </Popconfirm>
       ),
     },
@@ -364,7 +383,12 @@ const AllUser = () => {
           },
         }}
       >
-        <Form layout="vertical" hideRequiredMark form={form} onFinish={updateUser}>
+        <Form
+          layout="vertical"
+          hideRequiredMark
+          form={form}
+          onFinish={updateUser}
+        >
           <Form.Item
             name="firstName"
             label="First Name"
@@ -375,9 +399,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Please Enter First Name"
-            />
+            <Input placeholder="Please Enter First Name" />
           </Form.Item>
           <Form.Item
             name="lastName"
@@ -389,9 +411,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Please Enter Last name"
-            />
+            <Input placeholder="Please Enter Last name" />
           </Form.Item>
           <Form.Item
             name="email"
@@ -403,9 +423,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Please Enter Email"
-            />
+            <Input placeholder="Please Enter Email" />
           </Form.Item>
           <Form.Item
             name="department"
@@ -417,9 +435,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Select
-              placeholder="Please select an department"
-            >
+            <Select placeholder="Please select an department">
               {departments.map((dep) => (
                 <Option key={dep.departmentName} value={dep.departmentName}>
                   {dep.departmentName}
@@ -437,9 +453,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Select
-              placeholder="Please choose the designation"
-            >
+            <Select placeholder="Please choose the designation">
               {designations.map((des) => (
                 <Option key={des.designationName} value={des.designationName}>
                   {des.designationName}
@@ -463,13 +477,19 @@ const AllUser = () => {
             </Select>
           </Form.Item>
           <Form.Item>
-           <Space>
-           <Button htmlType="submit" icon={<EditOutlined/>  } style={{backgroundColor:"#01606F",color:"white"}}>
-              Update
-            </Button>
-            <Button onClick={onClose} style={{marginLeft:"15px"}}>Cancel</Button>
-          </Space>
-           </Form.Item>
+            <Space>
+              <Button
+                htmlType="submit"
+                icon={<EditOutlined />}
+                style={{ backgroundColor: "#01606F", color: "white" }}
+              >
+                Update
+              </Button>
+              <Button onClick={onClose} style={{ marginLeft: "15px" }}>
+                Cancel
+              </Button>
+            </Space>
+          </Form.Item>
         </Form>
       </Drawer>
     </>
@@ -477,6 +497,3 @@ const AllUser = () => {
 };
 
 export default AllUser;
-
-
-

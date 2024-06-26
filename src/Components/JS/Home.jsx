@@ -27,7 +27,7 @@ import {
   Input,
   Checkbox,
 } from "antd";
-import { Alltemplate } from "./AllTemplates";
+import { AllTemplate, Alltemplate } from "./AllTemplates";
 import { log } from "util";
 import { Alldocument } from "./AllDocument";
 import CreateTemplate from "./CreateTemplate";
@@ -218,8 +218,8 @@ const Home = () => {
       case "Home":
         return (
           <>
-            <Register onUserCreated={handleUserCreated} />
-            <AllUser users={users} />
+            <Register />
+            <AllUser />
           </>
         );
       case "LogOut":
@@ -313,30 +313,36 @@ const Home = () => {
   const menuItems = user.role === "ADMIN" ? adminMenuItems : userMenuItems;
   const renderContent =
     user.role === "ADMIN" ? renderContentAdmin : renderContentUser;
-    const validatePassword = (_, value) => {
-      if (!value) {
-          return Promise.reject('Please input your password!');
-      }
-      if (value.length <8 ) {
-          return Promise.reject('Password must be at least 6 characters long!');
-      }
-      if (value.length > 12) {
-          return Promise.reject('Password cannot exceed 12 characters!');
-      }
-      if (!/[A-Z]/.test(value)) {
-          return Promise.reject('Password must contain at least one uppercase letter!');
-      }
-      if (!/[a-z]/.test(value)) {
-          return Promise.reject('Password must contain at least one lowercase letter!');
-      }
-      if (!/[0-9]/.test(value)) {
-          return Promise.reject('Password must contain at least one digit!');
-      }
-      if (!/[!@#$%^&*]/.test(value)) {
-          return Promise.reject('Password must contain at least one special character!');
-      }
-      return Promise.resolve();
-    };
+  const validatePassword = (_, value) => {
+    if (!value) {
+      return Promise.reject("Please input your password!");
+    }
+    if (value.length < 8) {
+      return Promise.reject("Password must be at least 6 characters long!");
+    }
+    if (value.length > 12) {
+      return Promise.reject("Password cannot exceed 12 characters!");
+    }
+    if (!/[A-Z]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one uppercase letter!"
+      );
+    }
+    if (!/[a-z]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one lowercase letter!"
+      );
+    }
+    if (!/[0-9]/.test(value)) {
+      return Promise.reject("Password must contain at least one digit!");
+    }
+    if (!/[!@#$%^&*]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one special character!"
+      );
+    }
+    return Promise.resolve();
+  };
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -445,8 +451,8 @@ const Home = () => {
                       message: "Please input old password!",
                     },
                     {
-                        validator:validatePassword    
-                    }
+                      validator: validatePassword,
+                    },
                   ]}
                 >
                   <Input.Password />
@@ -460,8 +466,8 @@ const Home = () => {
                       message: "Please input new password!",
                     },
                     {
-                      validator:validatePassword
-                    }
+                      validator: validatePassword,
+                    },
                   ]}
                 >
                   <Input.Password />
