@@ -36,7 +36,6 @@ const Register = ({ fetchUsers,allUser }) => {
   const [departmentName, setDepartmentName] = useState("");
   const [designationName, setDesignationName] = useState("");
   const [manager, setManager] = useState("");
-  const [manager, setManager] = useState("");
   const [form] = Form.useForm();
   const [desName, setDesName] = useState("");
   const [deptName, setDeptName] = useState("");
@@ -555,7 +554,6 @@ const Register = ({ fetchUsers,allUser }) => {
                         {des.designationName}
                         <Button
                           type="text"
-                          icon={<EditOutlined />}
                           icon={<EditOutlined />}
                           onClick={() => startEditingDesignation(des)}
                         />
