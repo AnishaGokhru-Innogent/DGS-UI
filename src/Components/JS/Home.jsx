@@ -27,7 +27,7 @@ import {
   Input,
   Checkbox,
 } from "antd";
-import { AllTemplate, Alltemplate } from "./AllTemplates";
+import { AllTemplate } from "./AllTemplates";
 import { log } from "util";
 import { Alldocument } from "./AllDocument";
 import CreateTemplate from "./CreateTemplate";
