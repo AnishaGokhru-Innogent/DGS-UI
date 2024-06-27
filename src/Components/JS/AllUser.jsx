@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { log } from "util";
 import { icons } from "antd/es/image/PreviewGroup";
+import Register from "./Register";
 const { Option } = Select;
 
 const AllUser = () => {
@@ -74,6 +75,7 @@ const AllUser = () => {
       firstName: record.firstName,
       lastName: record.lastName,
       email: record.email,
+      manager:record.manager,
       department: record.departmentName,
       designation: record.designationName,
       role: record.role,
@@ -99,6 +101,7 @@ const AllUser = () => {
     const updateData = {
        firstName:values.firstName,
        lastName:values.lastName,
+       manager:values.manager,
        email:values.email,
        departmentId:departmentId,
        designationId:designationId
@@ -285,41 +288,51 @@ const AllUser = () => {
       title: "First Name",
       dataIndex: "firstName",
       key: "firstName",
-      width: "15%",
+      width: "12%",
       ...getColumnSearchProps("firstName"),
     },
     {
       title: "Last Name",
       dataIndex: "lastName",
       key: "lastName",
-      width: "15%",
+      width: "12%",
       ...getColumnSearchProps("lastName"),
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      width: "23%",
+      width: "22%",
       ...getColumnSearchProps("email"),
+    },
+    {
+      title: "Manager",
+      dataIndex: "manager",
+      key: "manager",
+      width: "13%",
+      ...getColumnSearchProps("manager"),
     },
     {
       title: "Department",
       dataIndex: "departmentName",
       key: "departmentName",
+      width: "13%",
       ...getColumnSearchProps("departmentName"),
     },
     {
       title: "Designation",
       dataIndex: "designationName",
       key: "designationName",
+      width: "15%",
       ...getColumnSearchProps("designationName"),
     },
     {
       title: "",
       key: "action",
+      width:"6%",
       render: (text, record) => (
         <Button type="primary" onClick={()=>showDrawer(record)} style={{backgroundColor:"#01606F"}} icon={<EditOutlined/>}>
-          Update
+          
         </Button>
       ),
     },
@@ -335,14 +348,15 @@ const AllUser = () => {
           okText="Yes"
           cancelText="No"
         >
-          <Button danger icon={<DeleteOutlined/>}>Delete</Button>
+          <Button danger icon={<DeleteOutlined/>}></Button>
         </Popconfirm>
       ),
     },
   ];
-
+ console.log(allUser);
   return (
     <>
+      <Register fetchUsers={fetchUsers} allUser={allUser}/>
       <div className="mt-4">
         <Table
           columns={columns}
@@ -400,6 +414,20 @@ const AllUser = () => {
               {
                 required: true,
                 message: "Please Enter Email",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Please Enter Email"
+            />
+          </Form.Item>
+          <Form.Item
+            name="manager"
+            label="Manager"
+            rules={[
+              {
+                required: true,
+                message: "Please Enter Manager",
               },
             ]}
           >

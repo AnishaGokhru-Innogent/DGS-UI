@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
@@ -24,7 +23,7 @@ import {
 
 const { Option } = Select;
 
-const Register = ({ onUserCreated }) => {
+const Register = ({ fetchUsers,allUser }) => {
   const [open, setOpen] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [designations, setDesignations] = useState([]);
@@ -34,18 +33,16 @@ const Register = ({ onUserCreated }) => {
   const [lastName, setLastName] = useState("");
   const [departmentName, setDepartmentName] = useState("");
   const [designationName, setDesignationName] = useState("");
-  const [manager,setManager] = useState("");
+  const [manager, setManager] = useState("");
   const [form] = Form.useForm();
   const [desName, setDesName] = useState("");
   const [deptName, setDeptName] = useState("");
 
   const [editingDepartment, setEditingDepartment] = useState(null);
   const [editingDeptName, setEditingDeptName] = useState("");
-  // const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const [editingDesignation, setEditingDesignation] = useState("");
   const [editingDesName, setEditingDesName] = useState(null);
-  // const [dropdownVisi, setDropdownVisi] = useState(false);
 
   const deptInputRef = useRef(null);
   const desInputRef = useRef(null);
@@ -177,7 +174,7 @@ const Register = ({ onUserCreated }) => {
       password: password,
       firstName: firstName,
       lastName: lastName,
-      manager:manager,
+      manager: manager,
       departmentId: departmentId,
       designationId: designationId,
     };
@@ -195,6 +192,12 @@ const Register = ({ onUserCreated }) => {
       );
       message.success("Register Success");
       onClose();
+      try {
+        fetchUsers(departments, designations);
+      } catch (error) {
+        console.error("Error calling fetchUser:", error);
+        message.error("Failed to fetch user data after registration");
+      }
     } catch (error) {
       message.error("Register Failed");
     }
@@ -204,14 +207,20 @@ const Register = ({ onUserCreated }) => {
     setEditingDepartment(dept.departmentId);
     setEditingDeptName(dept.departmentName);
     setTimeout(() => deptInputRef.current?.focus(), 0);
-    // setDropdownVisible(false);
+  };
+
+  const onChange = (value) => {
+    console.log(`selected ${value}`);
+    setManager(value);
+  };
+  const onSearch = (value) => {
+    console.log('search:', value);
   };
 
   const startEditingDesignation = (des) => {
     setEditingDesignation(des.designationId);
     setEditingDesName(des.designationName);
     setTimeout(() => desInputRef.current?.focus(), 0);
-    // setDropdownVisi(false);
   };
 
   const cancelEditingDepartment = () => {
@@ -336,9 +345,28 @@ const Register = ({ onUserCreated }) => {
               },
             ]}
           >
-            <Input
+            {/* <Input
               placeholder="Please Enter Manager"
               onChange={(e) => setManager(e.target.value)}
+            /> */}
+            <Select
+              showSearch
+              placeholder="Select a Manager"
+              optionFilterProp="label"
+              onChange={(value) => {
+                const selectedUser = allUser.find(user => user.userId === value);
+                if (selectedUser) {
+                  console.log("Selected manager name:", selectedUser.firstName); // Debug log to check value
+                  setManager(selectedUser.firstName);
+                }
+              }}
+              onSearch={onSearch}
+              options={allUser.filter(user=>user.designationId===1)
+                .map(user => ({
+                label: user.firstName,
+                value: user.userId,
+              }))}
+              
             />
           </Form.Item>
 
@@ -354,12 +382,10 @@ const Register = ({ onUserCreated }) => {
           >
             <Select
               style={{
-                width: 300,
+                width: 385,
               }}
               placeholder="Department"
               onChange={(value) => setDepartmentName(value)}
-              // open={dropdownVisible}
-              // onDropdownVisibleChange={(open) => setDropdownVisible(open)}
               dropdownRender={(menu) => (
                 <>
                   {menu}
@@ -442,12 +468,10 @@ const Register = ({ onUserCreated }) => {
           >
             <Select
               style={{
-                width: 300,
+                width: 385,
               }}
               placeholder="Designation"
               onChange={(value) => setDesignationName(value)}
-              // open={dropdownVisi}
-              // onDropdownVisibleChange={(open) => setDropdownVisible(open)}
               dropdownRender={(menu) => (
                 <>
                   {menu}
@@ -507,9 +531,7 @@ const Register = ({ onUserCreated }) => {
                         {des.designationName}
                         <Button
                           type="text"
-                          icon={
-                            <EditOutlined/>
-                          }
+                          icon={<EditOutlined />}
                           onClick={() => startEditingDesignation(des)}
                         />
                       </>
@@ -527,6 +549,10 @@ const Register = ({ onUserCreated }) => {
               {
                 required: true,
                 message: "Please Enter Email",
+              },
+              {
+                type: "email",
+                message: "Email is invalid",
               },
             ]}
           >

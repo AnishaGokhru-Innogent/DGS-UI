@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import mainImage from "../Images/mainImage.jpg";
+import viewImg from "../Images/emp.png"
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -11,6 +12,7 @@ import {
   HomeOutlined,
   ContactsOutlined,
   LogoutOutlined,
+  LockOutlined
 } from "@ant-design/icons";
 import {
   Button,
@@ -27,7 +29,7 @@ import {
   Input,
   Checkbox,
 } from "antd";
-import { Alltemplate } from "./AllTemplates";
+import { AllTemplate, Alltemplate } from "./AllTemplates";
 import { log } from "util";
 import { Alldocument } from "./AllDocument";
 import CreateTemplate from "./CreateTemplate";
@@ -39,6 +41,9 @@ import AllUser from "./AllUser";
 import "../CSS/home.css";
 import { ChooseCreateTemplate } from "./ChooseCreateTemplate";
 import EditTemplate from "./EditTemplate";
+import MyProfile from "./MyProfile";
+import baseUrl from "../../BootApi";
+
 
 const { Header, Sider, Content } = Layout;
 
@@ -50,6 +55,8 @@ const Home = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [templateId, setTemplateId] = useState();
   const [users, setUsers] = useState([]);
+  const [department,setDepartment] = useState({});
+  const [designation,setDesignation] = useState({});
 
   const dispatch = useDispatch();
   const {
@@ -68,11 +75,31 @@ const Home = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  const [isModalOpenProfile, setIsModalOpenProfile] = useState(false);
+
+  const showModalProfile = () => {
+    setIsModalOpenProfile(true);
+  };
+
+  const handleOkProfile = () => {
+    setIsModalOpenProfile(false);
+  };
+
+  const handleCancelProfile = () => {
+    setIsModalOpenProfile(false);
+  };
+  const myProfile = () => {
+    showModalProfile();
+    // console.log(user);
+      getDeptById();
+      getDesById();
+  };
 
   useEffect(() => {
     userName();
-    getallUser();
   }, []);
+
+
 
   const changePassword = () => {
     showModal();
@@ -82,13 +109,8 @@ const Home = () => {
     {
       key: "1",
       label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.antgroup.com"
-          style={{ textDecoration: "none" }}
-        >
-          My Profile
+        <a onClick={myProfile} style={{ textDecoration: "none" }}>
+           <UserOutlined />  My Profile
         </a>
       ),
     },
@@ -96,20 +118,7 @@ const Home = () => {
       key: "2",
       label: (
         <a style={{ textDecoration: "none" }} onClick={() => changePassword()}>
-          Change Password
-        </a>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.luohanacademy.com"
-          style={{ textDecoration: "none" }}
-        >
-          LogOut
+          <LockOutlined/> Change Password
         </a>
       ),
     },
@@ -127,6 +136,19 @@ const Home = () => {
       console.log(error);
     }
   };
+
+  const getDeptById = async()=>{
+     const id = user.departmentId;
+     const response = await axios.get(`${baseUrl}/department/getDept/${id}`);
+     console.log(response.data);
+     setDepartment(response.data);
+  }
+  const getDesById = async()=>{
+    const id = user.designationId;
+    const response = await axios.get(`${baseUrl}/designation/getDes/${id}`);
+    console.log(response.data);
+    setDesignation(response.data);
+ }
   const onFinish = async (values) => {
     console.log("Success:", values);
     updatePassword(values);
@@ -154,32 +176,61 @@ const Home = () => {
       message.error("Password is not updated");
     }
   };
-  const getallUser = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        "http://localhost:8080/api/v1/users/getallUser",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setUsers(response.data);
-      console.log(response.data);
-    } catch (error) {
-      message.error("Error in Fetching Users");
-    }
-  };
-  const handleUserCreated = (newUser) => {
-    setUsers((prevUsers) => [...prevUsers, newUser]);
-  };
   function logOut() {
     dispatch(logout());
     navigate("/login");
   }
   const renderContentUser = () => {
     switch (currentView) {
+      case "Templates":
+        return (
+          <AllTemplate
+            setCurrentView={setCurrentView}
+            setTemplateId={setTemplateId}
+          />
+        );
+      case "Home":
+        return (
+          <div className="mainImg">
+            {/* <img src={mainImage} alt="" className="img" /> */}
+          </div>
+        );
+      case "My Documents":
+        return <Alldocument />;
+      case "New Tempalte":
+        return (
+          <ChooseCreateTemplate
+            setCurrentView={setCurrentView}
+            setUploadedFile={setUploadedFile}
+          />
+        );
+      case "CreateTemplate":
+        return <CreateTemplate uploadedFile={uploadedFile} />;
+      case "EditTemplate":
+        return <EditTemplate templateId={templateId} />;
+      case "MyProfile":
+        return <MyProfile />;
+      case "LogOut":
+        return logOut();
+      default:
+        return (
+          <div>
+            {/* <img src={mainImage} alt="" /> */}
+          </div>
+        );
+        return <div>Home Content</div>;
+    }
+  };
+  console.log(currentView);
+
+  const renderContentAdmin = () => {
+    switch (currentView) {
+      case "Home":
+        return (
+          <>
+            <AllUser />
+          </>
+        );
       case "Templates":
         return (
           <AllTemplate
@@ -202,32 +253,10 @@ const Home = () => {
         return <EditTemplate templateId={templateId} />;
       case "LogOut":
         return logOut();
-      default:
-        return (
-          <div>
-            <img src={mainImage} alt="" />
-          </div>
-        );
-        return <div>Home Content</div>;
-    }
-  };
-  console.log(currentView);
 
-  const renderContentAdmin = () => {
-    switch (currentView) {
-      case "Home":
-        return (
-          <>
-            <Register onUserCreated={handleUserCreated} />
-            <AllUser users={users} />
-          </>
-        );
-      case "LogOut":
-        return logOut();
       default:
         return (
           <>
-            <Register />
             <AllUser />
           </>
         );
@@ -253,7 +282,7 @@ const Home = () => {
       style: { color: "white" },
     },
     {
-      key: "4",
+      key: "Home",
       icon: <HomeOutlined />,
       label: "Home",
       style: { color: "white" },
@@ -268,12 +297,6 @@ const Home = () => {
       key: "Templates",
       icon: <LayoutOutlined />,
       label: "Templates",
-      style: { color: "white" },
-    },
-    {
-      key: "7",
-      icon: <ContactsOutlined />,
-      label: "Contact Us",
       style: { color: "white" },
     },
     {
@@ -297,9 +320,27 @@ const Home = () => {
       style: { color: "white", fontSize: "21px" },
     },
     {
+      key: "New Tempalte",
+      icon: <PlusOutlined />,
+      label: "New Template",
+      style: { color: "white" },
+    },
+    {
       key: "Home",
       icon: <HomeOutlined />,
       label: "Home",
+      style: { color: "white" },
+    },
+    {
+      key: "My Documents",
+      icon: <BookOutlined />,
+      label: "My Documents",
+      style: { color: "white" },
+    },
+    {
+      key: "Templates",
+      icon: <LayoutOutlined />,
+      label: "Templates",
       style: { color: "white" },
     },
     {
@@ -313,30 +354,36 @@ const Home = () => {
   const menuItems = user.role === "ADMIN" ? adminMenuItems : userMenuItems;
   const renderContent =
     user.role === "ADMIN" ? renderContentAdmin : renderContentUser;
-    const validatePassword = (_, value) => {
-      if (!value) {
-          return Promise.reject('Please input your password!');
-      }
-      if (value.length <8 ) {
-          return Promise.reject('Password must be at least 6 characters long!');
-      }
-      if (value.length > 12) {
-          return Promise.reject('Password cannot exceed 12 characters!');
-      }
-      if (!/[A-Z]/.test(value)) {
-          return Promise.reject('Password must contain at least one uppercase letter!');
-      }
-      if (!/[a-z]/.test(value)) {
-          return Promise.reject('Password must contain at least one lowercase letter!');
-      }
-      if (!/[0-9]/.test(value)) {
-          return Promise.reject('Password must contain at least one digit!');
-      }
-      if (!/[!@#$%^&*]/.test(value)) {
-          return Promise.reject('Password must contain at least one special character!');
-      }
-      return Promise.resolve();
-    };
+  const validatePassword = (_, value) => {
+    if (!value) {
+      return Promise.reject("Please input your password!");
+    }
+    if (value.length < 8) {
+      return Promise.reject("Password must be at least 6 characters long!");
+    }
+    if (value.length > 12) {
+      return Promise.reject("Password cannot exceed 12 characters!");
+    }
+    if (!/[A-Z]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one uppercase letter!"
+      );
+    }
+    if (!/[a-z]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one lowercase letter!"
+      );
+    }
+    if (!/[0-9]/.test(value)) {
+      return Promise.reject("Password must contain at least one digit!");
+    }
+    if (!/[!@#$%^&*]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one special character!"
+      );
+    }
+    return Promise.resolve();
+  };
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -444,9 +491,6 @@ const Home = () => {
                       required: true,
                       message: "Please input old password!",
                     },
-                    {
-                        validator:validatePassword    
-                    }
                   ]}
                 >
                   <Input.Password />
@@ -460,8 +504,8 @@ const Home = () => {
                       message: "Please input new password!",
                     },
                     {
-                      validator:validatePassword
-                    }
+                      validator: validatePassword,
+                    },
                   ]}
                 >
                   <Input.Password />
@@ -500,6 +544,46 @@ const Home = () => {
                   </div>
                 </Form.Item>
               </Form>
+            </Modal>
+          </div>
+          <div>
+            <Modal
+              title=""
+              open={isModalOpenProfile}
+              onOk={handleOkProfile}
+              onCancel={handleCancelProfile}
+              footer={null}
+            >
+              <div className="viewMoreBox">
+                <div className="viewHeading bg-dark">
+                  <h4 style={{ fontFamily: "auto" }}>My Profile</h4>
+                </div>
+                <div className="viewDetail">
+                  <div className="viewImg">
+                    <img src={viewImg}></img>
+                  </div>
+                  <div style={{ marginLeft: "50px", marginTop: "28px" }}>
+                    <p>
+                      <b>First Name</b> : {user.firstName}
+                    </p>
+                    <p> 
+                      <b>Last Name</b> : {user.lastName}
+                    </p>
+                    <p>
+                      <b>Email</b> : {user.email}
+                    </p>
+                    <p>
+                      <b>Manger</b> : {user.manager}
+                    </p>
+                    <p>
+                      <b>Department</b> : {department.departmentName}
+                    </p>
+                    <p>
+                      <b>Designation</b> : {designation.designationName}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </Modal>
           </div>
         </Content>

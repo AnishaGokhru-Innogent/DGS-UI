@@ -20,6 +20,7 @@ import {
   MailOutlined,
   FileImageOutlined,
   DeleteOutlined,
+  EditOutlined
 } from "@ant-design/icons";
 import CryptoJS from "crypto-js";
 import Item from "antd/es/list/Item";
@@ -121,11 +122,13 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
     {
       title: "Template Name",
       dataIndex: "templateName",
+      width:"24%",
       key: "templateName",
     },
     {
       title: "Date Of Creation",
       key: "createdAt",
+      width:"24%",
       render: (text) => {
         if (text) {
           const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
@@ -144,16 +147,26 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       defaultSortOrder: "descend",
     },
     {
-      title: "Actions",
+      title: "",
+      key: "actions",
+      width:"10%",
+      render: (_, record) => (
+        <Space>
+           <Button
+            style={{ backgroundColor: "#01606F", color: "white" }}
+            onClick={() => handleEditClick(record.templateId)}
+            icon={<EditOutlined/>}
+          >   
+          Edit     
+          </Button>
+        </Space>
+      ),
+    },
+    {
+      title: "",
       key: "actions",
       render: (_, record) => (
         <Space>
-          <Button
-            style={{ backgroundColor: "#01606F", color: "white" }}
-            onClick={() => handleEditClick(record.templateId)}
-          >
-            Edit
-          </Button>
           <Button
             icon={<FileImageOutlined />}
             style={{ backgroundColor: "#01606F", color: "white" }}
@@ -161,7 +174,31 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
           >
             Use
           </Button>
-          <Popconfirm
+        </Space>
+      ),
+    },
+  
+    {
+      title: "",
+      key: "actions",
+     
+      render: (_, record) => (
+        <Space>
+          <Button 
+          onClick={() => setVisible(true)}
+          style={{ backgroundColor: "#01606F", color: "white" }}
+          >Access</Button>
+        </Space>
+      ),
+    },
+    {
+      title: "",
+      key: "actions",
+      width:"12%",
+      render: (_, record) => (
+        <Space>
+         
+           <Popconfirm
             title="Delete Template"
             description="Are you sure you want to delete this template?"
             onConfirm={() => deleteTemplate(record.templateId)}
@@ -170,13 +207,14 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
             cancelText="No"
           >
             <Button icon={<DeleteOutlined />} danger>
-              Delete
+            Delete
             </Button>
           </Popconfirm>
-          <Button onClick={() => setVisible(true)}>Access</Button>
         </Space>
       ),
-    },
+    }
+  
+
   ];
 
   function handleAccessEmail() {
