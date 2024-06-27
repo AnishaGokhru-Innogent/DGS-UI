@@ -5,8 +5,7 @@
 .create-document-container {
   padding: 20px;
   background-color: #f0f0f0;
-  width:100%;
-
+  width: 100%;
 }
 
 .a4-paper {
@@ -20,7 +19,7 @@
   width: calc(200mm); /* A4 paper width in mm */
   overflow-y: auto;
   max-height: calc(297mm);
-  height: calc(140mm);
+  height: 100vh;
 }
 
 .document-body {
