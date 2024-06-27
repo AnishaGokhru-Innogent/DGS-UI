@@ -143,7 +143,7 @@ const AllUser = () => {
       setAllUser(allUser.filter((user) => user.userId != id));
       message.success("Deleted SuccessFully");
     } catch (error) {
-      toast.error("Something went wrong");
+      message.error("Something went wrong");
     }
   };
   const cancel = (e) => {
@@ -288,7 +288,7 @@ const AllUser = () => {
       setAllUser(userWithDepartmentNames);
       console.log("Users Fetched");
     } catch (error) {
-      console.error("Error fetching users:", error);
+      message.error("Error fetching users:", error);
     }
   };
   console.log(allUser);
@@ -490,3 +490,6 @@ const AllUser = () => {
 };
 
 export default AllUser;
+
+
+

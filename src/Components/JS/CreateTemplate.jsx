@@ -131,10 +131,10 @@ const CreateTemplate = ({ uploadedFile }) => {
         leaf.domNode.classList.contains("placeholder-blot")
       ) {
         event.preventDefault();
-        quill.insertText(range.index, "");
+        quill.insertText(range.index, "\n");
         quill.setSelection(range.index + 1);
       } else {
-        quill.insertText(range.index, "");
+        quill.insertText(range.index, "\n");
         quill.setSelection(range.index + 1);
       }
     }
@@ -264,7 +264,7 @@ const CreateTemplate = ({ uploadedFile }) => {
               padding: "1px",
             }}
           >
-            <h4>Create a New Template</h4>
+            <h4 className="mt-1">Create a New Template</h4>
           </div>
           <div style={{ marginTop: "20px" }}>
             <Form.Item
@@ -276,7 +276,7 @@ const CreateTemplate = ({ uploadedFile }) => {
                 placeholder="Enter Template Name"
                 value={templateName}
                 onChange={(e) => setTemplateName(e.target.value)}
-                style={{ width: "580px" }}
+                style={{ width: "590px" }}
               />
             </Form.Item>
           </div>

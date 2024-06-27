@@ -35,6 +35,7 @@
     "react-signature-canvas": "^1.0.6",
     "react-to-print": "^2.15.1",
     "react-toastify": "^10.0.5",
+    "react-tooltip-lite": "^1.12.0",
     "slate-history": "^0.100.0",
     "slate-react": "^0.105.0",
     "util": "^0.12.5",

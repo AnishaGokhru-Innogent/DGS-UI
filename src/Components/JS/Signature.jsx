@@ -3,7 +3,7 @@ import SignatureCanvas from "react-signature-canvas";
 import axios from "axios";
 import baseUrl from "../../BootApi";
 import { toast } from "react-toastify";
-import { Button, Dropdown, Space, Form, Input, Upload, Modal } from "antd";
+import { Button, Dropdown, Space, Form, Input, Upload, Modal,message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 
@@ -94,7 +94,7 @@ const Signature = () => {
     let signatureUrl = "";
     const apiEndpoint = getApiEndpoint();
     if (!apiEndpoint) {
-      toast.error("Invalid signature type.");
+      message.error("Invalid signature type.");
       return;
     }
 
