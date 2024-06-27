@@ -765,8 +765,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
     getAllAccessOfTemplate(Number(accessTemplateId));
     getAllAccessDetails(Number(accessTemplateId));
   }
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  
   return (
     <div style={{ padding: "20px" }}>
       {contextHolder}

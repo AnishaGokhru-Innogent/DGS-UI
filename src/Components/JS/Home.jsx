@@ -44,6 +44,7 @@ import EditTemplate from "./EditTemplate";
 import { SelectTempltes } from "./SelectTemplates";
 import MyProfile from "./MyProfile";
 import baseUrl from "../../BootApi";
+import HomePage from "./HomePage";
 
 
 const { Header, Sider, Content } = Layout;
@@ -52,7 +53,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState({});
-  const [currentView, setCurrentView] = useState("home");
+  const [currentView, setCurrentView] = useState("Home");
   const [uploadedFile, setUploadedFile] = useState(null);
   const [templateId, setTemplateId] = useState();
   const [users, setUsers] = useState([]);
@@ -73,6 +74,9 @@ const Home = () => {
   const handleOk = () => {
     setIsModalOpen(false);
   };
+  const handleHome = ()=>{
+    setCurrentView("Home");
+  }
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -193,9 +197,7 @@ const Home = () => {
         );
       case "Home":
         return (
-          <div className="mainImg">
-            {/* <img src={mainImage} alt="" className="img" /> */}
-          </div>
+           <HomePage  onClick={handleHome} setCurrentView={setCurrentView}/>
         );
       case "My Documents":
         return <Alldocument />;
@@ -220,7 +222,6 @@ const Home = () => {
             {/* <img src={mainImage} alt="" /> */}
           </div>
         );
-        return <div>Home Content</div>;
     }
   };
   console.log(currentView);
@@ -266,17 +267,17 @@ const Home = () => {
   };
 
   const userMenuItems = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: `${user.firstName}`,
-      style: { color: "white", fontSize: "18px" },
-    },
-    {
-      key: "2",
-      label: "DocMaster",
-      style: { color: "white", fontSize: "21px" },
-    },
+    // {
+    //   key: "1",
+    //   icon: <UserOutlined />,
+    //   label: `${user.firstName}`,
+    //   style: { color: "white", fontSize: "18px" },
+    // },
+    // {
+    //   key: "2",
+    //   label: "DocMaster",
+    //   style: { color: "white", fontSize: "21px" },
+    // },
     {
       key: "New Tempalte",
       icon: <PlusOutlined />,
@@ -310,17 +311,17 @@ const Home = () => {
   ];
 
   const adminMenuItems = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: `${user.firstName}`,
-      style: { color: "white", fontSize: "18px" },
-    },
-    {
-      key: "2",
-      label: "DocMaster",
-      style: { color: "white", fontSize: "21px" },
-    },
+    // {
+    //   key: "1",
+    //   icon: <UserOutlined />,
+    //   label: `${user.firstName}`,
+    //   style: { color: "white", fontSize: "18px" },
+    // },
+    // {
+    //   key: "2",
+    //   label: "DocMaster",
+    //   style: { color: "white", fontSize: "21px" },
+    // },
     {
       key: "New Tempalte",
       icon: <PlusOutlined />,
@@ -389,6 +390,8 @@ const Home = () => {
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
+        {/* <h4 style={{backgroundColor:"#01606F",margin:"0",color:"white"}}>{`Hello ${user.firstName}`}</h4> */}
+        <h4  style={{backgroundColor: "#01606F" ,color:"white",padding:"20px",height:"10vh",margin:"0"}} >DocMaster</h4>
         <div className="demo-logo-vertical" />
         <Menu
           className="slideBar"
@@ -449,7 +452,7 @@ const Home = () => {
         <Content
           style={{
             margin: "24px 16px",
-            padding: 24,
+            // padding:24,
             minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,

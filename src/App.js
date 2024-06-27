@@ -16,6 +16,7 @@ import { Alldocument } from "./Components/JS/AllDocument";
 import { FinalDocument } from "./Components/JS/FinalDocument";
 import EditTemplate from "./Components/JS/EditTemplate";
 import { AccessTemplates } from "./Components/JS/AccessTemplates";
+import HomePage from "./Components/JS/HomePage";
 
 function App() {
   return (
@@ -102,6 +103,7 @@ function App() {
           />
           <Route path="/edit-template/:templateId" element={<EditTemplate />} />
           <Route path="/access-template" element={<AccessTemplates />} />
+          {/* <Route path="/homePage" element={<HomePage/>}></Route> */}
         </Routes>
       </>
     </>

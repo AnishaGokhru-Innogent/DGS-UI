@@ -20,6 +20,7 @@ import {
   EditOutlined,
   SaveOutlined,
   CloseOutlined,
+  DeleteOutlined
 } from "@ant-design/icons";
 import baseUrl from "../../BootApi";
 
@@ -301,7 +302,7 @@ const Register = ({ fetchUsers,allUser }) => {
         type="primary"
         onClick={showDrawer}
         icon={<PlusOutlined />}
-        style={{ backgroundColor: "#01606F" }}
+        style={{ backgroundColor: "#01606F",marginTop:"25px",marginLeft:"15px" }}
       >
         Create New User
       </Button>
@@ -380,13 +381,13 @@ const Register = ({ fetchUsers,allUser }) => {
                 const selectedUser = allUser.find(user => user.userId === value);
                 if (selectedUser) {
                   console.log("Selected manager name:", selectedUser.firstName); // Debug log to check value
-                  setManager(selectedUser.firstName);
+                  setManager(`${selectedUser.firstName} ${selectedUser.lastName}`);
                 }
               }}
               onSearch={onSearch}
               options={allUser.filter(user=>user.designationId===1)
                 .map(user => ({
-                label: user.firstName,
+                label: `${user.firstName} ${user.lastName}`,
                 value: user.userId,
               }))}
               
@@ -466,11 +467,17 @@ const Register = ({ fetchUsers,allUser }) => {
                     ) : (
                       <>
                         {dept.departmentName}
+                        <div>
                         <Button
                           type="text"
                           icon={<EditOutlined />}
                           onClick={() => startEditingDepartment(dept)}
                         />
+                          <Button
+                          type="text"
+                          icon={<DeleteOutlined />}
+                        />
+                        </div>
                       </>
                     )}
                   </div>
@@ -552,11 +559,18 @@ const Register = ({ fetchUsers,allUser }) => {
                     ) : (
                       <>
                         {des.designationName}
-                        <Button
+                       <div>
+                       <Button
                           type="text"
                           icon={<EditOutlined />}
                           onClick={() => startEditingDesignation(des)}
                         />
+                         <Button
+                          type="text"
+                          icon={<DeleteOutlined />}
+                          onClick={() => startEditingDesignation(des)}
+                        />
+                       </div>
                       </>
                     )}
                   </div>
