@@ -41,6 +41,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   const [access, setAccess] = useState();
   const [accessDetails, setAccessDetails] = useState([]);
   const [currnetUser, setCurrentUser] = useState();
+  const [selectedSegment, setSelectedSegment] = useState("My Templates");
 
   const { Title, Text } = Typography;
 
@@ -75,7 +76,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   };
 
   const handleEditClick = (templateId) => {
-    const encryptedTemplateId = encryptTemplateId(templateId);
+    // const encryptedTemplateId = encryptTemplateId(templateId);
     // navigate(`/edit-template/${encryptedTemplateId}`);
     setTemplateId(templateId);
     setCurrentView("EditTemplate");
@@ -309,36 +310,38 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   ///////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <div style={{ padding: "20px" }}>
-      <h2>All Templates</h2>
+      {contextHolder}
       <Segmented
         options={["My Templates", "Access"]}
-        onChange={(value) => {
-          if (value === "Access") {
-            <AccessTemplates />;
-          } // string
-        }}
+        value={selectedSegment}
+        onChange={(value) => setSelectedSegment(value)}
       />
-      {contextHolder}
-      <Spin spinning={loading}>
-        <div
-          className="mt-4"
-          style={{
-            marginTop: "20px",
-          }}
-        >
-          <Table
-            dataSource={templates}
-            columns={columns}
-            rowKey="templateId"
-            bordered
-            scroll={{
-              x: "100%",
-              y: 330,
+      {selectedSegment === "My Templates" && (
+        <Spin spinning={loading}>
+          <div
+            className="mt-4"
+            style={{
+              marginTop: "20px",
             }}
-            pagination={{ pageSize: 10 }}
-          />
-        </div>
-      </Spin>
+          >
+            <h2>My Templates</h2>
+
+            <Table
+              dataSource={templates}
+              columns={columns}
+              rowKey="templateId"
+              bordered
+              scroll={{
+                x: "100%",
+                y: 330,
+              }}
+              pagination={{ pageSize: 10 }}
+            />
+          </div>
+        </Spin>
+      )}
+
+      {selectedSegment === "Access" && <AccessTemplates />}
 
       <Modal open={visible} onCancel={() => setVisible(false)}>
         <Form form={form} onFinish={handleAccessEmail}>
