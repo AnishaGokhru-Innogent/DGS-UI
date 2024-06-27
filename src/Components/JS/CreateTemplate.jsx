@@ -120,6 +120,7 @@ const CreateTemplate = ({ uploadedFile }) => {
     const quill = quillRef.current.getEditor();
     const range = quill.getSelection();
     if (!range) return;
+    
 
     const [leaf] = quill.getLeaf(range.index - 1);
 

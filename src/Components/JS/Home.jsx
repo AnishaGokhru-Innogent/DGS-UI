@@ -44,7 +44,9 @@ import EditTemplate from "./EditTemplate";
 import { SelectTempltes } from "./SelectTemplates";
 import MyProfile from "./MyProfile";
 import baseUrl from "../../BootApi";
-// import HomePage from "./HomePage";
+
+import HomePage from "./HomePage";
+
 
 const { Header, Sider, Content } = Layout;
 
@@ -76,6 +78,7 @@ const Home = () => {
   const handleHome = () => {
     setCurrentView("Home");
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -192,10 +195,11 @@ const Home = () => {
             setTemplateId={setTemplateId}
           />
         );
-      // case "Home":
-      // return (
-      // <HomePage onClick={handleHome} setCurrentView={setCurrentView} />
-      // );
+
+      case "Home":
+        return (
+           <HomePage  onClick={handleHome} setCurrentView={setCurrentView}/>
+        );
       case "My Documents":
         return <Alldocument />;
       case "New Tempalte":
@@ -214,7 +218,12 @@ const Home = () => {
       case "LogOut":
         return logOut();
       default:
-        return <div>{/* <img src={mainImage} alt="" /> */}</div>;
+
+        return (
+          <div>
+            {/* <img src={mainImage} alt="" /> */}
+          </div>
+        );
     }
   };
   console.log(currentView);
@@ -304,17 +313,17 @@ const Home = () => {
   ];
 
   const adminMenuItems = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: `${user.firstName}`,
-      style: { color: "white", fontSize: "18px" },
-    },
-    {
-      key: "2",
-      label: "DocMaster",
-      style: { color: "white", fontSize: "21px" },
-    },
+    // {
+    //   key: "1",
+    //   icon: <UserOutlined />,
+    //   label: `${user.firstName}`,
+    //   style: { color: "white", fontSize: "18px" },
+    // },
+    // {
+    //   key: "2",
+    //   label: "DocMaster",
+    //   style: { color: "white", fontSize: "21px" },
+    // },
     {
       key: "New Tempalte",
       icon: <PlusOutlined />,
@@ -394,6 +403,7 @@ const Home = () => {
         >
           DocMaster
         </h4>
+
         <div className="demo-logo-vertical" />
         <Menu
           className="slideBar"
