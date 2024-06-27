@@ -30,6 +30,7 @@ import {
   Checkbox,
 } from "antd";
 import { AllTemplate, Alltemplate } from "./AllTemplates";
+import { AllTemplate, Alltemplate } from "./AllTemplates";
 import { log } from "util";
 import { Alldocument } from "./AllDocument";
 import CreateTemplate from "./CreateTemplate";
@@ -41,6 +42,7 @@ import AllUser from "./AllUser";
 import "../CSS/home.css";
 import { ChooseCreateTemplate } from "./ChooseCreateTemplate";
 import EditTemplate from "./EditTemplate";
+import { SelectTempltes } from "./SelectTemplates";
 import MyProfile from "./MyProfile";
 import baseUrl from "../../BootApi";
 
@@ -184,6 +186,7 @@ const Home = () => {
     switch (currentView) {
       case "Templates":
         return (
+          // <SelectTempltes />
           <AllTemplate
             setCurrentView={setCurrentView}
             setTemplateId={setTemplateId}
@@ -384,6 +387,36 @@ const Home = () => {
     }
     return Promise.resolve();
   };
+  const validatePassword = (_, value) => {
+    if (!value) {
+      return Promise.reject("Please input your password!");
+    }
+    if (value.length < 8) {
+      return Promise.reject("Password must be at least 6 characters long!");
+    }
+    if (value.length > 12) {
+      return Promise.reject("Password cannot exceed 12 characters!");
+    }
+    if (!/[A-Z]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one uppercase letter!"
+      );
+    }
+    if (!/[a-z]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one lowercase letter!"
+      );
+    }
+    if (!/[0-9]/.test(value)) {
+      return Promise.reject("Password must contain at least one digit!");
+    }
+    if (!/[!@#$%^&*]/.test(value)) {
+      return Promise.reject(
+        "Password must contain at least one special character!"
+      );
+    }
+    return Promise.resolve();
+  };
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -491,6 +524,9 @@ const Home = () => {
                       required: true,
                       message: "Please input old password!",
                     },
+                    {
+                      validator: validatePassword,
+                    },
                   ]}
                 >
                   <Input.Password />
@@ -504,6 +540,8 @@ const Home = () => {
                       message: "Please input new password!",
                     },
                     {
+                      validator: validatePassword,
+                    },
                       validator: validatePassword,
                     },
                   ]}
