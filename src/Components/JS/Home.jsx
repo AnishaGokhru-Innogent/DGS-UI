@@ -39,6 +39,7 @@ import AllUser from "./AllUser";
 import "../CSS/home.css";
 import { ChooseCreateTemplate } from "./ChooseCreateTemplate";
 import EditTemplate from "./EditTemplate";
+import { SelectTempltes } from "./SelectTemplates";
 
 const { Header, Sider, Content } = Layout;
 
@@ -182,6 +183,7 @@ const Home = () => {
     switch (currentView) {
       case "Templates":
         return (
+          // <SelectTempltes />
           <AllTemplate
             setCurrentView={setCurrentView}
             setTemplateId={setTemplateId}
