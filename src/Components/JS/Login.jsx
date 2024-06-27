@@ -78,15 +78,15 @@ const Login = () => {
                 />
               </Form.Item>
               <Form.Item
-                // name="password"
+                name="password"
                 rules={[
-                  // {
-                  //   min: 8,
-                  //   message: "Password must be at least 8 character",
-                  // },
+                  {
+                    min: 8,
+                    message: "Password must be at least 8 character",
+                  },
                 ]}
               >
-                <Input
+                <Input.Password
                   size="large"
                   placeholder="Password"
                   prefix={<LockOutlined />}

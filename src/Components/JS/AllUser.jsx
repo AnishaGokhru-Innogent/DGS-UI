@@ -1,7 +1,10 @@
-
 import React, { useEffect, useRef, useState } from "react";
-import "../CSS/allUser.css"
-import { SearchOutlined , EditOutlined , DeleteOutlined} from "@ant-design/icons";
+import "../CSS/allUser.css";
+import {
+  SearchOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Input,
@@ -23,6 +26,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { log } from "util";
 import { icons } from "antd/es/image/PreviewGroup";
+import Register from "./Register";
 const { Option } = Select;
 
 const AllUser = () => {
@@ -33,12 +37,15 @@ const AllUser = () => {
   const [departments, setDepartments] = useState([]);
   const [designations, setDesignations] = useState([]);
   const [form] = Form.useForm();
-  const [userId,setUserId] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const bearerToken = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
         const [departmentsResponse, designationsResponse] = await Promise.all([
+<<<<<<< HEAD
           axios.get("http://localhost:8080/department/getAll",{
              headers:{
               Authorization:`Bearer ${token}`,
@@ -48,6 +55,13 @@ const AllUser = () => {
             headers:{
               Authorization:` Bearer ${token}`,
             },
+=======
+          axios.get("http://localhost:8080/department/getAll", {
+            headers: { Authorization: `Bearer ${bearerToken}` },
+          }),
+          axios.get("http://localhost:8080/designation/getAll", {
+            headers: { Authorization: `Bearer ${bearerToken}` },
+>>>>>>> 38f23128deb7fe305d386d5024927662dbc78bd7
           }),
         ]);
 
@@ -83,6 +97,7 @@ const AllUser = () => {
       firstName: record.firstName,
       lastName: record.lastName,
       email: record.email,
+      manager:record.manager,
       department: record.departmentName,
       designation: record.designationName,
       role: record.role,
@@ -92,10 +107,12 @@ const AllUser = () => {
   const onClose = (id) => {
     setOpen(false);
   };
-  const findDepartmentIdByName=(name) => departments.find((dep)=>dep.departmentName===name);
-  const findDesignationByName=(name) => designations.find((des)=>des.designationName===name);
+  const findDepartmentIdByName = (name) =>
+    departments.find((dep) => dep.departmentName === name);
+  const findDesignationByName = (name) =>
+    designations.find((des) => des.designationName === name);
 
-  const updateUser = async(values)=>{
+  const updateUser = async (values) => {
     console.log("Called");
     console.log(values);
     const department = findDepartmentIdByName(values.department);
@@ -104,31 +121,33 @@ const AllUser = () => {
     const departmentId = department.departmentId;
     const designationId = designation.designationId;
 
-
     const updateData = {
        firstName:values.firstName,
        lastName:values.lastName,
+       manager:values.manager,
        email:values.email,
        departmentId:departmentId,
        designationId:designationId
     }
     console.log(updateData);
-    try{  
+    try {
       let token = localStorage.getItem("token");
-       const response = await axios.put(`http://localhost:8080/api/v1/users/updateUser/${userId}`,updateData,{
-          headers:{Authorization :`Bearer ${token}` },
-       });
-      if(response.data){
+      const response = await axios.put(
+        `http://localhost:8080/api/v1/users/updateUser/${userId}`,
+        updateData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.data) {
         message.success("Updated Successfully");
         setOpen(false);
       }
-      fetchUsers(departments,designations);
-   }
-   catch(error){
+      fetchUsers(departments, designations);
+    } catch (error) {
       console.log(error);
-   }
- 
-  }
+    }
+  };
 
   const confirm = async (id) => {
     try {
@@ -298,41 +317,51 @@ const AllUser = () => {
       title: "First Name",
       dataIndex: "firstName",
       key: "firstName",
-      width: "15%",
+      width: "12%",
       ...getColumnSearchProps("firstName"),
     },
     {
       title: "Last Name",
       dataIndex: "lastName",
       key: "lastName",
-      width: "15%",
+      width: "12%",
       ...getColumnSearchProps("lastName"),
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      width: "23%",
+      width: "22%",
       ...getColumnSearchProps("email"),
+    },
+    {
+      title: "Manager",
+      dataIndex: "manager",
+      key: "manager",
+      width: "13%",
+      ...getColumnSearchProps("manager"),
     },
     {
       title: "Department",
       dataIndex: "departmentName",
       key: "departmentName",
+      width: "13%",
       ...getColumnSearchProps("departmentName"),
     },
     {
       title: "Designation",
       dataIndex: "designationName",
       key: "designationName",
+      width: "15%",
       ...getColumnSearchProps("designationName"),
     },
     {
       title: "",
       key: "action",
+      width:"6%",
       render: (text, record) => (
         <Button type="primary" onClick={()=>showDrawer(record)} style={{backgroundColor:"#01606F"}} icon={<EditOutlined/>}>
-          Update
+          
         </Button>
       ),
     },
@@ -348,14 +377,15 @@ const AllUser = () => {
           okText="Yes"
           cancelText="No"
         >
-          <Button danger icon={<DeleteOutlined/>}>Delete</Button>
+          <Button danger icon={<DeleteOutlined/>}></Button>
         </Popconfirm>
       ),
     },
   ];
-
+ console.log(allUser);
   return (
     <>
+      <Register fetchUsers={fetchUsers} allUser={allUser}/>
       <div className="mt-4">
         <Table
           columns={columns}
@@ -377,7 +407,12 @@ const AllUser = () => {
           },
         }}
       >
-        <Form layout="vertical" hideRequiredMark form={form} onFinish={updateUser}>
+        <Form
+          layout="vertical"
+          hideRequiredMark
+          form={form}
+          onFinish={updateUser}
+        >
           <Form.Item
             name="firstName"
             label="First Name"
@@ -388,9 +423,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Please Enter First Name"
-            />
+            <Input placeholder="Please Enter First Name" />
           </Form.Item>
           <Form.Item
             name="lastName"
@@ -402,9 +435,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Please Enter Last name"
-            />
+            <Input placeholder="Please Enter Last name" />
           </Form.Item>
           <Form.Item
             name="email"
@@ -413,6 +444,32 @@ const AllUser = () => {
               {
                 required: true,
                 message: "Please Enter Email",
+              },
+            ]}
+          >
+            <Input placeholder="Please Enter Email" />
+          </Form.Item>
+          <Form.Item
+            name="manager"
+            label="Manager"
+            rules={[
+              {
+                required: true,
+                message: "Please Enter Manager",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Please Enter Email"
+            />
+          </Form.Item>
+          <Form.Item
+            name="manager"
+            label="Manager"
+            rules={[
+              {
+                required: true,
+                message: "Please Enter Manager",
               },
             ]}
           >
@@ -430,9 +487,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Select
-              placeholder="Please select an department"
-            >
+            <Select placeholder="Please select an department">
               {departments.map((dep) => (
                 <Option key={dep.departmentName} value={dep.departmentName}>
                   {dep.departmentName}
@@ -450,9 +505,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Select
-              placeholder="Please choose the designation"
-            >
+            <Select placeholder="Please choose the designation">
               {designations.map((des) => (
                 <Option key={des.designationName} value={des.designationName}>
                   {des.designationName}
@@ -476,13 +529,19 @@ const AllUser = () => {
             </Select>
           </Form.Item>
           <Form.Item>
-           <Space>
-           <Button htmlType="submit" icon={<EditOutlined/>  } style={{backgroundColor:"#01606F",color:"white"}}>
-              Update
-            </Button>
-            <Button onClick={onClose} style={{marginLeft:"15px"}}>Cancel</Button>
-          </Space>
-           </Form.Item>
+            <Space>
+              <Button
+                htmlType="submit"
+                icon={<EditOutlined />}
+                style={{ backgroundColor: "#01606F", color: "white" }}
+              >
+                Update
+              </Button>
+              <Button onClick={onClose} style={{ marginLeft: "15px" }}>
+                Cancel
+              </Button>
+            </Space>
+          </Form.Item>
         </Form>
       </Drawer>
     </>
@@ -490,6 +549,3 @@ const AllUser = () => {
 };
 
 export default AllUser;
-
-
-
