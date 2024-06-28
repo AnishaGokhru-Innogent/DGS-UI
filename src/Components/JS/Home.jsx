@@ -44,7 +44,7 @@ import EditTemplate from "./EditTemplate";
 import { SelectTempltes } from "./SelectTemplates";
 import MyProfile from "./MyProfile";
 import baseUrl from "../../BootApi";
-// import HomePage from "./HomePage";
+import HomePage from "./HomePage";
 
 const { Header, Sider, Content } = Layout;
 
@@ -192,10 +192,10 @@ const Home = () => {
             setTemplateId={setTemplateId}
           />
         );
-      // case "Home":
-      // return (
-      // <HomePage onClick={handleHome} setCurrentView={setCurrentView} />
-      // );
+      case "Home":
+        return (
+          <HomePage onClick={handleHome} setCurrentView={setCurrentView} />
+        );
       case "My Documents":
         return <Alldocument />;
       case "New Tempalte":
@@ -304,17 +304,17 @@ const Home = () => {
   ];
 
   const adminMenuItems = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: `${user.firstName}`,
-      style: { color: "white", fontSize: "18px" },
-    },
-    {
-      key: "2",
-      label: "DocMaster",
-      style: { color: "white", fontSize: "21px" },
-    },
+    // {
+    //   key: "1",
+    //   icon: <UserOutlined />,
+    //   label: `${user.firstName}`,
+    //   style: { color: "white", fontSize: "18px" },
+    // },
+    // {
+    //   key: "2",
+    //   label: "DocMaster",
+    //   style: { color: "white", fontSize: "21px" },
+    // },
     {
       key: "New Tempalte",
       icon: <PlusOutlined />,
@@ -383,6 +383,7 @@ const Home = () => {
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
+        {/* <h4 style={{backgroundColor:"#01606F",margin:"0",color:"white"}}>{`Hello ${user.firstName}`}</h4> */}
         <h4
           style={{
             backgroundColor: "#01606F",
