@@ -15,6 +15,7 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
 import CryptoJS from "crypto-js";
+import "./../CSS/Tables.css";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState([]);
@@ -181,7 +182,7 @@ export function Alldocument() {
   ];
 
   const cancel = (e) => {
-    console.log(e);
+    // console.log(e);
     message.error("Click on No");
   };
 
@@ -195,11 +196,15 @@ export function Alldocument() {
           style={{ transform: "scale(1)", marginTop: "20px" }}
         >
           <Table
+            className="access-template-table"
             dataSource={documents}
             columns={columns}
             rowKey="documentId"
             bordered
-            scroll={{ x: "100%", y: 450 }}
+            scroll={{
+              x: "1000px",
+              y: "calc(100vh - 25rem)",
+            }}
             pagination={{ pageSize: 6 }}
           />
         </div>
