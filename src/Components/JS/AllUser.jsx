@@ -45,23 +45,11 @@ const AllUser = () => {
       try {
         const token = localStorage.getItem("token");
         const [departmentsResponse, designationsResponse] = await Promise.all([
-<<<<<<< HEAD
-          axios.get("http://localhost:8080/department/getAll",{
-             headers:{
-              Authorization:`Bearer ${token}`,
-             },
-      }),
-          axios.get("http://localhost:8080/designation/getAll",{
-            headers:{
-              Authorization:` Bearer ${token}`,
-            },
-=======
           axios.get("http://localhost:8080/department/getAll", {
             headers: { Authorization: `Bearer ${bearerToken}` },
           }),
           axios.get("http://localhost:8080/designation/getAll", {
             headers: { Authorization: `Bearer ${bearerToken}` },
->>>>>>> 38f23128deb7fe305d386d5024927662dbc78bd7
           }),
         ]);
 

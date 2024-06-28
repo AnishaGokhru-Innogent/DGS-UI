@@ -81,7 +81,7 @@ const Login = () => {
                 name="password"
                 rules={[
                   {
-                    min: 8,
+                   // min: 8,
                     message: "Password must be at least 8 character",
                   },
                 ]}

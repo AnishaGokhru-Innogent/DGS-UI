@@ -29,10 +29,6 @@ import {
   Input,
   Checkbox,
 } from "antd";
-<<<<<<< HEAD
-//import { Alltemplate } from "./AllTemplates";
-=======
->>>>>>> 38f23128deb7fe305d386d5024927662dbc78bd7
 import { AllTemplate } from "./AllTemplates";
 import { log } from "util";
 import { Alldocument } from "./AllDocument";
@@ -353,34 +349,7 @@ const Home = () => {
 
   const menuItems = user.role === "ROLE_ADMIN" ? adminMenuItems : userMenuItems;
   const renderContent =
-<<<<<<< HEAD
     user.role === "ROLE_ADMIN" ? renderContentAdmin : renderContentUser;
-    const validatePassword = (_, value) => {
-      if (!value) {
-          return Promise.reject('Please input your password!');
-      }
-      if (value.length <8 ) {
-          return Promise.reject('Password must be at least 6 characters long!');
-      }
-      if (value.length > 12) {
-          return Promise.reject('Password cannot exceed 12 characters!');
-      }
-      if (!/[A-Z]/.test(value)) {
-          return Promise.reject('Password must contain at least one uppercase letter!');
-      }
-      if (!/[a-z]/.test(value)) {
-          return Promise.reject('Password must contain at least one lowercase letter!');
-      }
-      if (!/[0-9]/.test(value)) {
-          return Promise.reject('Password must contain at least one digit!');
-      }
-      if (!/[!@#$%^&*]/.test(value)) {
-          return Promise.reject('Password must contain at least one special character!');
-      }
-      return Promise.resolve();
-    };
-=======
-    user.role === "ADMIN" ? renderContentAdmin : renderContentUser;
   const validatePassword = (_, value) => {
     if (!value) {
       return Promise.reject("Please input your password!");
@@ -411,7 +380,6 @@ const Home = () => {
     }
     return Promise.resolve();
   };
->>>>>>> 38f23128deb7fe305d386d5024927662dbc78bd7
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
