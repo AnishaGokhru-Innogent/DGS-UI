@@ -13,6 +13,7 @@ import {
   Space,
   message,
   Tooltip,
+  Popconfirm,
 } from "antd";
 
 import {
@@ -20,13 +21,13 @@ import {
   EditOutlined,
   SaveOutlined,
   CloseOutlined,
-  DeleteOutlined
+  DeleteOutlined,
 } from "@ant-design/icons";
 import baseUrl from "../../BootApi";
 
 const { Option } = Select;
 
-const Register = ({ fetchUsers,allUser }) => {
+const Register = ({ fetchUsers, allUser }) => {
   const [open, setOpen] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [designations, setDesignations] = useState([]);
@@ -58,6 +59,51 @@ const Register = ({ fetchUsers,allUser }) => {
   const onNameDesChange = (event) => {
     setDesName(event.target.value);
   };
+  const deleteDesignation =async (e) => {
+    console.log("Designation");
+    const id = e.designationId;
+    console.log(e);
+    await axios.delete(`${baseUrl}/designation/delete/${id}`,{
+      headers: { Authorization: `Bearer ${bearerToken}` }, 
+    }).then((response)=>{
+      console.log(response.data);
+      if(!response.data){
+         message.error("Designation is not deleted because user is associated with it")
+      }
+      else{   
+        setDesignations(designations.filter((des)=>des.designationId!=e.designationId));
+        message.success("Designation Deleted Successfully");
+       }
+    }).catch((error)=>{
+       console.log(error);
+    })
+  };
+  const deleteDepartment = async(e) => {
+    const id = e.departmentId;
+    console.log(id);
+    console.log("Department");
+    console.log(e);
+    await axios.delete(`${baseUrl}/department/delete/${id}`,{
+      headers: { Authorization: `Bearer ${bearerToken}` }, 
+    }).then((response)=>{
+      console.log(response.data);
+      if(!response.data){
+         message.error("Department is not deleted because user is associated with it")
+      }
+      else{   
+        setDepartments(departments.filter((dept)=>dept.departmentId !=e.departmentId));
+        message.success("Department Deleted Successfully");
+       }
+    }).catch((error)=>{
+       console.log(error);
+    })
+
+    
+  };
+  const cancel = (e) => {
+    console.log(e);
+    message.error('Click on No');
+  };
 
   const addItem = async (e) => {
     e.preventDefault();
@@ -72,7 +118,7 @@ const Register = ({ fetchUsers,allUser }) => {
           headers: { Authorization: `Bearer ${bearerToken}` },
         }
       );
-      setDesignations([...designations, { designationName: desName }]);
+      setDesignations([...designations, { designationName: desName ,designationId:response.data.designationId}]);
       setDesName("");
       console.log(response.data);
       message.success("Designation Added");
@@ -94,7 +140,7 @@ const Register = ({ fetchUsers,allUser }) => {
           headers: { Authorization: `Bearer ${bearerToken}` },
         }
       );
-      setDepartments([...departments, { departmentName: deptName }]);
+      setDepartments([...departments, { departmentName: deptName ,departmentId:response.data.departmentId}]);
       setDeptName("");
       console.log(response.data);
       message.success("Department Added");
@@ -218,7 +264,6 @@ const Register = ({ fetchUsers,allUser }) => {
     } catch (error) {
       message.error("Register Failed");
     }
-    window.location.reload();
   };
 
   const startEditingDepartment = (dept) => {
@@ -232,7 +277,7 @@ const Register = ({ fetchUsers,allUser }) => {
     setManager(value);
   };
   const onSearch = (value) => {
-    console.log('search:', value);
+    console.log("search:", value);
   };
 
   const startEditingDesignation = (des) => {
@@ -302,7 +347,11 @@ const Register = ({ fetchUsers,allUser }) => {
         type="primary"
         onClick={showDrawer}
         icon={<PlusOutlined />}
-        style={{ backgroundColor: "#01606F",marginTop:"25px",marginLeft:"15px" }}
+        style={{
+          backgroundColor: "#01606F",
+          marginTop: "25px",
+          marginLeft: "15px",
+        }}
       >
         Create New User
       </Button>
@@ -378,19 +427,23 @@ const Register = ({ fetchUsers,allUser }) => {
               placeholder="Select a Manager"
               optionFilterProp="label"
               onChange={(value) => {
-                const selectedUser = allUser.find(user => user.userId === value);
+                const selectedUser = allUser.find(
+                  (user) => user.userId === value
+                );
                 if (selectedUser) {
                   console.log("Selected manager name:", selectedUser.firstName); // Debug log to check value
-                  setManager(`${selectedUser.firstName} ${selectedUser.lastName}`);
+                  setManager(
+                    `${selectedUser.firstName} ${selectedUser.lastName}`
+                  );
                 }
               }}
               onSearch={onSearch}
-              options={allUser.filter(user=>user.designationId===1)
-                .map(user => ({
-                label: `${user.firstName} ${user.lastName}`,
-                value: user.userId,
-              }))}
-              
+              options={allUser
+                .filter((user) => user.designationId === 1)
+                .map((user) => ({
+                  label: `${user.firstName} ${user.lastName}`,
+                  value: user.userId,
+                }))}
             />
           </Form.Item>
 
@@ -468,15 +521,24 @@ const Register = ({ fetchUsers,allUser }) => {
                       <>
                         {dept.departmentName}
                         <div>
-                        <Button
-                          type="text"
-                          icon={<EditOutlined />}
-                          onClick={() => startEditingDepartment(dept)}
-                        />
                           <Button
-                          type="text"
-                          icon={<DeleteOutlined />}
-                        />
+                            type="text"
+                            icon={<EditOutlined />}
+                            onClick={() => startEditingDepartment(dept)}
+                          />
+                            <Popconfirm
+                            title="Delete the task"
+                            description="Are you sure to delete this task?"
+                            onConfirm={()=>deleteDepartment(dept)}
+                            onCancel={cancel}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                             <Button
+                            type="text"
+                            icon={<DeleteOutlined />}
+                          />
+                          </Popconfirm>
                         </div>
                       </>
                     )}
@@ -559,18 +621,27 @@ const Register = ({ fetchUsers,allUser }) => {
                     ) : (
                       <>
                         {des.designationName}
-                       <div>
-                       <Button
-                          type="text"
-                          icon={<EditOutlined />}
-                          onClick={() => startEditingDesignation(des)}
-                        />
-                         <Button
-                          type="text"
-                          icon={<DeleteOutlined />}
-                          onClick={() => startEditingDesignation(des)}
-                        />
-                       </div>
+                        <div>
+                          <Button
+                            type="text"
+                            icon={<EditOutlined />}
+                            onClick={() => startEditingDesignation(des)}
+                          />
+                         
+                          <Popconfirm
+                            title="Delete the task"
+                            description="Are you sure to delete this task?"
+                            onConfirm={()=>deleteDesignation(des)}
+                            onCancel={cancel}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                             <Button
+                            type="text"
+                            icon={<DeleteOutlined />}
+                          />
+                          </Popconfirm>
+                        </div>
                       </>
                     )}
                   </div>

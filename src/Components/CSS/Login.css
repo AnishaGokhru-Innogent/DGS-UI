@@ -11,8 +11,8 @@
   border-radius: 20px;
   overflow: hidden;
   /* background-color: white; */
-  background-image: url("https://img.freepik.com/free-vector/beautiful-blue-wave-background_1394-103.jpg?w=740&t=st=1719477577~exp=1719478177~hmac=c1afa72ff97adf3a203f2f0cb1c9c37014d6d3a1ed3ee2c79e5db80d892c692f");
-  opacity: 0.99;
+   background-image: url("https://img.freepik.com/free-vector/beautiful-blue-wave-background_1394-103.jpg?w=740&t=st=1719477577~exp=1719478177~hmac=c1afa72ff97adf3a203f2f0cb1c9c37014d6d3a1ed3ee2c79e5db80d892c692f");
+  /* opacity: 0.99; */
 }
 .main {
   height: 100vh;
@@ -27,9 +27,9 @@
   width: 45%;
 }
 .image {
-  /* background-image: url("../Images/docuImage.jpg"); */
-  background-size: cover;
-  border-radius: 20px;
-  height: 400px;
+  background-image: url("../Images/docuImage.jpg");
+  background-size: contain;
+  /* border-radius: 20px; */
+  height: 300px;
   width: 300px;
 }

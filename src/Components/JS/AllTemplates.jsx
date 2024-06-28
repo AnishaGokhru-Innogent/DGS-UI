@@ -124,7 +124,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       .then((data) => setAllUsers(data))
       .catch((error) => console.log(error));
   }
-  // console.log(allUsers);
+  console.log(allUsers);
 
   useEffect(() => {
     getTemplate();
