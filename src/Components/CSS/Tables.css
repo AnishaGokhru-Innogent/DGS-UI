@@ -1,0 +1,3 @@
+.access-template-table .ant-table-container .ant-table-body {
+  min-height: calc(-25rem + 100vh);
+}

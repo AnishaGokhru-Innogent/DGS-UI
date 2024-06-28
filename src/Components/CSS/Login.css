@@ -1,34 +1,35 @@
-*{
-    margin: 0;
-    padding: 0;
+* {
+  margin: 0;
+  padding: 0;
 }
 
-.loginBox{
-    /* border: 2px solid black; */
-    height:450px;
-    width:700px;
-    box-shadow: 0px 2px 8px;
-    border-radius: 20px;
-    overflow: hidden;
-    background-color:white;
-    opacity: 0.99;
+.loginBox {
+  /* border: 2px solid black; */
+  height: 450px;
+  width: 700px;
+  box-shadow: 0px 2px 8px;
+  border-radius: 20px;
+  overflow: hidden;
+  /* background-color: white; */
+  background-image: url("https://img.freepik.com/free-vector/beautiful-blue-wave-background_1394-103.jpg?w=740&t=st=1719477577~exp=1719478177~hmac=c1afa72ff97adf3a203f2f0cb1c9c37014d6d3a1ed3ee2c79e5db80d892c692f");
+  opacity: 0.99;
 }
-.main{
-    height: 630px;
-    background-image: url("https://static.zohocdn.com/iam/v2/components/images/bg.49756b7c711696d95133fa95451f8e13.svg");
+.main {
+  height: 100vh;
+  background-image: url("https://static.zohocdn.com/iam/v2/components/images/bg.49756b7c711696d95133fa95451f8e13.svg");
 }
-.leftSection{
-    /* border: 2px solid blue; */
-    height: 100%;
-    width: 55%; 
+.leftSection {
+  /* border: 2px solid blue; */
+  height: 100%;
+  width: 55%;
 }
-.rightSection{
-    width: 45%;  
+.rightSection {
+  width: 45%;
 }
-.image{
-    background-image: url("../Images/docuImage.jpg");
-    background-size:cover;
-    border-radius: 20px;
-    height: 400px;
-    width: 300px;
+.image {
+  /* background-image: url("../Images/docuImage.jpg"); */
+  background-size: cover;
+  border-radius: 20px;
+  height: 400px;
+  width: 300px;
 }

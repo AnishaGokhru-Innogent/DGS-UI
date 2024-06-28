@@ -113,9 +113,10 @@ export function Alldocument() {
           const formattedTime = moment(text.createdAt).format("hh:mm A");
           return (
             <span>
-              {formattedDate}
+              {/* {formattedDate}
               <br />
-              {formattedTime}
+              {formattedTime} */}
+              {`${formattedDate} / ${formattedTime}`}
             </span>
           );
         }
@@ -191,7 +192,7 @@ export function Alldocument() {
       <Spin spinning={loading}>
         <div
           className="mt-4"
-          style={{ transform: "scale(0.9)", marginTop: "20px" }}
+          style={{ transform: "scale(1)", marginTop: "20px" }}
         >
           <Table
             dataSource={documents}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import mainImage from "../Images/mainImage.jpg";
-import viewImg from "../Images/emp.png"
+import viewImg from "../Images/emp.png";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -12,7 +12,7 @@ import {
   HomeOutlined,
   ContactsOutlined,
   LogoutOutlined,
-  LockOutlined
+  LockOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -29,7 +29,7 @@ import {
   Input,
   Checkbox,
 } from "antd";
-import { AllTemplate} from "./AllTemplates";
+import { AllTemplate } from "./AllTemplates";
 import { log } from "util";
 import { Alldocument } from "./AllDocument";
 import CreateTemplate from "./CreateTemplate";
@@ -44,8 +44,8 @@ import EditTemplate from "./EditTemplate";
 import { SelectTempltes } from "./SelectTemplates";
 import MyProfile from "./MyProfile";
 import baseUrl from "../../BootApi";
-import HomePage from "./HomePage";
 
+import HomePage from "./HomePage";
 
 const { Header, Sider, Content } = Layout;
 
@@ -57,8 +57,8 @@ const Home = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [templateId, setTemplateId] = useState();
   const [users, setUsers] = useState([]);
-  const [department,setDepartment] = useState({});
-  const [designation,setDesignation] = useState({});
+  const [department, setDepartment] = useState({});
+  const [designation, setDesignation] = useState({});
 
   const dispatch = useDispatch();
   const {
@@ -74,9 +74,10 @@ const Home = () => {
   const handleOk = () => {
     setIsModalOpen(false);
   };
-  const handleHome = ()=>{
+  const handleHome = () => {
     setCurrentView("Home");
-  }
+  };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -96,15 +97,13 @@ const Home = () => {
   const myProfile = () => {
     showModalProfile();
     // console.log(user);
-      getDeptById();
-      getDesById();
+    getDeptById();
+    getDesById();
   };
 
   useEffect(() => {
     userName();
   }, []);
-
-
 
   const changePassword = () => {
     showModal();
@@ -115,7 +114,7 @@ const Home = () => {
       key: "1",
       label: (
         <a onClick={myProfile} style={{ textDecoration: "none" }}>
-           <UserOutlined />  My Profile
+          <UserOutlined /> My Profile
         </a>
       ),
     },
@@ -123,7 +122,7 @@ const Home = () => {
       key: "2",
       label: (
         <a style={{ textDecoration: "none" }} onClick={() => changePassword()}>
-          <LockOutlined/> Change Password
+          <LockOutlined /> Change Password
         </a>
       ),
     },
@@ -142,18 +141,18 @@ const Home = () => {
     }
   };
 
-  const getDeptById = async()=>{
-     const id = user.departmentId;
-     const response = await axios.get(`${baseUrl}/department/getDept/${id}`);
-     console.log(response.data);
-     setDepartment(response.data);
-  }
-  const getDesById = async()=>{
+  const getDeptById = async () => {
+    const id = user.departmentId;
+    const response = await axios.get(`${baseUrl}/department/getDept/${id}`);
+    console.log(response.data);
+    setDepartment(response.data);
+  };
+  const getDesById = async () => {
     const id = user.designationId;
     const response = await axios.get(`${baseUrl}/designation/getDes/${id}`);
     console.log(response.data);
     setDesignation(response.data);
- }
+  };
   const onFinish = async (values) => {
     console.log("Success:", values);
     updatePassword(values);
@@ -195,9 +194,10 @@ const Home = () => {
             setTemplateId={setTemplateId}
           />
         );
+
       case "Home":
         return (
-           <HomePage  onClick={handleHome} setCurrentView={setCurrentView}/>
+          <HomePage onClick={handleHome} setCurrentView={setCurrentView} />
         );
       case "My Documents":
         return <Alldocument />;
@@ -217,11 +217,7 @@ const Home = () => {
       case "LogOut":
         return logOut();
       default:
-        return (
-          <div>
-            {/* <img src={mainImage} alt="" /> */}
-          </div>
-        );
+        return <div>{/* <img src={mainImage} alt="" /> */}</div>;
     }
   };
   console.log(currentView);
@@ -390,8 +386,18 @@ const Home = () => {
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        {/* <h4 style={{backgroundColor:"#01606F",margin:"0",color:"white"}}>{`Hello ${user.firstName}`}</h4> */}
-        <h4  style={{backgroundColor: "#01606F" ,color:"white",padding:"20px",height:"10vh",margin:"0"}} >DocMaster</h4>
+        <h4
+          style={{
+            backgroundColor: "#01606F",
+            color: "white",
+            padding: "20px",
+            height: "10vh",
+            margin: "0",
+          }}
+        >
+          DocMaster
+        </h4>
+
         <div className="demo-logo-vertical" />
         <Menu
           className="slideBar"
@@ -513,7 +519,7 @@ const Home = () => {
                     },
                     {
                       validator: validatePassword,
-                    }
+                    },
                   ]}
                 >
                   <Input.Password />
@@ -574,7 +580,7 @@ const Home = () => {
                     <p>
                       <b>First Name</b> : {user.firstName}
                     </p>
-                    <p> 
+                    <p>
                       <b>Last Name</b> : {user.lastName}
                     </p>
                     <p>
