@@ -44,6 +44,7 @@ import EditTemplate from "./EditTemplate";
 import { SelectTempltes } from "./SelectTemplates";
 import MyProfile from "./MyProfile";
 import baseUrl from "../../BootApi";
+
 import HomePage from "./HomePage";
 
 const { Header, Sider, Content } = Layout;
@@ -76,6 +77,7 @@ const Home = () => {
   const handleHome = () => {
     setCurrentView("Home");
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -192,6 +194,7 @@ const Home = () => {
             setTemplateId={setTemplateId}
           />
         );
+
       case "Home":
         return (
           <HomePage onClick={handleHome} setCurrentView={setCurrentView} />
@@ -383,7 +386,6 @@ const Home = () => {
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        {/* <h4 style={{backgroundColor:"#01606F",margin:"0",color:"white"}}>{`Hello ${user.firstName}`}</h4> */}
         <h4
           style={{
             backgroundColor: "#01606F",
@@ -395,6 +397,7 @@ const Home = () => {
         >
           DocMaster
         </h4>
+
         <div className="demo-logo-vertical" />
         <Menu
           className="slideBar"
