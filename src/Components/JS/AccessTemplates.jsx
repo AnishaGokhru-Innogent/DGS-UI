@@ -280,7 +280,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
           <Button
             type="primary"
             danger
-            style={{}}
+            // style={{ backgroundColor: "#01606F", color: "white" }}
             disabled={checkEditAccess(record.templateAccess)}
             onClick={() => handleEditClick(record.templateId)}
             icon={<EditOutlined/>}
