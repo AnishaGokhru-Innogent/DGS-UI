@@ -34,7 +34,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
   const userId = localStorage.getItem("userId");
   const bearerToken = localStorage.getItem("token");
   const navigate = useNavigate();
-  const [accessTemplateId, setAccessTemplateId] = useState();
+  const [accessTemplateId, setAccessTemplateId] = useState(null);
   const [visible, setVisible] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [form] = useForm();
@@ -44,6 +44,8 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
   const [accesses, setAccesses] = useState([]);
   const [templateAccess, setTemplateAccess] = useState([]);
   const [accessDetails, setAccessDetails] = useState([]);
+  const [accessTemplate, setAccessTemplate] = useState();
+  const [accessValue, setAccessValue] = useState("ALL");
 
   const secretKey =
     "sD3rReEbZ+kjdUCCYD9ov/0fBb5ttGwzzZd1VRBmFwFAUTo3gwfBxBZ3UwngzTFn";
@@ -69,7 +71,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
     }
   }
   function handleAccess(value) {
-    setAccess(value);
+    setAccessValue(value);
   }
 
   async function deleteAccess(accessId) {
@@ -91,7 +93,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
     getAccessAndTemplates();
   }, []);
 
-  const mergedData = templates.map((template) => {
+  const mergedDataTable = templates.map((template) => {
     const accessDetails =
       access.find((a) => a.template === template.templateId) || {};
     return { ...template, ...accessDetails };
@@ -141,8 +143,6 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
       .catch((error) => console.log(error));
   }
 
-  console.log(templateAccess);
-
   async function handleAccessEmail() {
     const userAlreadyHasAccess = templateAccess.some(
       (acc) => acc.userId === accessUserId
@@ -160,19 +160,21 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
       return;
     }
 
-    const accessTemplate = {
-      template: accessTemplateId,
-      userId: accessUserId,
-      templateAccess: access,
-      ownerId: userId,
-      ownerName: `${currnetUser.firstName} ${currnetUser.lastName}`,
-    };
     console.log(accessTemplate);
+
+    const template = {
+      template: accessTemplate.templateId,
+      userId: accessUserId,
+      templateAccess: accessValue,
+      ownerId: accessTemplate.ownerId,
+      ownerName: accessTemplate.ownerName,
+    };
+    console.log(template);
 
     try {
       const response = await axios.post(
         `${baseUrl}/accessControl/addAccess`,
-        accessTemplate,
+        template,
         {
           headers: { Authorization: `Bearer ${bearerToken}` },
         }
@@ -208,11 +210,30 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
     navigate(`/create-document/${encryptedTemplateId}`);
   };
 
-  function handleAccessClick(templateId) {
+  function handleAccessClick(record) {
     setVisible(true);
-    setAccessTemplateId(templateId);
+    setAccessTemplateId(record.templateId);
+    setAccessTemplate(record);
     getAllUserForAccess();
   }
+
+  useEffect(() => {
+    getAllAccessOfTemplate(Number(accessTemplateId));
+    getAllAccessDetails(Number(accessTemplateId));
+  }, [accessTemplateId]);
+
+  const mergedData = templateAccess
+    .map((item) => {
+      if (item.userId != userId) {
+        const details = accessDetails.find(
+          (detail) => detail.userId === item.userId
+        );
+        return { ...item, ...details };
+      }
+      return null;
+    })
+    .filter((item) => item !== null);
+
   const columns = [
     {
       title: "Sno",
@@ -257,7 +278,9 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
       render: (_, record) => (
         <Space>
           <Button
-            style={{ backgroundColor: "#01606F", color: "white" }}
+            type="primary"
+            danger
+            // style={{ backgroundColor: "#01606F", color: "white" }}
             disabled={checkEditAccess(record.templateAccess)}
             onClick={() => handleEditClick(record.templateId)}
           >
@@ -273,7 +296,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
           </Button>
           <Button
             disabled={checkAccessAccess(record.templateAccess)}
-            onClick={() => handleAccessClick(record.templateId)}
+            onClick={() => handleAccessClick(record)}
           >
             Access
           </Button>
@@ -296,7 +319,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
         >
           <Table
             className="access-template-table"
-            dataSource={mergedData}
+            dataSource={mergedDataTable}
             columns={columns}
             bordered
             scroll={{
@@ -307,7 +330,16 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
           />
         </ConfigProvider>
       </div>
-      <Modal open={visible} onCancel={() => setVisible(false)}>
+      <Modal
+        open={visible}
+        footer={(_, {}) => (
+          <>
+            <Button onClick={() => setVisible(false)}>Close</Button>
+          </>
+        )}
+        onCancel={() => setVisible(false)}
+      >
+        {" "}
         <Form form={form} onFinish={handleAccessEmail}>
           <Title level={5}>Access on {document.documentName}</Title>
           <Form.Item
@@ -326,7 +358,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
                     .includes(input.toLowerCase())
                 }
                 options={allUsers
-                  .filter((user) => user.userId !== userId) // Filter out the logged-in user
+                  .filter((user) => user.userId != userId) // Filter out the logged-in user
                   .map((user) => ({
                     label: `${user.firstName} ${user.lastName}`,
                     value: user.userId,
@@ -372,12 +404,14 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
                 <Text style={{ marginLeft: "10px" }}>
                   ({access.templateAccess})
                 </Text>
-                <Button
-                  style={{ marginLeft: "auto" }}
-                  onClick={() => deleteAccess(access.accessControlId)}
-                >
-                  <DeleteOutlined />
-                </Button>
+                {userId != access.userId && (
+                  <Button
+                    style={{ marginLeft: "auto" }}
+                    onClick={() => deleteAccess(access.accessControlId)}
+                  >
+                    <DeleteOutlined />
+                  </Button>
+                )}
               </List.Item>
             )}
           />

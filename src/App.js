@@ -101,8 +101,8 @@ function App() {
             path="/final-document/:documentId"
             element={<FinalDocument />}
           />
-          <Route path="/edit-template/:templateId" element={<EditTemplate />} />
-          <Route path="/access-template" element={<AccessTemplates />} />
+          {/* <Route path="/edit-template/:templateId" element={<EditTemplate />} />
+          <Route path="/access-template" element={<AccessTemplates />} /> */}
           {/* <Route path="/homePage" element={<HomePage/>}></Route> */}
         </Routes>
       </>
