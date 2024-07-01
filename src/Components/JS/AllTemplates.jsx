@@ -327,11 +327,12 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
               marginTop: "20px",
             }}
           >
-            <Title level={2}>My Templates</Title>
+            {/* <Title level={2}>My Templates</Title> */}
 
             <Table
               dataSource={templates}
               columns={columns}
+              style={{marginTop:"35px"}}
               rowKey="templateId"
               bordered
               scroll={{

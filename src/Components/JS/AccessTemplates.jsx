@@ -265,7 +265,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
   ];
   return (
     <div>
-      <Title level={2}>Access Templates</Title>
+      {/* <Title level={2}>Access Templates</Title> */}
       <div>
         <ConfigProvider
           theme={{
@@ -280,6 +280,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
             className="access-template-table"
             dataSource={mergedData}
             columns={columns}
+            style={{marginTop:"35px"}}
             bordered
             scroll={{
               x: "1000px",
