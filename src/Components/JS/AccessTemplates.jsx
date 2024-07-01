@@ -141,6 +141,8 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
       .catch((error) => console.log(error));
   }
 
+  console.log(templateAccess);
+
   async function handleAccessEmail() {
     const userAlreadyHasAccess = templateAccess.some(
       (acc) => acc.userId === accessUserId
@@ -189,7 +191,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
   };
 
   const checkUseAccess = (access) => {
-    return access !== "ALL";
+    return access !== "ALL" && access !== "SHARE";
   };
 
   const checkAccessAccess = (access) => {
@@ -332,8 +334,8 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
                   }))}
                 onChange={(e) => setAccessUserId(e)}
                 defaultValue={
-                  allUsers.filter((user) => user.userId !== userId)[0]
-                    ?.userId || null
+                  allUsers.filter((user) => user.userId != userId)[0]?.userId ||
+                  null
                 }
               />
               <Select
@@ -350,7 +352,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
                   },
                   {
                     value: "SHARE",
-                    label: "SHARE",
+                    label: "USE / SHARE",
                   },
                 ]}
                 defaultValue="ALL"
