@@ -39,7 +39,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   const [accesses, setAccesses] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [templateAccess, setTemplateAccess] = useState([]);
-  const [access, setAccess] = useState();
+  const [access, setAccess] = useState("ALL");
   const [accessDetails, setAccessDetails] = useState([]);
   const [currnetUser, setCurrentUser] = useState();
   const [selectedSegment, setSelectedSegment] = useState("My Templates");
@@ -320,6 +320,8 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
     getAllAccessDetails(Number(accessTemplateId));
   }
 
+  console.log(userId);
+
   return (
     <div style={{ padding: "20px" }}>
       {contextHolder}
@@ -402,7 +404,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                     .includes(input.toLowerCase())
                 }
                 options={allUsers
-                  .filter((user) => user.userId !== userId) // Filter out the logged-in user
+                  .filter((user) => user.userId != userId) // Filter out the logged-in user
                   .map((user) => ({
                     label: `${user.firstName} ${user.lastName}`,
                     value: user.userId,
@@ -427,7 +429,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                   },
                   {
                     value: "SHARE",
-                    label: "SHARE",
+                    label: "USE / SHARE",
                   },
                 ]}
                 defaultValue="ALL" // Set "ALL" as the default value
@@ -444,7 +446,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
               <List.Item style={{ padding: "5px 10px" }}>
                 <Text
                   style={{ fontSize: "14px" }}
-                >{`${access.firstName} ${access.lastName}`}</Text>
+                >{`${access?.firstName} ${access?.lastName}`}</Text>
                 <Text style={{ marginLeft: "10px" }}>
                   ({access.templateAccess})
                 </Text>
