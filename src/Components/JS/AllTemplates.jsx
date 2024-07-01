@@ -24,6 +24,7 @@ import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
 import CryptoJS from "crypto-js";
 import { useForm } from "antd/es/form/Form";
 import { AccessTemplates } from "./AccessTemplates";
+import "./../CSS/Tables.css";
 
 export function AllTemplate({ setCurrentView, setTemplateId }) {
   const [templates, setTemplates] = useState([]);
@@ -34,6 +35,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   const [form] = useForm();
   // const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const [accessTemplateId, setAccessTemplateId] = useState(null);
+  const [accessTemplateName, setAccessTemplateName] = useState(null);
   const [accesses, setAccesses] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [templateAccess, setTemplateAccess] = useState([]);
@@ -164,13 +166,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
         if (text) {
           const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
           const formattedTime = moment(text.createdAt).format("hh:mm A");
-          return (
-            <span>
-              {/* {formattedDate}
-              {formattedTime} */}
-              {`${formattedDate} / ${formattedTime}`}
-            </span>
-          );
+          return <span>{`${formattedDate} / ${formattedTime}`}</span>;
         }
         return null;
       },
@@ -198,9 +194,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
             Use
           </Button>
 
-          <Button onClick={() => handleAccessClick(record.templateId)}>
-            Access
-          </Button>
+          <Button onClick={() => handleAccessClick(record)}>Access</Button>
           <Popconfirm
             title="Delete Template"
             description="Are you sure you want to delete this template?"
@@ -228,9 +222,10 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
 
   // console.log(templateAccess);
 
-  function handleAccessClick(templateId) {
+  function handleAccessClick(record) {
     setVisible(true);
-    setAccessTemplateId(templateId);
+    setAccessTemplateName(record.templateName);
+    setAccessTemplateId(record.templateId);
     getAllUserForAccess();
   }
 
@@ -240,6 +235,22 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   }, [accessTemplateId]);
 
   async function handleAccessEmail() {
+    const userAlreadyHasAccess = templateAccess.some(
+      (acc) => acc.userId === accessUserId
+    );
+
+    if (userAlreadyHasAccess) {
+      message.warning(
+        "User already has access to this template. Delete the old access."
+      );
+      return;
+    }
+
+    if (accessUserId == null || access == null) {
+      message.warning("Please select the valid values");
+      return;
+    }
+
     const accessTemplate = {
       template: accessTemplateId,
       userId: accessUserId,
@@ -247,7 +258,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       ownerId: userId,
       ownerName: `${currnetUser.firstName} ${currnetUser.lastName}`,
     };
-    console.log(accessTemplate);
+    // console.log(accessTemplate);
 
     try {
       const response = await axios.post(
@@ -308,7 +319,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
     getAllAccessOfTemplate(Number(accessTemplateId));
     getAllAccessDetails(Number(accessTemplateId));
   }
-  
+
   return (
     <div style={{ padding: "20px" }}>
       {contextHolder}
@@ -330,14 +341,15 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
             {/* <Title level={2}>My Templates</Title> */}
 
             <Table
+              className="access-template-table"
               dataSource={templates}
               columns={columns}
               style={{marginTop:"35px"}}
               rowKey="templateId"
               bordered
               scroll={{
-                x: "100%",
-                y: "100%",
+                x: "1000px",
+                y: "calc(100vh - 25rem)",
               }}
               pagination={{ pageSize: 5 }}
             />
@@ -371,7 +383,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
         onCancel={() => setVisible(false)}
       >
         <Form form={form} onFinish={handleAccessEmail}>
-          <Title level={5}>Access on {document.documentName}</Title>
+          <Title level={5}>Access on: {accessTemplateName}</Title>
           <Form.Item
             label="Name"
             name="Name"
@@ -388,12 +400,16 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                     .includes(input.toLowerCase())
                 }
                 options={allUsers
-                  .filter((user) => user.userId != userId) // Filter out the logged-in user
+                  .filter((user) => user.userId !== userId) // Filter out the logged-in user
                   .map((user) => ({
                     label: `${user.firstName} ${user.lastName}`,
                     value: user.userId,
                   }))}
                 onChange={(e) => setAccessUserId(e)}
+                defaultValue={
+                  allUsers.filter((user) => user.userId !== userId)[0]
+                    ?.userId || null
+                } // Set the first user as the default value
               />
               <Select
                 style={{ width: 120 }}
@@ -412,9 +428,10 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                     label: "SHARE",
                   },
                 ]}
+                defaultValue="ALL" // Set "ALL" as the default value
               />
               <Button type="primary" htmlType="submit">
-                Send
+                Share
               </Button>
             </Space>
           </Form.Item>
@@ -430,6 +447,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                   ({access.templateAccess})
                 </Text>
                 <Button
+                  danger
                   style={{ marginLeft: "auto" }}
                   onClick={() => deleteAccess(access.accessControlId)}
                 >

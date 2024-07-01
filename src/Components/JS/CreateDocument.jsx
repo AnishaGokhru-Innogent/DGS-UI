@@ -119,7 +119,6 @@ export function CreateDocument() {
         acc[field.placeholderName] = formValues[field.placeholderName];
         return acc;
       }, {});
-    message.success("Document Saved");
 
     const decodedTemplateId = decryptTemplateId(id);
 
@@ -135,7 +134,6 @@ export function CreateDocument() {
     };
 
     try {
-      message.success("Email Send");
       setLoading(false);
       await axios.post(`${baseUrl}/document/save`, documentData, {
         headers: {
@@ -143,6 +141,8 @@ export function CreateDocument() {
           Authorization: `Bearer ${bearerToken}`,
         },
       });
+      message.success("Document Saved");
+      message.success("Email Send");
     } catch (error) {
       console.error(error);
       message.error("Error Occurred in Saving Document and Sending Email");
@@ -150,7 +150,6 @@ export function CreateDocument() {
   }
 
   return (
-
     <div className="create-document-container ">
       <Spin spinning={loading} size="large">
         <div className="d-flex justify-content-between">

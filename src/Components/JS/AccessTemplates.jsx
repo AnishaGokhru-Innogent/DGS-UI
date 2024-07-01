@@ -142,6 +142,22 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
   }
 
   async function handleAccessEmail() {
+    const userAlreadyHasAccess = templateAccess.some(
+      (acc) => acc.userId === accessUserId
+    );
+
+    if (userAlreadyHasAccess) {
+      message.warning(
+        "User already has access to this template. Delete the old access."
+      );
+      return;
+    }
+
+    if (accessUserId == null || access == null) {
+      message.warning("Please select the valid values");
+      return;
+    }
+
     const accessTemplate = {
       template: accessTemplateId,
       userId: accessUserId,
@@ -309,12 +325,16 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
                     .includes(input.toLowerCase())
                 }
                 options={allUsers
-                  .filter((user) => user.userId != userId) // Filter out the logged-in user
+                  .filter((user) => user.userId !== userId) // Filter out the logged-in user
                   .map((user) => ({
                     label: `${user.firstName} ${user.lastName}`,
                     value: user.userId,
                   }))}
                 onChange={(e) => setAccessUserId(e)}
+                defaultValue={
+                  allUsers.filter((user) => user.userId !== userId)[0]
+                    ?.userId || null
+                }
               />
               <Select
                 style={{ width: 120 }}
@@ -333,6 +353,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
                     label: "SHARE",
                   },
                 ]}
+                defaultValue="ALL"
               />
               <Button type="primary" htmlType="submit">
                 Send
