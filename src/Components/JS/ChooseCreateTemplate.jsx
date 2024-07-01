@@ -44,12 +44,12 @@ export function ChooseCreateTemplate({ setCurrentView, setUploadedFile }) {
   }
 
   return (
-    <div>
-      <h1 className="d-flex justify-content-center mt-2">Create Template</h1>
+    <div className="imagebox" style={{height:"83vh"}}>
+      <h2 className="d-flex justify-content-center mt-4">Create Template</h2>
 
       <div
         className="d-flex justify-content-center align-items-center"
-        style={{ height: "60vh" }}
+        style={{ height: "50vh"}}
       >
         <Row gutter={[16, 16]} justify="center" align="middle">
           <Col>

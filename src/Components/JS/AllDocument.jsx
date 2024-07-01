@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
+import "../CSS/chooseCreateTemplate.css"
 import {
   Button,
   Space,
@@ -44,7 +45,6 @@ export function Alldocument() {
       setDocuments(response.data);
     } catch (error) {
       console.error(error);
-      openNotificationWithIcon("error", "Failed to fetch documents");
     } finally {
       setLoading(false);
     }
@@ -104,10 +104,12 @@ export function Alldocument() {
       title: "Document Name",
       dataIndex: "documentName",
       key: "documentName",
+      width: "280px",
     },
     {
       title: "Date Of Creation",
       key: "createdAt",
+      width: "280px",
       render: (text) => {
         if (text.createdAt) {
           const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
@@ -129,6 +131,7 @@ export function Alldocument() {
     {
       title: "Status",
       key: "status",
+      align:"center",
       filters: [
         { text: "SIGNED", value: "SIGNED" },
         { text: "PENDING", value: "PENDING" },
@@ -149,6 +152,7 @@ export function Alldocument() {
     {
       title: "",
       key: "view",
+      align:"center",
       render: (_, record) => (
         <Space>
           <Button
@@ -164,6 +168,7 @@ export function Alldocument() {
     {
       title: "",
       key: "use",
+      align:"center",
       render: (_, record) => (
         <Popconfirm
           title="Delete the document"
@@ -187,8 +192,8 @@ export function Alldocument() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>All Documents</h2>
+    <div style={{ padding: "20px" ,height:"86vh"}} className="imagebox">
+      <h3>All Documents</h3>
       {contextHolder}
       <Spin spinning={loading}>
         <div

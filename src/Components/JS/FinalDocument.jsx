@@ -73,22 +73,23 @@ export function FinalDocument() {
 
   return (
     <div>
-      <div>
-        <h1 className="d-flex justify-content-center">
+      <div style={{display:"flex",justifyContent:"space-around"}} className="mt-4">
+        <h3 className="d-flex justify-content-center">
           {document.documentName}
-        </h1>
+        </h3>
         <div className="d-flex justify-content-center">
           <Button
             type="primary"
             icon={<DownloadOutlined />}
             onClick={generatePdf}
+            style={{backgroundColor:"#01606F"}}
           >
             Download as PDF
           </Button>
         </div>
       </div>
       {document ? (
-        <div className="d-flex justify-content-center">
+        <div className="d-flex justify-content-center mt-4">
           <div
             ref={signatureRef}
             dangerouslySetInnerHTML={{ __html: document.documentBody }}

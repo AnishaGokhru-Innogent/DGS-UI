@@ -527,8 +527,8 @@ const Register = ({ fetchUsers, allUser }) => {
                             onClick={() => startEditingDepartment(dept)}
                           />
                             <Popconfirm
-                            title="Delete the task"
-                            description="Are you sure to delete this task?"
+                            title="Delete the Department"
+                            description="Are you sure to delete this Department?"
                             onConfirm={()=>deleteDepartment(dept)}
                             onCancel={cancel}
                             okText="Yes"
@@ -629,8 +629,8 @@ const Register = ({ fetchUsers, allUser }) => {
                           />
                          
                           <Popconfirm
-                            title="Delete the task"
-                            description="Are you sure to delete this task?"
+                            title="Delete the Designation"
+                            description="Are you sure to delete this Designation?"
                             onConfirm={()=>deleteDesignation(des)}
                             onCancel={cancel}
                             okText="Yes"

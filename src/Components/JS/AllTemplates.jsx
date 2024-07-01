@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import baseUrl from "../../BootApi";
+import "../CSS/allTemplates.css"
 import {
   Button,
   Space,
@@ -20,7 +21,7 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
+import { FileImageOutlined, DeleteOutlined ,EditOutlined} from "@ant-design/icons";
 import CryptoJS from "crypto-js";
 import { useForm } from "antd/es/form/Form";
 import { AccessTemplates } from "./AccessTemplates";
@@ -183,6 +184,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
             type="primary"
             danger
             onClick={() => handleEditClick(record.templateId)}
+            icon={<EditOutlined/>}
           >
             Edit
           </Button>
@@ -323,7 +325,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   console.log(userId);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px" ,height:"86vh"}} className="imagebox">
       {contextHolder}
       <Segmented
         options={["My Templates", "Access Templates"]}
@@ -348,7 +350,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
               className="access-template-table"
               dataSource={templates}
               columns={columns}
-              style={{marginTop:"35px"}}
+              style={{marginTop:"40px"}}
               rowKey="templateId"
               bordered
               scroll={{
@@ -434,7 +436,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                 ]}
                 defaultValue="ALL" // Set "ALL" as the default value
               />
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" style={{backgroundColor:"#01606F",marginTop:"10px",marginRight:"20px"}}>
                 Share
               </Button>
             </Space>

@@ -353,8 +353,8 @@ const AllUser = () => {
       key: "action",
       render: (text, record) => (
         <Popconfirm
-          title="Delete the task"
-          description="Are you sure to delete this task?"
+          title="Delete User"
+          description="Are you sure to delete this User?"
           onConfirm={() => confirm(record.userId)}
           onCancel={cancel}
           okText="Yes"
@@ -367,7 +367,7 @@ const AllUser = () => {
   ];
  console.log(allUser);
   return (
-    <>
+    <div className="imagebox" style={{height:"86vh"}}>
       <Register fetchUsers={fetchUsers} allUser={allUser}/>
       <div className="mt-4">
         <Table
@@ -527,7 +527,7 @@ const AllUser = () => {
           </Form.Item>
         </Form>
       </Drawer>
-    </>
+    </div>
   );
 };
 

@@ -13,6 +13,7 @@ import {
   ContactsOutlined,
   LogoutOutlined,
   LockOutlined,
+  ProfileOutlined
 } from "@ant-design/icons";
 import {
   Button,
@@ -114,12 +115,12 @@ const Home = () => {
       key: "1",
       label: (
         <a onClick={myProfile} style={{ textDecoration: "none" }}>
-          <UserOutlined /> My Profile
+          <UserOutlined style={{ marginRight: 6 }}/>{user.firstName} {user.lastName}
         </a>
       ),
     },
     {
-      key: "2",
+      key: "3",
       label: (
         <a style={{ textDecoration: "none" }} onClick={() => changePassword()}>
           <LockOutlined /> Change Password
@@ -266,14 +267,14 @@ const Home = () => {
     // {
     //   key: "1",
     //   icon: <UserOutlined />,
-    //   label: `${user.firstName}`,
+    //   label: `${user.firstName} ${user.lastName}`,
     //   style: { color: "white", fontSize: "18px" },
     // },
-    // {
-    //   key: "2",
-    //   label: "DocMaster",
-    //   style: { color: "white", fontSize: "21px" },
-    // },
+    {
+      key: "2",
+      label: "DocMaster",
+      style: { color: "white", fontSize: "21px" },
+    },
     {
       key: "New Tempalte",
       icon: <PlusOutlined />,
@@ -313,11 +314,11 @@ const Home = () => {
     //   label: `${user.firstName}`,
     //   style: { color: "white", fontSize: "18px" },
     // },
-    // {
-    //   key: "2",
-    //   label: "DocMaster",
-    //   style: { color: "white", fontSize: "21px" },
-    // },
+    {
+      key: "2",
+      label: "DocMaster",
+      style: { color: "white", fontSize: "21px" },
+    },
     {
       key: "New Tempalte",
       icon: <PlusOutlined />,
@@ -383,10 +384,16 @@ const Home = () => {
     }
     return Promise.resolve();
   };
+  const modalTitle = (
+    <div>
+      <LockOutlined style={{ marginRight: 8 }} />
+      Change Password
+    </div>
+  );
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <h4
+        {/* <h4
           style={{
             backgroundColor: "#01606F",
             color: "white",
@@ -396,7 +403,7 @@ const Home = () => {
           }}
         >
           DocMaster
-        </h4>
+        </h4> */}
 
         <div className="demo-logo-vertical" />
         <Menu
@@ -467,10 +474,11 @@ const Home = () => {
           {renderContent()}
           <div>
             <Modal
-              title="Change Password"
+              title={modalTitle}
               open={isModalOpen}
               footer={null}
               // onOk={handleOk}
+              className="centered-modal"
               onCancel={handleCancel}
             >
               <Form

@@ -167,9 +167,9 @@ const Signature = () => {
         documentBody: updatedDocumentBody,
       }));
       setIsSignatureAdded(true);
-      toast.success("Signature Added");
+      message.success("Signature Added");
     } catch (error) {
-      toast.error("Something went wrong");
+      message.error("Something went wrong");
       console.error(error);
     }
   };
@@ -296,7 +296,7 @@ const Signature = () => {
         </Form>
       </Modal>
       <div className="d-flex justify-content-center" style={{ margin: "20px" }}>
-        <Button type="primary" onClick={showModal} disabled={isSignatureAdded}>
+        <Button type="primary" onClick={showModal} disabled={isSignatureAdded} style={{backgroundColor:"#01606F",color:"white"}}>
           Click Here To Sign
         </Button>
       </div>

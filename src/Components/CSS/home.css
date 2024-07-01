@@ -45,12 +45,9 @@
 .viewDetail{
     display: flex;
 }
-  /* .mainImg{
-    border:2px solid black;
-    height: 500px;
-    width: 100%;
-  }
-  .img{
-    height: 500px;
-    overflow: hidden;
-  } */
+/* Center the modal title */
+.centered-modal .ant-modal-title {
+  text-align: center;
+  font-size: 20px;
+}
+

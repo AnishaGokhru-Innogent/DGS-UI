@@ -1,3 +1,8 @@
 .image{
     background-image: url("https://cdn2.slidemodel.com/wp-content/uploads/22237-01-navy-blue-abstract-powerpoint-background-16x9-1.jpg");
 }
+.imagebox{
+    background-size:cover;
+    /* background-image: url("https://img.freepik.com/free-vector/stylish-blue-wave-presentation-background_1017-33720.jpg?t=st=1719485351~exp=1719488951~hmac=310e5134e2a98dc46258f01b316f6b9c50aa90ef20e922e3ca68f71e4002cb77&w=826"); */
+    background-image: url("../Images/wave2.avif");
+}
