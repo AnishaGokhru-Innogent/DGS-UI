@@ -326,7 +326,9 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       <Segmented
         options={["My Templates", "Access Templates"]}
         value={selectedSegment}
+        style={{backgroundColor:"#01606F",color:"white"}}
         onChange={(value) => setSelectedSegment(value)}
+       className="custom-segmented"
         size="large"
         block
       />
