@@ -112,7 +112,8 @@ const Home = () => {
       key: "1",
       label: (
         <a onClick={myProfile} style={{ textDecoration: "none" }}>
-          <UserOutlined style={{ marginRight: 6 }}/>{user.firstName} {user.lastName}
+          <UserOutlined style={{ marginRight: 6 }} />
+          {user.firstName} {user.lastName}
         </a>
       ),
     },

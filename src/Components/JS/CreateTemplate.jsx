@@ -15,7 +15,7 @@ import { SaveOutlined, BookOutlined } from "@ant-design/icons";
 import axios from "axios";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import * as mammoth from "mammoth";
+import mammoth from "mammoth";
 import "../CSS/createTemplate.css";
 
 // Register the custom placeholder blot
@@ -120,7 +120,6 @@ const CreateTemplate = ({ uploadedFile }) => {
     const quill = quillRef.current.getEditor();
     const range = quill.getSelection();
     if (!range) return;
-    
 
     const [leaf] = quill.getLeaf(range.index - 1);
 
@@ -299,6 +298,27 @@ const CreateTemplate = ({ uploadedFile }) => {
                 width: "100%",
                 minHeight: "50vh",
                 overflow: "auto",
+              }}
+              modules={{
+                toolbar: {
+                  container: [
+                    [{ header: "1" }, { header: "2" }, { font: [] }],
+                    [{ size: [] }],
+                    ["bold", "italic", "underline", "strike", "blockquote"],
+                    [
+                      { list: "ordered" },
+                      { list: "bullet" },
+                      { indent: "-1" },
+                      { indent: "+1" },
+                    ],
+                    ["link", "image", "video"],
+                    ["code-block"],
+                    ["clean"],
+                  ],
+                },
+                clipboard: {
+                  matchVisual: false,
+                },
               }}
             />
           </div>
