@@ -59,50 +59,60 @@ const Register = ({ fetchUsers, allUser }) => {
   const onNameDesChange = (event) => {
     setDesName(event.target.value);
   };
-  const deleteDesignation =async (e) => {
+  const deleteDesignation = async (e) => {
     console.log("Designation");
     const id = e.designationId;
     console.log(e);
-    await axios.delete(`${baseUrl}/designation/delete/${id}`,{
-      headers: { Authorization: `Bearer ${bearerToken}` }, 
-    }).then((response)=>{
-      console.log(response.data);
-      if(!response.data){
-         message.error("Designation is not deleted because user is associated with it")
-      }
-      else{   
-        setDesignations(designations.filter((des)=>des.designationId!=e.designationId));
-        message.success("Designation Deleted Successfully");
-       }
-    }).catch((error)=>{
-       console.log(error);
-    })
+    await axios
+      .delete(`${baseUrl}/designation/delete/${id}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (!response.data) {
+          message.error(
+            "Designation is not deleted because user is associated with it"
+          );
+        } else {
+          setDesignations(
+            designations.filter((des) => des.designationId != e.designationId)
+          );
+          message.success("Designation Deleted Successfully");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-  const deleteDepartment = async(e) => {
+  const deleteDepartment = async (e) => {
     const id = e.departmentId;
     console.log(id);
     console.log("Department");
     console.log(e);
-    await axios.delete(`${baseUrl}/department/delete/${id}`,{
-      headers: { Authorization: `Bearer ${bearerToken}` }, 
-    }).then((response)=>{
-      console.log(response.data);
-      if(!response.data){
-         message.error("Department is not deleted because user is associated with it")
-      }
-      else{   
-        setDepartments(departments.filter((dept)=>dept.departmentId !=e.departmentId));
-        message.success("Department Deleted Successfully");
-       }
-    }).catch((error)=>{
-       console.log(error);
-    })
-
-    
+    await axios
+      .delete(`${baseUrl}/department/delete/${id}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (!response.data) {
+          message.error(
+            "Department is not deleted because user is associated with it"
+          );
+        } else {
+          setDepartments(
+            departments.filter((dept) => dept.departmentId != e.departmentId)
+          );
+          message.success("Department Deleted Successfully");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   const cancel = (e) => {
     console.log(e);
-    message.error('Click on No');
+    message.error("Click on No");
   };
 
   const addItem = async (e) => {
@@ -118,7 +128,13 @@ const Register = ({ fetchUsers, allUser }) => {
           headers: { Authorization: `Bearer ${bearerToken}` },
         }
       );
-      setDesignations([...designations, { designationName: desName ,designationId:response.data.designationId}]);
+      setDesignations([
+        ...designations,
+        {
+          designationName: desName,
+          designationId: response.data.designationId,
+        },
+      ]);
       setDesName("");
       console.log(response.data);
       message.success("Designation Added");
@@ -140,7 +156,10 @@ const Register = ({ fetchUsers, allUser }) => {
           headers: { Authorization: `Bearer ${bearerToken}` },
         }
       );
-      setDepartments([...departments, { departmentName: deptName ,departmentId:response.data.departmentId}]);
+      setDepartments([
+        ...departments,
+        { departmentName: deptName, departmentId: response.data.departmentId },
+      ]);
       setDeptName("");
       console.log(response.data);
       message.success("Department Added");
@@ -228,6 +247,7 @@ const Register = ({ fetchUsers, allUser }) => {
   }, []);
 
   const handleRegister = async () => {
+    onClose();
     const departmentId = await getDepartmentIdByName(departmentName);
     const designationId = await getDesignationByName(designationName);
 
@@ -242,7 +262,7 @@ const Register = ({ fetchUsers, allUser }) => {
       designationId: designationId,
     };
 
-    console.log("Register data:", registerData);
+    // console.log("Register data:", registerData);
     try {
       const response = await axios.post(
         `${baseUrl}/api/v1/auth/register`,
@@ -254,7 +274,7 @@ const Register = ({ fetchUsers, allUser }) => {
         }
       );
       message.success("Register Success");
-      onClose();
+
       try {
         fetchUsers(departments, designations);
       } catch (error) {
@@ -526,18 +546,15 @@ const Register = ({ fetchUsers, allUser }) => {
                             icon={<EditOutlined />}
                             onClick={() => startEditingDepartment(dept)}
                           />
-                            <Popconfirm
+                          <Popconfirm
                             title="Delete the Department"
                             description="Are you sure to delete this Department?"
-                            onConfirm={()=>deleteDepartment(dept)}
+                            onConfirm={() => deleteDepartment(dept)}
                             onCancel={cancel}
                             okText="Yes"
                             cancelText="No"
                           >
-                             <Button
-                            type="text"
-                            icon={<DeleteOutlined />}
-                          />
+                            <Button type="text" icon={<DeleteOutlined />} />
                           </Popconfirm>
                         </div>
                       </>
@@ -627,19 +644,16 @@ const Register = ({ fetchUsers, allUser }) => {
                             icon={<EditOutlined />}
                             onClick={() => startEditingDesignation(des)}
                           />
-                         
+
                           <Popconfirm
                             title="Delete the Designation"
                             description="Are you sure to delete this Designation?"
-                            onConfirm={()=>deleteDesignation(des)}
+                            onConfirm={() => deleteDesignation(des)}
                             onCancel={cancel}
                             okText="Yes"
                             cancelText="No"
                           >
-                             <Button
-                            type="text"
-                            icon={<DeleteOutlined />}
-                          />
+                            <Button type="text" icon={<DeleteOutlined />} />
                           </Popconfirm>
                         </div>
                       </>
