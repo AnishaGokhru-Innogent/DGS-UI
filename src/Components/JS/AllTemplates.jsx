@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import baseUrl from "../../BootApi";
-import "../CSS/allTemplates.css"
+import "../CSS/allTemplates.css";
 import {
   Button,
   Space,
@@ -21,11 +21,17 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { FileImageOutlined, DeleteOutlined ,EditOutlined} from "@ant-design/icons";
+import {
+  FileImageOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import CryptoJS from "crypto-js";
 import { useForm } from "antd/es/form/Form";
 import { AccessTemplates } from "./AccessTemplates";
 import "./../CSS/Tables.css";
+import Highlighter from "react-highlight-words";
+import { SearchOutlined } from "@ant-design/icons";
 
 export function AllTemplate({ setCurrentView, setTemplateId }) {
   const [templates, setTemplates] = useState([]);
@@ -78,8 +84,6 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   };
 
   const handleEditClick = (templateId) => {
-    // const encryptedTemplateId = encryptTemplateId(templateId);
-    // navigate(`/edit-template/${encryptedTemplateId}`);
     setTemplateId(templateId);
     setCurrentView("EditTemplate");
   };
@@ -103,6 +107,121 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       setLoading(false);
     }
   };
+
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
 
   const getCurrentUser = async (userId) => {
     try {
@@ -159,6 +278,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       title: "Template Name",
       dataIndex: "templateName",
       key: "templateName",
+      ...getColumnSearchProps("templateName"),
     },
     {
       title: "Date Of Creation",
@@ -184,7 +304,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
             type="primary"
             danger
             onClick={() => handleEditClick(record.templateId)}
-            icon={<EditOutlined/>}
+            icon={<EditOutlined />}
           >
             Edit
           </Button>
@@ -325,14 +445,14 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   console.log(userId);
 
   return (
-    <div style={{ padding: "20px" ,height:"86vh"}} className="imagebox">
+    <div style={{ padding: "20px", height: "86vh" }} className="imagebox">
       {contextHolder}
       <Segmented
-        options={["My Templates", "Access Templates"]}
+        options={["My Templates", "Shared Templates"]}
         value={selectedSegment}
-        style={{backgroundColor:"#01606F",color:"white"}}
+        style={{ backgroundColor: "#01606F", color: "white" }}
         onChange={(value) => setSelectedSegment(value)}
-       className="custom-segmented"
+        className="custom-segmented"
         size="large"
         block
       />
@@ -350,7 +470,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
               className="access-template-table"
               dataSource={templates}
               columns={columns}
-              style={{marginTop:"40px"}}
+              style={{ marginTop: "40px" }}
               rowKey="templateId"
               bordered
               scroll={{
@@ -363,7 +483,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
         </Spin>
       )}
 
-      {selectedSegment === "Access Templates" && (
+      {selectedSegment === "Shared Templates" && (
         <Spin spinning={loading}>
           <div
             className="mt-4"
@@ -436,7 +556,15 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                 ]}
                 defaultValue="ALL" // Set "ALL" as the default value
               />
-              <Button type="primary" htmlType="submit" style={{backgroundColor:"#01606F",marginTop:"10px",marginRight:"20px"}}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{
+                  backgroundColor: "#01606F",
+                  marginTop: "10px",
+                  marginRight: "20px",
+                }}
+              >
                 Share
               </Button>
             </Space>

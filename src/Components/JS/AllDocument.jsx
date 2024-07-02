@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import baseUrl from "../../BootApi";
-import "../CSS/chooseCreateTemplate.css"
+import "../CSS/chooseCreateTemplate.css";
 import {
   Button,
   Space,
@@ -11,22 +11,145 @@ import {
   message,
   Tag,
   Spin,
+  Input,
 } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { FileImageOutlined, DeleteOutlined } from "@ant-design/icons";
 import CryptoJS from "crypto-js";
 import "./../CSS/Tables.css";
+import { log } from "util";
+import Highlighter from "react-highlight-words";
+import { SearchOutlined } from "@ant-design/icons";
 
 export function Alldocument() {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const [templates, setTemplates] = useState([]);
+
+  // console.log(documents);
   const userId = localStorage.getItem("userId");
   const bearerToken = localStorage.getItem("token");
 
   const [api, contextHolder] = notification.useNotification();
+
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
 
   const openNotificationWithIcon = (type, msg) => {
     api[type]({
@@ -49,6 +172,16 @@ export function Alldocument() {
       setLoading(false);
     }
   };
+
+  function getTemplatesOfUser(userId) {
+    axios
+      .get(`${baseUrl}/template/all/${userId}`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((reponse) => reponse.data)
+      .then((data) => setTemplates(data))
+      .catch((error) => console.log(error));
+  }
 
   const secretKey =
     "sD3rReEbZ+kjdUCCYD9ov/0fBb5ttGwzzZd1VRBmFwFAUTo3gwfBxBZ3UwngzTFn";
@@ -77,6 +210,7 @@ export function Alldocument() {
 
   useEffect(() => {
     getDocumentsOfUser(userId);
+    getTemplatesOfUser(userId);
   }, [userId]);
 
   const deleteDocument = async (id) => {
@@ -93,6 +227,24 @@ export function Alldocument() {
     }
   };
 
+  // const mergedTables = documents.map((doc) => {
+  //   const template = templates.find(
+  //     (temp) => temp.templateId === doc.templateId
+  //   );
+  //   return { ...doc, ...template };
+  // });
+
+  const templatesMap = templates.reduce((acc, template) => {
+    acc[template.templateId] = template.templateName;
+    return acc;
+  }, {});
+
+  const documentsWithTempalteName = documents.map((doc) => ({
+    ...doc,
+    templateName: templatesMap[doc.templateId],
+  }));
+  console.log(documentsWithTempalteName);
+
   const columns = [
     {
       title: "Sno",
@@ -104,7 +256,15 @@ export function Alldocument() {
       title: "Document Name",
       dataIndex: "documentName",
       key: "documentName",
-      width: "280px",
+      width: "250px",
+      ...getColumnSearchProps("documentName"),
+    },
+    {
+      title: "Template Name",
+      dataIndex: "templateName",
+      key: "templateName",
+      width: "220px",
+      ...getColumnSearchProps("templateName"),
     },
     {
       title: "Date Of Creation",
@@ -131,7 +291,7 @@ export function Alldocument() {
     {
       title: "Status",
       key: "status",
-      align:"center",
+      align: "center",
       filters: [
         { text: "SIGNED", value: "SIGNED" },
         { text: "PENDING", value: "PENDING" },
@@ -152,7 +312,7 @@ export function Alldocument() {
     {
       title: "",
       key: "view",
-      align:"center",
+      align: "center",
       render: (_, record) => (
         <Space>
           <Button
@@ -168,7 +328,7 @@ export function Alldocument() {
     {
       title: "",
       key: "use",
-      align:"center",
+      align: "center",
       render: (_, record) => (
         <Popconfirm
           title="Delete the document"
@@ -192,7 +352,7 @@ export function Alldocument() {
   };
 
   return (
-    <div style={{ padding: "20px" ,height:"86vh"}} className="imagebox">
+    <div style={{ padding: "20px", height: "86vh" }} className="imagebox">
       <h3>All Documents</h3>
       {contextHolder}
       <Spin spinning={loading}>
@@ -202,7 +362,7 @@ export function Alldocument() {
         >
           <Table
             className="access-template-table"
-            dataSource={documents}
+            dataSource={documentsWithTempalteName}
             columns={columns}
             rowKey="documentId"
             bordered
