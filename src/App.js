@@ -37,7 +37,7 @@ function App() {
           {/* <Route path='/register' element={<Register/>}></Route> */}
 
           <Route
-            path="/home"
+            path="/dashboard"
             element={
               <PrivateRoute>
                 <Home />

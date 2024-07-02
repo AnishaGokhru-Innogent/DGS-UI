@@ -33,6 +33,7 @@
     "slate-history": "^0.100.0",
     "slate-react": "^0.105.0",
     "util": "^0.12.5",
+    "vara": "^1.4.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

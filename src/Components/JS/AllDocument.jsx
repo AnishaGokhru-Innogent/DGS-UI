@@ -192,7 +192,7 @@ export function Alldocument() {
   };
 
   return (
-    <div style={{ padding: "20px" ,height:"86vh"}} className="imagebox">
+    <div style={{ padding: "20px" ,height:"85vh"}}>
       <h3>All Documents</h3>
       {contextHolder}
       <Spin spinning={loading}>

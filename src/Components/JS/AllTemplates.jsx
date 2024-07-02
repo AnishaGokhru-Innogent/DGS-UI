@@ -325,7 +325,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   console.log(userId);
 
   return (
-    <div style={{ padding: "20px" ,height:"86vh"}} className="imagebox">
+    <div style={{ padding: "20px" ,height:"85vh"}}>
       {contextHolder}
       <Segmented
         options={["My Templates", "Access Templates"]}

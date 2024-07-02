@@ -30,7 +30,7 @@ const Login = () => {
           localStorage.setItem("token", token);
           localStorage.setItem("userId", userId);
           message.success("Login Success");
-          navigate("/home");
+          navigate("/dashboard");
           dispatch(login(token));
         }
       })

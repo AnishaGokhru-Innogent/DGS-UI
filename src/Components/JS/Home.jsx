@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import mainImage from "../Images/mainImage.jpg";
 import viewImg from "../Images/emp.png";
 import {
   MenuFoldOutlined,
@@ -10,10 +9,9 @@ import {
   UserOutlined,
   BookOutlined,
   HomeOutlined,
-  ContactsOutlined,
   LogoutOutlined,
   LockOutlined,
-  ProfileOutlined
+  DashboardOutlined
 } from "@ant-design/icons";
 import {
   Button,
@@ -54,10 +52,9 @@ const Home = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState({});
-  const [currentView, setCurrentView] = useState("Home");
+  const [currentView, setCurrentView] = useState("Dashboard");
   const [uploadedFile, setUploadedFile] = useState(null);
   const [templateId, setTemplateId] = useState();
-  const [users, setUsers] = useState([]);
   const [department, setDepartment] = useState({});
   const [designation, setDesignation] = useState({});
 
@@ -75,8 +72,8 @@ const Home = () => {
   const handleOk = () => {
     setIsModalOpen(false);
   };
-  const handleHome = () => {
-    setCurrentView("Home");
+  const   handleHome = () => {
+    setCurrentView("Dashboard");
   };
 
   const handleCancel = () => {
@@ -196,9 +193,9 @@ const Home = () => {
           />
         );
 
-      case "Home":
+      case "Dashboard":
         return (
-          <HomePage onClick={handleHome} setCurrentView={setCurrentView} />
+          <HomePage onClick={handleHome} setCurrentView={setCurrentView} user={user}/>
         );
       case "My Documents":
         return <Alldocument />;
@@ -225,7 +222,7 @@ const Home = () => {
 
   const renderContentAdmin = () => {
     switch (currentView) {
-      case "Home":
+      case "Dashboard":
         return (
           <>
             <AllUser />
@@ -282,9 +279,9 @@ const Home = () => {
       style: { color: "white" },
     },
     {
-      key: "Home",
-      icon: <HomeOutlined />,
-      label: "Home",
+      key: "Dashboard",
+      icon: <DashboardOutlined />,
+      label: "Dashboard",
       style: { color: "white" },
     },
     {
