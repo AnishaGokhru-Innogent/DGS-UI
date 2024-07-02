@@ -32,6 +32,7 @@ import { AccessTemplates } from "./AccessTemplates";
 import "./../CSS/Tables.css";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined } from "@ant-design/icons";
+import { log } from "util";
 
 export function AllTemplate({ setCurrentView, setTemplateId }) {
   const [templates, setTemplates] = useState([]);
@@ -50,6 +51,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   const [accessDetails, setAccessDetails] = useState([]);
   const [currnetUser, setCurrentUser] = useState();
   const [selectedSegment, setSelectedSegment] = useState("My Templates");
+  const [allAccessTemplateId, setAllAccessTemplateId] = useState([]);
 
   const { Title, Text } = Typography;
 
@@ -107,6 +109,17 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       setLoading(false);
     }
   };
+
+  async function getAllAccessTemplateId() {
+    await axios
+      .get(`${baseUrl}/accessControl/all/access/${userId}/templateId`, {
+        headers: { Authorization: `Bearer ${bearerToken}` },
+      })
+      .then((response) => response.data)
+      .then((data) => setAllAccessTemplateId(data))
+      .catch((error) => console.log(error));
+  }
+  // console.log(allAccessTemplateId);
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -251,6 +264,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   useEffect(() => {
     getTemplate();
     getCurrentUser(Number(userId));
+    getAllAccessTemplateId();
   }, []);
 
   const deleteTemplate = async (id) => {
@@ -316,7 +330,20 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
             Use
           </Button>
 
-          <Button onClick={() => handleAccessClick(record)}>Access</Button>
+          <Button
+            onClick={() => handleAccessClick(record)}
+            style={{
+              backgroundColor: allAccessTemplateId.includes(record.templateId)
+                ? "#17B169"
+                : "white",
+              color: allAccessTemplateId.includes(record.templateId)
+                ? "white"
+                : "black",
+            }}
+          >
+            Share
+          </Button>
+
           <Popconfirm
             title="Delete Template"
             description="Are you sure you want to delete this template?"
@@ -397,6 +424,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
     }
     getAllAccessOfTemplate(Number(accessTemplateId));
     getAllAccessDetails(Number(accessTemplateId));
+    getAllAccessTemplateId();
   }
 
   function handleAccess(value) {
@@ -440,9 +468,10 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
 
     getAllAccessOfTemplate(Number(accessTemplateId));
     getAllAccessDetails(Number(accessTemplateId));
+    getAllAccessTemplateId();
   }
 
-  console.log(userId);
+  // console.log(userId);
 
   return (
     <div style={{ padding: "20px", height: "86vh" }} className="imagebox">
