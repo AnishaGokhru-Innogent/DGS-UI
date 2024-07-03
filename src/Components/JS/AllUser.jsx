@@ -367,7 +367,7 @@ const AllUser = () => {
   ];
  console.log(allUser);
   return (
-    <div className="imagebox" style={{height:"86vh"}}>
+    <div style={{height:"86vh"}}>
       <Register fetchUsers={fetchUsers} allUser={allUser}/>
       <div className="mt-4">
         <Table

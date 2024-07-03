@@ -157,7 +157,7 @@ export function CreateDocument() {
             <Button
               style={{ backgroundColor: "#01606F", color: "white" }}
               icon={<BackwardOutlined />}
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/dashboard")}
             >
               HOME
             </Button>

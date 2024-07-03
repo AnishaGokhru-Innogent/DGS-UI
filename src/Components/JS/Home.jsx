@@ -11,7 +11,8 @@ import {
   HomeOutlined,
   LogoutOutlined,
   LockOutlined,
-  DashboardOutlined
+  DashboardOutlined,
+  ProfileOutlined
 } from "@ant-design/icons";
 import {
   Button,
@@ -93,8 +94,8 @@ const Home = () => {
     setIsModalOpenProfile(false);
   };
   const myProfile = () => {
-    showModalProfile();
-    // console.log(user);
+    // showModalProfile();
+    setCurrentView("MyProfile")
     getDeptById();
     getDesById();
   };
@@ -111,9 +112,17 @@ const Home = () => {
     {
       key: "1",
       label: (
-        <a onClick={myProfile} style={{ textDecoration: "none" }}>
-          <UserOutlined style={{ marginRight: 6 }} />
-          {user.firstName} {user.lastName}
+        <a style={{ textDecoration: "none" }}>
+          <UserOutlined style={{ marginRight: 5 }} />
+          {user.firstName} {user.lastName}{user.role==="USER" && `(${user.role})`}
+        </a>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <a style={{ textDecoration: "none" }} onClick={myProfile}>
+          <ProfileOutlined style={{ marginRight: 6 }} />Profile
         </a>
       ),
     },
@@ -126,6 +135,7 @@ const Home = () => {
       ),
     },
   ];
+  
   const userName = async () => {
     try {
       const response = await axios.get(
@@ -143,17 +153,15 @@ const Home = () => {
   const getDeptById = async () => {
     const id = user.departmentId;
     const response = await axios.get(`${baseUrl}/department/getDept/${id}`);
-    console.log(response.data);
     setDepartment(response.data);
   };
   const getDesById = async () => {
     const id = user.designationId;
     const response = await axios.get(`${baseUrl}/designation/getDes/${id}`);
-    console.log(response.data);
     setDesignation(response.data);
   };
   const onFinish = async (values) => {
-    console.log("Success:", values);
+    // console.log("Success:", values);
     updatePassword(values);
   };
   const onFinishFailed = (errorInfo) => {
@@ -172,7 +180,7 @@ const Home = () => {
           },
         }
       );
-      console.log(response.data);
+      // console.log(response.data);
       message.success("Password Updated Successfully");
       handleCancel();
     } catch (error) {
@@ -219,7 +227,6 @@ const Home = () => {
         return <div>{/* <img src={mainImage} alt="" /> */}</div>;
     }
   };
-  console.log(currentView);
 
   const renderContentAdmin = () => {
     switch (currentView) {
@@ -324,9 +331,9 @@ const Home = () => {
       style: { color: "white" },
     },
     {
-      key: "Home",
-      icon: <HomeOutlined />,
-      label: "Home",
+      key: "Dashboard",
+      icon: <DashboardOutlined />,
+      label: "Dashboard",
       style: { color: "white" },
     },
     {
@@ -391,17 +398,6 @@ const Home = () => {
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        {/* <h4
-          style={{
-            backgroundColor: "#01606F",
-            color: "white",
-            padding: "20px",
-            height: "10vh",
-            margin: "0",
-          }}
-        >
-          DocMaster
-        </h4> */}
 
         <div className="demo-logo-vertical" />
         <Menu

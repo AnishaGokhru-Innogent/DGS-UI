@@ -105,7 +105,7 @@ export function Seedocument() {
           <Button
             type="primary"
             icon={<HomeOutlined />}
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/dashboard")}
             style={{ backgroundColor: "#01606F" }}
           >
             Home

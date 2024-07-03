@@ -250,13 +250,13 @@ export function Alldocument() {
       title: "Sno",
       key: "Sno",
       render: (_, __, index) => index + 1,
-      width: "80px",
+      width: "60px",
     },
     {
       title: "Document Name",
       dataIndex: "documentName",
       key: "documentName",
-      width: "250px",
+      width: "220px",
       ...getColumnSearchProps("documentName"),
     },
     {
@@ -269,7 +269,7 @@ export function Alldocument() {
     {
       title: "Date Of Creation",
       key: "createdAt",
-      width: "280px",
+      width: "220px",
       render: (text) => {
         if (text.createdAt) {
           const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
@@ -303,7 +303,7 @@ export function Alldocument() {
           color = "geekblue";
         }
         return (
-          <Tag color={color} style={{ fontSize: "14px" }}>
+          <Tag color={color} style={{ fontSize: "12px" }}>
             {record.status}
           </Tag>
         );

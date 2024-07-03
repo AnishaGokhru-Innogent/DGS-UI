@@ -31,7 +31,7 @@ import { useForm } from "antd/es/form/Form";
 import { AccessTemplates } from "./AccessTemplates";
 import "./../CSS/Tables.css";
 import Highlighter from "react-highlight-words";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined ,ShareAltOutlined} from "@ant-design/icons";
 import { log } from "util";
 
 export function AllTemplate({ setCurrentView, setTemplateId }) {
@@ -340,6 +340,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                 ? "white"
                 : "black",
             }}
+            icon={<ShareAltOutlined/>}
           >
             Share
           </Button>
@@ -482,7 +483,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
         style={{ backgroundColor: "#01606F", color: "white" }}
         onChange={(value) => setSelectedSegment(value)}
         className="custom-segmented"
-        size="large"
+        size="medium"
         block
       />
       {selectedSegment === "My Templates" && (
@@ -593,6 +594,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                   marginTop: "10px",
                   marginRight: "20px",
                 }}
+                icon={<ShareAltOutlined/>}
               >
                 Share
               </Button>

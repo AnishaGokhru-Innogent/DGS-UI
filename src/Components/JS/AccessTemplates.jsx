@@ -32,7 +32,7 @@ import {
 import { useForm } from "antd/es/form/Form";
 import "./../CSS/Tables.css";
 import Highlighter from "react-highlight-words";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined ,ShareAltOutlined} from "@ant-design/icons";
 
 export function AccessTemplates({ setCurrentView, setTemplateId }) {
   const [templates, setTemplates] = useState([]);
@@ -360,18 +360,20 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
       title: "Sno",
       key: "Sno",
       render: (_, __, index) => index + 1,
-      width: "80px",
+      width: "60px",
     },
     {
       title: "Template Name",
       dataIndex: "templateName",
       key: "templateName",
+      width:"220px",
       ...getColumnSearchProps("templateName"),
     },
     {
       title: "Created By",
       dataIndex: "ownerName",
       key: "ownerName",
+      width:"220px",
       ...getColumnSearchProps("ownerName"),
     },
     {
@@ -424,8 +426,9 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
               backgroundColor: "#17B169",
               color: "white",
             }}
+            icon={<ShareAltOutlined/>}
           >
-            Access
+            Share
           </Button>
         </Space>
       ),
