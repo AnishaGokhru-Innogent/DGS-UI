@@ -20,6 +20,7 @@ import "../CSS/createTemplate.css";
 import baseUrl from "../../BootApi";
 import { useParams } from "react-router-dom";
 import CryptoJS from "crypto-js";
+import { log } from "util";
 
 // Register the custom placeholder blot
 const Inline = Quill.import("blots/inline");
@@ -69,6 +70,7 @@ const EditTemplate = ({ templateId }) => {
       const editorElement = editor.container.firstChild;
       editorElement.style.minHeight = "50vh";
     }
+    // handlePlaceholders(template.templateBody);
   }, []);
 
   // useEffect(() => {
@@ -254,18 +256,20 @@ const EditTemplate = ({ templateId }) => {
     return bytes.toString(CryptoJS.enc.Utf8);
   };
 
-  function handlePlaceholders(templateBody) {
-    // placeholders.map((placeholder) => {
-    //   const regex = new RegExp(`{{${placeholder.placeholderName}}}`, "g");
-    //   console.log(regex);
-    //   templateBody = templateBody.replace(
-    //     regex,
-    //     `<span class="placeholder-blot" data-placeholder="${placeholder.placeholderName}" style="border:2px solid black;">{{${placeholder.placeholderName}}}</span>`
-    //   );
-    // });
-    // const quill = quillRef.current.getEditor();
-    // quill.clipboard.dangerouslyPasteHTML(templateBody);
-  }
+  // function handlePlaceholders(templateBody) {
+  // placeholders.map((placeholder) => {
+  //   const regex = new RegExp(`{{${placeholder.placeholderName}}}`, "g");
+  //   console.log(regex);
+  //   templateBody = templateBody.replace(
+  //     regex,
+  //     `<span class="placeholder-blot" data-placeholder="${placeholder.placeholderName}" style="border:2px solid black;">{{${placeholder.placeholderName}}}</span>`
+  //   );
+  // });
+  // const quill = quillRef.current.getEditor();
+  // quill.clipboard.dangerouslyPa steHTML(templateBody);
+  // }
+
+  console.log(template.templateBody);
 
   async function getTemplateAndPlaceholders(id) {
     try {
@@ -277,7 +281,7 @@ const EditTemplate = ({ templateId }) => {
       );
       const template = responseTemplate.data;
       setTemplate(template);
-      setTemplateName(template.templateName); // Set the templateName state here
+      setTemplateName(template.templateName);
       // console.log(template);
       setEditorContent(template.templateBody);
 
@@ -289,7 +293,7 @@ const EditTemplate = ({ templateId }) => {
       );
       const placeholdersData = responsePlaceholders.data;
       setPlaceholders(placeholdersData);
-      handlePlaceholders(template.templateBody);
+      // handlePlaceholders(template.templateBody);
     } catch (error) {
       console.log(error);
       message.error("Failed to fetch template and placeholders");
@@ -319,18 +323,6 @@ const EditTemplate = ({ templateId }) => {
             <h4>Edit a Template</h4>
           </div>
           <div style={{ marginTop: "20px" }}>
-            {/* <Form.Item
-              label="Template Name"
-              name="Template Name"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <Input
-                placeholder="Enter Template Name"
-                value={templateName}
-                onChange={(e) => setTemplateName(e.target.value)}
-                style={{ width: "580px" }}
-              />
-            </Form.Item> */}
             <Title level={4}>Template Name: {templateName}</Title>
           </div>
           <div
