@@ -73,7 +73,7 @@ const Home = () => {
   const handleOk = () => {
     setIsModalOpen(false);
   };
-  const   handleHome = () => {
+  const handleHome = () => {
     setCurrentView("Dashboard");
   };
 
@@ -152,11 +152,19 @@ const Home = () => {
 
   const getDeptById = async () => {
     const id = user.departmentId;
+    const response = await axios.get(`${baseUrl}/department/getDept/${id}`, {
+      headers: { Authorization: `Bearer ${bearerToken}` },
+    });
+    // console.log(response.data);
     const response = await axios.get(`${baseUrl}/department/getDept/${id}`);
     setDepartment(response.data);
   };
   const getDesById = async () => {
     const id = user.designationId;
+    const response = await axios.get(`${baseUrl}/designation/getDes/${id}`, {
+      headers: { Authorization: `Bearer ${bearerToken}` },
+    });
+    // console.log(response.data);
     const response = await axios.get(`${baseUrl}/designation/getDes/${id}`);
     setDesignation(response.data);
   };
@@ -204,7 +212,11 @@ const Home = () => {
 
       case "Dashboard":
         return (
-          <HomePage onClick={handleHome} setCurrentView={setCurrentView} user={user}/>
+          <HomePage
+            onClick={handleHome}
+            setCurrentView={setCurrentView}
+            user={user}
+          />
         );
       case "My Documents":
         return <Alldocument />;

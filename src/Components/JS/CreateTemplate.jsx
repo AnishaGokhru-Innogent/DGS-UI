@@ -17,6 +17,7 @@ import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import mammoth from "mammoth";
 import "../CSS/createTemplate.css";
+import { log } from "util";
 
 // Register the custom placeholder blot
 const Inline = Quill.import("blots/inline");
@@ -253,7 +254,7 @@ const CreateTemplate = ({ uploadedFile }) => {
   }
 
   return (
-    <div style={{}}>
+    <div style={{ margin: "20px" }}>
       <Row gutter={24}>
         <Col span={16}>
           <div
@@ -324,7 +325,7 @@ const CreateTemplate = ({ uploadedFile }) => {
           </div>
         </Col>
         <Col span={7}>
-          <Tooltip title="Create Document Template from the scratch">
+          <Tooltip title="Create an template and place the placeholders by inputing their name and selecting in placeholder type. In order to delete an placeholder just click behind the placeholder and press backspace">
             <Typography.Link href="#API">How to use this? </Typography.Link>
           </Tooltip>
           <Title level={5}>Add Placeholder</Title>

@@ -475,7 +475,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
   // console.log(userId);
 
   return (
-    <div style={{ padding: "20px", height: "85vh" }}>
+    <div style={{ padding: "20px", height: "85vh", margin: "20px" }}>
       {contextHolder}
       <Segmented
         options={["My Templates", "Shared Templates"]}

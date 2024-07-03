@@ -84,7 +84,7 @@ const AllUser = () => {
       firstName: record.firstName,
       lastName: record.lastName,
       email: record.email,
-      manager:record.manager,
+      manager: record.manager,
       department: record.departmentName,
       designation: record.designationName,
       role: record.role,
@@ -109,13 +109,13 @@ const AllUser = () => {
     const designationId = designation.designationId;
 
     const updateData = {
-       firstName:values.firstName,
-       lastName:values.lastName,
-       manager:values.manager,
-       email:values.email,
-       departmentId:departmentId,
-       designationId:designationId
-    }
+      firstName: values.firstName,
+      lastName: values.lastName,
+      manager: values.manager,
+      email: values.email,
+      departmentId: departmentId,
+      designationId: designationId,
+    };
     console.log(updateData);
     try {
       let token = localStorage.getItem("token");
@@ -341,11 +341,14 @@ const AllUser = () => {
     {
       title: "",
       key: "action",
-      width:"6%",
+      width: "6%",
       render: (text, record) => (
-        <Button type="primary" onClick={()=>showDrawer(record)} style={{backgroundColor:"#01606F"}} icon={<EditOutlined/>}>
-          
-        </Button>
+        <Button
+          type="primary"
+          onClick={() => showDrawer(record)}
+          style={{ backgroundColor: "#01606F" }}
+          icon={<EditOutlined />}
+        ></Button>
       ),
     },
     {
@@ -360,12 +363,12 @@ const AllUser = () => {
           okText="Yes"
           cancelText="No"
         >
-          <Button danger icon={<DeleteOutlined/>}></Button>
+          <Button danger icon={<DeleteOutlined />}></Button>
         </Popconfirm>
       ),
     },
   ];
- console.log(allUser);
+  console.log(allUser);
   return (
     <div style={{height:"86vh"}}>
       <Register fetchUsers={fetchUsers} allUser={allUser}/>
@@ -442,9 +445,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Please Enter Email"
-            />
+            <Input placeholder="Please Enter Email" />
           </Form.Item>
           <Form.Item
             name="manager"
@@ -456,9 +457,7 @@ const AllUser = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Please Enter Email"
-            />
+            <Input placeholder="Please Enter Email" />
           </Form.Item>
           <Form.Item
             name="department"

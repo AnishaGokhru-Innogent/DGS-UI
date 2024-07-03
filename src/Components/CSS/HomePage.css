@@ -39,14 +39,14 @@
   width: 1120px;
   text-align: center;
 }
-.f1 h6{
-    font-size: 16px;
-    font-weight: 550;
-    font-family: sans-serif;
+.f1 h6 {
+  font-size: 18px;
+  font-weight: 530;
+  font-family: sans-serif;
 }
-.f1 h4{
-    margin-top: 20px;
-    font-size: 25px;
-    font-weight: 700;
-    text-align: center;
+.f1 h4 {
+  margin-top: 20px;
+  font-size: 40px;
+  font-weight: 700;
+  text-align: center;
 }
