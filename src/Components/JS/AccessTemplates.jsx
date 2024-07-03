@@ -425,7 +425,7 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
               color: "white",
             }}
           >
-            Access
+            Share
           </Button>
         </Space>
       ),
