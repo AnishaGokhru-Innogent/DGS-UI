@@ -31,7 +31,7 @@ import { useForm } from "antd/es/form/Form";
 import { AccessTemplates } from "./AccessTemplates";
 import "./../CSS/Tables.css";
 import Highlighter from "react-highlight-words";
-import { SearchOutlined ,ShareAltOutlined} from "@ant-design/icons";
+import { SearchOutlined, ShareAltOutlined } from "@ant-design/icons";
 import { log } from "util";
 
 export function AllTemplate({ setCurrentView, setTemplateId }) {
@@ -258,7 +258,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       .then((data) => setAllUsers(data))
       .catch((error) => console.log(error));
   }
-  console.log(allUsers);
+  // console.log(allUsers);
 
   useEffect(() => {
     getTemplate();
@@ -341,7 +341,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                 ? "white"
                 : "black",
             }}
-            icon={<ShareAltOutlined/>}
+            icon={<ShareAltOutlined />}
           >
             Share
           </Button>
@@ -440,7 +440,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       })
       .then((reponse) => reponse.data)
       .then((data) => setAccessDetails(data))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log());
   }
 
   // console.log(accessDetails);
@@ -595,7 +595,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
                   marginTop: "10px",
                   marginRight: "20px",
                 }}
-                icon={<ShareAltOutlined/>}
+                icon={<ShareAltOutlined />}
               >
                 Share
               </Button>

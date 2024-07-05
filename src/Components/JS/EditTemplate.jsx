@@ -269,7 +269,7 @@ const EditTemplate = ({ templateId }) => {
   // quill.clipboard.dangerouslyPa steHTML(templateBody);
   // }
 
-  console.log(template.templateBody);
+  // console.log(template.templateBody);
 
   async function getTemplateAndPlaceholders(id) {
     try {

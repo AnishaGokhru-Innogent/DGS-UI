@@ -12,7 +12,7 @@ import {
   LogoutOutlined,
   LockOutlined,
   DashboardOutlined,
-  ProfileOutlined
+  ProfileOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -97,7 +97,8 @@ const Home = () => {
       label: (
         <a style={{ textDecoration: "none" }}>
           <UserOutlined style={{ marginRight: 5 }} />
-          {user.firstName} {user.lastName}{user.role==="USER" && `(${user.role})`}
+          {user.firstName} {user.lastName}
+          {user.role === "USER" && `(${user.role})`}
         </a>
       ),
     },
@@ -118,7 +119,7 @@ const Home = () => {
       ),
     },
   ];
-  
+
   const userName = async () => {
     try {
       const response = await axios.get(
@@ -380,7 +381,6 @@ const Home = () => {
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-
         <div className="demo-logo-vertical" />
         <Menu
           className="slideBar"
