@@ -243,7 +243,7 @@ export function Alldocument() {
     ...doc,
     templateName: templatesMap[doc.templateId],
   }));
-  console.log(documentsWithTempalteName);
+  // console.log(documentsWithTempalteName);
 
   const columns = [
     {
@@ -352,7 +352,7 @@ export function Alldocument() {
   };
 
   return (
-    <div style={{ padding: "20px" ,height:"85vh"}}>
+    <div style={{ padding: "20px", height: "85vh" }}>
       <h3>All Documents</h3>
       {contextHolder}
       <Spin spinning={loading}>
