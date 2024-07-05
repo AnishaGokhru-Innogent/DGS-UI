@@ -204,7 +204,6 @@ export function CreateDocument() {
               </div>
               <Form
                 name="basic"
-                // labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 initialValues={{ remember: true }}
                 autoComplete="on"

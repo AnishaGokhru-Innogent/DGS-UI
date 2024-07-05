@@ -4,7 +4,7 @@ import homeImg from "../Images/homeImg.jpg";
 import { Button } from "antd";
 import axios from "axios";
 import baseUrl from "../../BootApi";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined ,ArrowRightOutlined} from "@ant-design/icons";
 const HomePage = ({ setCurrentView, user }) => {
   useEffect(() => {
     countTemplate();
@@ -100,11 +100,11 @@ const HomePage = ({ setCurrentView, user }) => {
           <h2 style={{ fontFamily: "script" }}>
             Hello ,{" "}
             <span
+              className="style"
               style={{
-                color: "#00308F",
-                fontWeight: "550",
-                fontSize: "60px",
-                fontFamily: "Brush Script MT",
+                color: "#01606F",
+                fontWeight: "500",
+                fontSize: "40px",
               }}
             >
               {user.firstName}
@@ -133,11 +133,11 @@ const HomePage = ({ setCurrentView, user }) => {
         >
           <Button
             onClick={handleStarting}
-            icon={<PlusOutlined />}
+            icon={<ArrowRightOutlined  />}
             type="primary"
             style={{ backgroundColor: "#01606F" }}
           >
-            Create Template
+           Get Started
           </Button>
         </div>
       </div>

@@ -104,7 +104,6 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       setTemplates(response.data);
     } catch (error) {
       console.error(error);
-      openNotificationWithIcon("error", "Failed to fetch templates");
     } finally {
       setLoading(false);
     }
@@ -286,17 +285,19 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       title: "Sno",
       key: "Sno",
       render: (_, __, index) => index + 1,
-      width: "80px",
+      width: "90px",
     },
     {
       title: "Template Name",
       dataIndex: "templateName",
       key: "templateName",
       ...getColumnSearchProps("templateName"),
+      width: "280px",
     },
     {
       title: "Date Of Creation",
       key: "createdAt",
+      width: "280px",
       render: (text) => {
         if (text) {
           const formattedDate = moment(text.createdAt).format("YYYY-MM-DD");
