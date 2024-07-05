@@ -69,6 +69,7 @@ const Login = () => {
                 ]}
               >
                 <Input
+                  autoComplete="email"
                   size="large"
                   placeholder="Email"
                   prefix={<MailOutlined />}
@@ -87,6 +88,7 @@ const Login = () => {
                 ]}
               >
                 <Input.Password
+                  autoComplete="current-password"
                   size="large"
                   placeholder="Password"
                   prefix={<LockOutlined />}

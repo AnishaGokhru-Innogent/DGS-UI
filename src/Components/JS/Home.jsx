@@ -12,7 +12,7 @@ import {
   LogoutOutlined,
   LockOutlined,
   DashboardOutlined,
-  ProfileOutlined
+  ProfileOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -95,7 +95,7 @@ const Home = () => {
   };
   const myProfile = () => {
     // showModalProfile();
-    setCurrentView("MyProfile")
+    setCurrentView("MyProfile");
     getDeptById();
     getDesById();
   };
@@ -114,7 +114,8 @@ const Home = () => {
       label: (
         <a style={{ textDecoration: "none" }}>
           <UserOutlined style={{ marginRight: 5 }} />
-          {user.firstName} {user.lastName}{user.role==="USER" && `(${user.role})`}
+          {user.firstName} {user.lastName}
+          {user.role === "USER" && `(${user.role})`}
         </a>
       ),
     },
@@ -122,7 +123,8 @@ const Home = () => {
       key: "2",
       label: (
         <a style={{ textDecoration: "none" }} onClick={myProfile}>
-          <ProfileOutlined style={{ marginRight: 6 }} />Profile
+          <ProfileOutlined style={{ marginRight: 6 }} />
+          Profile
         </a>
       ),
     },
@@ -135,7 +137,7 @@ const Home = () => {
       ),
     },
   ];
-  
+
   const userName = async () => {
     try {
       const response = await axios.get(
@@ -156,7 +158,6 @@ const Home = () => {
       headers: { Authorization: `Bearer ${bearerToken}` },
     });
     // console.log(response.data);
-    const response = await axios.get(`${baseUrl}/department/getDept/${id}`);
     setDepartment(response.data);
   };
   const getDesById = async () => {
@@ -165,7 +166,6 @@ const Home = () => {
       headers: { Authorization: `Bearer ${bearerToken}` },
     });
     // console.log(response.data);
-    const response = await axios.get(`${baseUrl}/designation/getDes/${id}`);
     setDesignation(response.data);
   };
   const onFinish = async (values) => {
@@ -410,7 +410,6 @@ const Home = () => {
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-
         <div className="demo-logo-vertical" />
         <Menu
           className="slideBar"
