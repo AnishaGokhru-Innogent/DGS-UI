@@ -54,7 +54,7 @@ const CreateTemplate = ({ uploadedFile }) => {
   const [cursorPosition, setCursorPosition] = useState(null);
   const [template, setTemplate] = useState({});
   const [resTemplate, setResTemplate] = useState({});
-  const [templateName, setTemplateName] = useState("");
+  const [templateName, setTemplateName] = useState(null);
   const quillRef = useRef(null);
   const userid = localStorage.getItem("userId");
   const [userId, setUserId] = useState(userid);
@@ -163,7 +163,6 @@ const CreateTemplate = ({ uploadedFile }) => {
   };
 
   async function saveTemplate() {
-    console.log(template);
     await axios
       .post("http://localhost:8080/template/create", template, {
         headers: { Authorization: `Bearer ${bearerToken}` },
@@ -237,6 +236,10 @@ const CreateTemplate = ({ uploadedFile }) => {
   };
 
   function generateTemplateJSON() {
+    if(templateName===null){
+      message.warning("Please input valid Template Name");
+      return;
+    }
     const plainText = quillRef.current.getEditor().getText();
     const templateJSON = {
       templateName: templateName,

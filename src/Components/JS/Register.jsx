@@ -60,15 +60,12 @@ const Register = ({ fetchUsers, allUser }) => {
     setDesName(event.target.value);
   };
   const deleteDesignation = async (e) => {
-    console.log("Designation");
     const id = e.designationId;
-    console.log(e);
     await axios
       .delete(`${baseUrl}/designation/delete/${id}`, {
         headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((response) => {
-        console.log(response.data);
         if (!response.data) {
           message.error(
             "Designation is not deleted because user is associated with it"
@@ -86,15 +83,11 @@ const Register = ({ fetchUsers, allUser }) => {
   };
   const deleteDepartment = async (e) => {
     const id = e.departmentId;
-    console.log(id);
-    console.log("Department");
-    console.log(e);
     await axios
       .delete(`${baseUrl}/department/delete/${id}`, {
         headers: { Authorization: `Bearer ${bearerToken}` },
       })
       .then((response) => {
-        console.log(response.data);
         if (!response.data) {
           message.error(
             "Department is not deleted because user is associated with it"
@@ -111,7 +104,6 @@ const Register = ({ fetchUsers, allUser }) => {
       });
   };
   const cancel = (e) => {
-    console.log(e);
     message.error("Click on No");
   };
 
@@ -136,7 +128,6 @@ const Register = ({ fetchUsers, allUser }) => {
         },
       ]);
       setDesName("");
-      console.log(response.data);
       message.success("Designation Added");
     } catch (error) {
       message.error("Designation Not Added");
@@ -161,7 +152,6 @@ const Register = ({ fetchUsers, allUser }) => {
         { departmentName: deptName, departmentId: response.data.departmentId },
       ]);
       setDeptName("");
-      console.log(response.data);
       message.success("Department Added");
     } catch (error) {
       message.error("Department Not Added");
@@ -262,7 +252,6 @@ const Register = ({ fetchUsers, allUser }) => {
       designationId: designationId,
     };
 
-    // console.log("Register data:", registerData);
     try {
       const response = await axios.post(
         `${baseUrl}/api/v1/auth/register`,
@@ -293,11 +282,11 @@ const Register = ({ fetchUsers, allUser }) => {
   };
 
   const onChange = (value) => {
-    console.log(`selected ${value}`);
+    // console.log(`selected ${value}`);
     setManager(value);
   };
   const onSearch = (value) => {
-    console.log("search:", value);
+    // console.log("search:", value);
   };
 
   const startEditingDesignation = (des) => {
@@ -438,10 +427,6 @@ const Register = ({ fetchUsers, allUser }) => {
               },
             ]}
           >
-            {/* <Input
-              placeholder="Please Enter Manager"
-              onChange={(e) => setManager(e.target.value)}
-            /> */}
             <Select
               showSearch
               placeholder="Select a Manager"
@@ -451,7 +436,6 @@ const Register = ({ fetchUsers, allUser }) => {
                   (user) => user.userId === value
                 );
                 if (selectedUser) {
-                  console.log("Selected manager name:", selectedUser.firstName); // Debug log to check value
                   setManager(
                     `${selectedUser.firstName} ${selectedUser.lastName}`
                   );

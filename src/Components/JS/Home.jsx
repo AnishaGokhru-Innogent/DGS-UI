@@ -56,8 +56,6 @@ const Home = () => {
   const [currentView, setCurrentView] = useState("Dashboard");
   const [uploadedFile, setUploadedFile] = useState(null);
   const [templateId, setTemplateId] = useState();
-  const [department, setDepartment] = useState({});
-  const [designation, setDesignation] = useState({});
 
   const dispatch = useDispatch();
   const {
@@ -80,24 +78,9 @@ const Home = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const [isModalOpenProfile, setIsModalOpenProfile] = useState(false);
 
-  const showModalProfile = () => {
-    setIsModalOpenProfile(true);
-  };
-
-  const handleOkProfile = () => {
-    setIsModalOpenProfile(false);
-  };
-
-  const handleCancelProfile = () => {
-    setIsModalOpenProfile(false);
-  };
   const myProfile = () => {
-    // showModalProfile();
-    setCurrentView("MyProfile");
-    getDeptById();
-    getDesById();
+    setCurrentView("MyProfile")
   };
 
   useEffect(() => {
@@ -123,8 +106,7 @@ const Home = () => {
       key: "2",
       label: (
         <a style={{ textDecoration: "none" }} onClick={myProfile}>
-          <ProfileOutlined style={{ marginRight: 6 }} />
-          Profile
+          <ProfileOutlined style={{ marginRight: 6 }} />My Profile
         </a>
       ),
     },
@@ -151,25 +133,7 @@ const Home = () => {
       console.log(error);
     }
   };
-
-  const getDeptById = async () => {
-    const id = user.departmentId;
-    const response = await axios.get(`${baseUrl}/department/getDept/${id}`, {
-      headers: { Authorization: `Bearer ${bearerToken}` },
-    });
-    // console.log(response.data);
-    setDepartment(response.data);
-  };
-  const getDesById = async () => {
-    const id = user.designationId;
-    const response = await axios.get(`${baseUrl}/designation/getDes/${id}`, {
-      headers: { Authorization: `Bearer ${bearerToken}` },
-    });
-    // console.log(response.data);
-    setDesignation(response.data);
-  };
   const onFinish = async (values) => {
-    // console.log("Success:", values);
     updatePassword(values);
   };
   const onFinishFailed = (errorInfo) => {
@@ -188,7 +152,6 @@ const Home = () => {
           },
         }
       );
-      // console.log(response.data);
       message.success("Password Updated Successfully");
       handleCancel();
     } catch (error) {
@@ -201,6 +164,14 @@ const Home = () => {
   }
   const renderContentUser = () => {
     switch (currentView) {
+      case "DocMaster":
+      return(
+        <HomePage
+        onClick={handleHome}
+        setCurrentView={setCurrentView}
+        user={user}
+      />
+      );
       case "Templates":
         return (
           // <SelectTempltes />
@@ -288,7 +259,7 @@ const Home = () => {
     //   style: { color: "white", fontSize: "18px" },
     // },
     {
-      key: "2",
+      key: "DocMaster",
       label: "DocMaster",
       style: { color: "white", fontSize: "21px" },
     },
@@ -334,7 +305,7 @@ const Home = () => {
     {
       key: "2",
       label: "DocMaster",
-      style: { color: "white", fontSize: "21px" },
+      style: { color: "white", fontSize: "21px"},
     },
     {
       key: "New Tempalte",
@@ -571,46 +542,6 @@ const Home = () => {
                   </div>
                 </Form.Item>
               </Form>
-            </Modal>
-          </div>
-          <div>
-            <Modal
-              title=""
-              open={isModalOpenProfile}
-              onOk={handleOkProfile}
-              onCancel={handleCancelProfile}
-              footer={null}
-            >
-              <div className="viewMoreBox">
-                <div className="viewHeading bg-dark">
-                  <h4 style={{ fontFamily: "auto" }}>My Profile</h4>
-                </div>
-                <div className="viewDetail">
-                  <div className="viewImg">
-                    <img src={viewImg}></img>
-                  </div>
-                  <div style={{ marginLeft: "50px", marginTop: "28px" }}>
-                    <p>
-                      <b>First Name</b> : {user.firstName}
-                    </p>
-                    <p>
-                      <b>Last Name</b> : {user.lastName}
-                    </p>
-                    <p>
-                      <b>Email</b> : {user.email}
-                    </p>
-                    <p>
-                      <b>Manger</b> : {user.manager}
-                    </p>
-                    <p>
-                      <b>Department</b> : {department.departmentName}
-                    </p>
-                    <p>
-                      <b>Designation</b> : {designation.designationName}
-                    </p>
-                  </div>
-                </div>
-              </div>
             </Modal>
           </div>
         </Content>

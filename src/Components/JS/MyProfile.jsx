@@ -58,7 +58,7 @@ const MyProfile = () => {
             gap: "20px",
             marginTop: "50px",
             height: "150px",
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
+            boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.2)",
             padding: "30px 23px",
             marginLeft: "25px",
           }}
@@ -85,17 +85,17 @@ const MyProfile = () => {
         <Descriptions
           className="mt-4"
           style={{
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
+            boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.2)",
             height: "250px",
             width: "1080px",
             marginLeft: "25px",
             padding: "35px 35px",
           }}
-          labelStyle={{ fontSize: "18px" }}
+          labelStyle={{ fontSize: "18px" ,color:"black" }}
         >
           <div className="custom-title" span={3}>
             <h3 style={{ fontSize: "24px" }}>
-              More Information
+            Additional Details
             </h3>
           </div>
           <Descriptions.Item label="Manager" span={3}>

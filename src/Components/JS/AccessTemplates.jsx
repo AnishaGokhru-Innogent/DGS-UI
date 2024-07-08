@@ -224,9 +224,6 @@ export function AccessTemplates({ setCurrentView, setTemplateId }) {
 
   const encryptTemplateId = (templateId) => {
     const stringTemplateId = String(templateId);
-
-    // console.log("Encrypting TemplateId:", stringTemplateId);
-
     const encrypted = CryptoJS.AES.encrypt(
       stringTemplateId,
       secretKey

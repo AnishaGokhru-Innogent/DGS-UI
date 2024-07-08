@@ -35,8 +35,7 @@ const Login = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
-        toast.error("Login Failed");
+        message.error("Login Failed");
       });
   };
   return (
@@ -114,14 +113,6 @@ const Login = () => {
                   Login
                 </Button>
               </Form.Item>
-              {/* <Form.Item className="text-center">
-                <p className="mt-3">
-                  Don't Have an Account ?{" "}
-                  <span style={{ color: "#589A65", fontWeight: "700" }}>
-                    SignUp
-                  </span>
-                </p>
-              </Form.Item> */}
             </div>
           </Form>
         </div>
