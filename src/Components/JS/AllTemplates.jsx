@@ -103,7 +103,9 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       });
       setTemplates(response.data);
     } catch (error) {
-      console.error(error);
+      console.error(error.response.data.errorMessage);
+      // openNotificationW.ithIcon("error", "Failed to fetch templates");
+
     } finally {
       setLoading(false);
     }
@@ -116,7 +118,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       })
       .then((response) => response.data)
       .then((data) => setAllAccessTemplateId(data))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error.reponse.data.message));
   }
   // console.log(allAccessTemplateId);
 
@@ -245,7 +247,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       );
       setCurrentUser(response.data);
     } catch (error) {
-      console.error("Failed to fetch current user data", error);
+      console.error(error.response.data.errorMessage);
     }
   };
 
@@ -256,7 +258,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       })
       .then((response) => response.data)
       .then((data) => setAllUsers(data))
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error.response.data.errorMessage));
   }
   // console.log(allUsers);
 
@@ -276,7 +278,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
         prevTemplates.filter((temp) => temp.templateId !== id)
       );
     } catch (error) {
-      message.error("Template not deleted");
+      console.error(error.response.data.errorMessage);
     }
   };
 
@@ -368,7 +370,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       })
       .then((response) => response.data)
       .then((data) => setTemplateAccess(data))
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error.response.data.errorMessage));
   }
 
   // console.log(templateAccess);
@@ -422,7 +424,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       // console.log(response);
       setAccesses((prevAccesses) => [...prevAccesses, response.data]);
     } catch (error) {
-      console.log(error);
+      console.error(error.response.data.errorMessage);
     }
     getAllAccessOfTemplate(Number(accessTemplateId));
     getAllAccessDetails(Number(accessTemplateId));
@@ -440,7 +442,7 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       })
       .then((reponse) => reponse.data)
       .then((data) => setAccessDetails(data))
-      .catch((error) => console.log());
+      .catch((error) => console.error(error.response.data.errorMessage));
   }
 
   // console.log(accessDetails);
@@ -464,8 +466,8 @@ export function AllTemplate({ setCurrentView, setTemplateId }) {
       })
       .then((response) => response.data, message.success("Access Deleted"))
       .catch((error) => {
-        console.log(error);
-        message.error("Error Occurred");
+        console.error(error.response.data.errorMessage);
+        message.error(error.response.data.errorMessage);
       });
 
     getAllAccessOfTemplate(Number(accessTemplateId));
